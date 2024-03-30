@@ -5,7 +5,7 @@ const LoanDetailHeader = ({ loanData }) => {
     return (
         <Paper className="p-4 mb-5">
             <Box>
-                <Grid Container>
+                <Grid container>
                     <Grid item md={12}>
                         <Typography variant="h5">
                             Name: {loanData.primary_applicant.full_name}
@@ -54,7 +54,7 @@ const LoanDetailHeader = ({ loanData }) => {
                                     Interest Rate
                                 </Typography>
                                 <Typography className="text-lg">
-                                    {loanData.rate_of_interest}
+                                    {loanData.interest_rate}%
                                 </Typography>
                             </Box>
                         </Box>

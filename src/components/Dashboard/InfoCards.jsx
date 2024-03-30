@@ -10,7 +10,7 @@ import {
 const InfoCards = ({ dashboardData }) => {
     const { loans } = dashboardData;
     return (
-        <div className="grid gap-4 md:grid-cols-4 xs:grid-cols-1 md:py-5">
+        <div className="grid gap-4 md:grid-cols-4 xs:grid-cols-1 md:py-5 xs:mt-5">
             <IconCard
                 boxTitle="Pending Loans"
                 boxValue={loans.pending_loan}

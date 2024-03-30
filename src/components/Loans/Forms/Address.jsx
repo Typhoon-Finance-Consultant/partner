@@ -106,14 +106,14 @@ const Address = ({ address, loanID }) => {
                                     onChange={formik.handleChange}
                                     error={
                                         formik.touched.permanent_address
-                                            ?.line_1 &&
+                                            ?.line1 &&
                                         !!formik.errors.permanent_address
-                                            ?.line_1
+                                            ?.line1
                                     }
                                     disabled={formDisabled}
                                     helperText={
                                         formik.touched.permanent_address
-                                            ?.line_1 &&
+                                            ?.line1 &&
                                         formik.errors.permanent_address?.line1
                                     }
                                 />

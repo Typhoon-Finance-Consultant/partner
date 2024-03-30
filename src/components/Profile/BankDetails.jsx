@@ -4,7 +4,7 @@ import { Typography, Paper } from '@mui/material';
 
 import LabelValue from '&/components/common/TextInfo/LabelValue';
 
-const BasicDetails = ({ profileData }) => {
+const BankDetails = ({ profileData }) => {
     return (
         <>
             <Typography variant="h5" className="ml-4">
@@ -60,4 +60,4 @@ const BasicDetails = ({ profileData }) => {
     );
 };
 
-export default BasicDetails;
+export default BankDetails;

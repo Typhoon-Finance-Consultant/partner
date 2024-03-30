@@ -19,6 +19,8 @@ import LoanDetailHeader from '&/components/Loans/DetailHeader';
 import Requirements from '&/components/Loans/Forms/Requirements';
 import Documents from '&/components/Loans/Forms/Documents';
 import Address from '&/components/Loans/Forms/Address';
+import IncomeProfile from '&/components/Loans/Forms/IncomeProfile';
+import BasicDetails from '&/components/Loans/Forms/BasicProfile';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -77,38 +79,44 @@ const LoanDetails = props => {
                         scrollButtons="auto"
                         value={activeTab}
                         onChange={handleTabChange}>
-                        <Tab label="Requirements" />
-
                         <Tab label="Basic Profile" />
-                        <Tab label="Address" />
+                        <Tab label="Documents" />
                         <Tab label="Bank" />
+
+                        <Tab label="Address" />
 
                         <Tab label="Income Profile" />
                         <Tab label="References" />
-                        <Tab label="Documents" />
+                        <Tab label="Requirements" />
                     </Tabs>
-                    <CustomTabPanel value={activeTab} index={0}>
+                    <CustomTabPanel value={activeTab} index={6}>
                         <Requirements
                             requirementsData={loanData}
                             loanID={loanID}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={1}>
-                        Basic Profile
-                    </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={2}>
-                        <Address address={loanData?.address} loanID={loanID} />
+                    <CustomTabPanel value={activeTab} index={0}>
+                        <BasicDetails profileData={loanData} loanID={loanID} />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={3}>
-                        <BankAccount bankData={loanData?.bank} />
+                        <Address address={loanData?.address} loanID={loanID} />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={activeTab} index={2}>
+                        <BankAccount
+                            bankData={loanData?.bank}
+                            loanID={loanID}
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={4}>
-                        Income Profile
+                        <IncomeProfile
+                            loanID={loanID}
+                            incomeProfile={loanData?.income_profile}
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={5}>
                         References
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={6}>
+                    <CustomTabPanel value={activeTab} index={1}>
                         <Documents
                             documentData={loanData.documents}
                             loanID={loanID}

@@ -4,6 +4,12 @@ export const RESPONSE_CODES = {
     custom: [409],
 };
 
+export const IncomeTypes = {
+    SALARIED: 1,
+    SELF_EMPLOYED: 2
+}
+
+
 export const ERROR_MESSAGES = {
     multipleOf100: 'Amount should be multiple of 100',
     timeout: 'Facing issues in connection. Try again later!',
@@ -57,5 +63,63 @@ export const INDIAN_STATES = [
     { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
     { value: 'Uttarakhand', label: 'Uttarakhand' },
     { value: 'West Bengal', label: 'West Bengal' }
+  ];
+  
+
+export  const DESIGNATION_OPTIONS = [
+    'Software Engineer',
+    'Data Scientist',
+    'Product Manager',
+    'Marketing Manager',
+    'Human Resources Manager',
+    'Financial Analyst',
+    'Business Development Manager',
+    'Project Manager',
+    'Quality Assurance Engineer',
+    'User Experience Designer',
+    'Graphic Designer',
+    'Content Writer',
+    'Sales Representative',
+    'Customer Success Manager',
+    'Account Manager',
+    'Operations Manager',
+    'Supply Chain Manager',
+    'Logistics Manager',
+    'Network Administrator',
+    'Security Analyst',
+    'Database Administrator',
+    'Systems Engineer',
+    'Help Desk Analyst',
+    'Technical Support Specialist',
+    'Marketing Analyst',
+    'Social Media Manager',
+    'Search Engine Optimization Specialist',
+    'Content Marketing Specialist',
+    'Public Relations Specialist',
+    'Web Developer',
+    'Mobile Developer',
+    'Full Stack Developer',
+    'Back-End Developer',
+    'Front-End Developer',
+    'DevOps Engineer',
+    'Data Engineer',
+    'Machine Learning Engineer',
+    'Artificial Intelligence Engineer',
+    'Business Analyst',
+    'Management Consultant',
+    'Human Resources Consultant',
+    'Financial Consultant',
+    'Lawyer',
+    'Doctor',
+    'Nurse',
+    'Teacher',
+    'Accountant',
+    'Architect',
+    'Engineer',
+    'Marketing Specialist',
+    'Sales Associate',
+    'Customer Service Representative',
+    'Executive Assistant',
+    'Human Resources Assistant',
   ];
   

@@ -10,10 +10,11 @@ import {
     FormControl,
     InputLabel,
     Button,
+    Snackbar,
 } from '@mui/material';
 import * as yup from 'yup';
 import { useQuery } from '@tanstack/react-query';
-import { getBankList } from '&/services/loans';
+import { getBankList, updateBankAccount } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 
 const bankValidationSchema = yup.object({
@@ -36,7 +37,9 @@ const bankValidationSchema = yup.object({
     type: yup.string().trim().required('Please select account type'),
 });
 
-const BankAccount = ({ bankData }) => {
+const BankAccount = ({ bankData, loanID }) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
         queryKey: ['bankList'],
         queryFn: async () => getBankList(),
@@ -53,9 +56,24 @@ const BankAccount = ({ bankData }) => {
             branch_state: bankData?.branch_state,
 
             type: bankData?.account_type,
+            loan_id: loanID,
+            bank_account_id: bankData?.id,
+            action_type: bankData?.id ? 'UPDATE' : 'ADD',
         },
         onSubmit: (values, actions) => {
-            console.log('Bank account', values);
+            console.log('Bank account Update Form', values);
+            actions.setSubmitting(true);
+            updateBankAccount(values)
+                .then(res => {
+                    setSnackbarMessage(res.response || res.message);
+                    setModalOpen(true);
+                    actions.setSubmitting(false);
+                })
+                .catch(error => {
+                    setModalOpen(true);
+                    setSnackbarMessage('Something went wrong');
+                    actions.setSubmitting(false);
+                });
         },
         validationSchema: bankValidationSchema,
     });
@@ -71,7 +89,7 @@ const BankAccount = ({ bankData }) => {
                     <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
                             <TextField
-                                name="IFSC"
+                                name="ifsc"
                                 variant="outlined"
                                 label="IFSC"
                                 onChange={formik.handleChange}
@@ -285,6 +303,13 @@ const BankAccount = ({ bankData }) => {
                     </div>
                 </div>
             </Box>
+            <Snackbar
+                open={modalOpen}
+                autoHideDuration={6000}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                onClose={() => setModalOpen(false)}
+                message={snackbarMessage}
+            />
         </Box>
     );
 };

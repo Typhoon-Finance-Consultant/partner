@@ -31,8 +31,8 @@ const menuOptions = [
         path: '/invoices',
     },
     {
-        name: 'Account',
-        path: '/account',
+        name: 'Create Lead',
+        path: '/create-lead',
     },
 ];
 
@@ -75,8 +75,8 @@ const PostLoginLayout = ({ children }) => {
                 </Box>
             </Drawer>
             <Box className="flex-grow" md={9}>
-                <AppBar position="sticky" color="white" >
-                    <Toolbar className="flex w-full " fixed>
+                <AppBar position="sticky" color="white">
+                    <Toolbar className="flex w-full ">
                         <IconButton
                             onClick={() => setShowMenu(prev => !prev)}
                             size="large"
@@ -116,6 +116,13 @@ const PostLoginLayout = ({ children }) => {
                                     sx={{ minWidth: 200 }}
                                     onClick={() => navigate('/profile')}>
                                     Profile
+                                </MenuItem>
+                                <MenuItem
+                                    sx={{ minWidth: 200 }}
+                                    onClick={() =>
+                                        navigate('/update-password')
+                                    }>
+                                    Update Password
                                 </MenuItem>
 
                                 <MenuItem onClick={logOutUser}>Logout</MenuItem>
