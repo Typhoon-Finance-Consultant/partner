@@ -1,16 +1,27 @@
 import React from 'react';
-import { Paper, Grid, Box, Typography } from '@mui/material';
+import { Paper, Grid, Box, Typography, Button } from '@mui/material';
 
 const LoanDetailHeader = ({ loanData }) => {
     return (
         <Paper className="p-4 mb-5">
             <Box>
                 <Grid container>
-                    <Grid item md={12}>
-                        <Typography variant="h5">
-                            Name: {loanData.primary_applicant.full_name}
-                        </Typography>
-                        <Box className="grid md:grid-cols-5 xs:grid-cols-2 py-5">
+                    <Grid item xs={12}>
+                        <Box className="flex justify-between">
+                            <Typography variant="h5">
+                                Name: {loanData.primary_applicant.full_name}
+                            </Typography>
+                            <Box>
+                                <Button
+                                    className=""
+                                    size="small"
+                                    variant="contained">
+                                    Submit for Verification
+                                </Button>
+                            </Box>
+                        </Box>
+
+                        <Box className="grid md:grid-cols-5 xs:grid-cols-2 sm:grid-cols-2 py-5">
                             <Box className="">
                                 <Typography className="font-bold text-sm text-gray-400">
                                     {' '}

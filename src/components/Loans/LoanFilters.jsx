@@ -31,7 +31,7 @@ const LoanFilters = props => {
     return (
         <Box className="py-5">
             <Paper className="py-5 px-4 bg-gradient-to-b from-neutral-100 to-neutral-200">
-                <Box className="flex-row justify-center grid xs:grid-cols-1 md:grid-cols-5 gap-4 w-full">
+                <Box className="flex-row justify-center grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
                     <Box>
                         <TextField
                             name="search_field"
@@ -41,6 +41,28 @@ const LoanFilters = props => {
                             size="small"
                             onChange={val => setSearchString(val.target.value)}
                         />
+                    </Box>
+                    <Box>
+                        <FormControl fullWidth>
+                            <InputLabel size="small" id="status_label">
+                                Status
+                            </InputLabel>
+                            <Select
+                                labelId="status_label"
+                                size="small"
+                                name="status"
+                                value={status}
+                                onChange={val => setStatus(val.target.value)}>
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="PENDING">Pending</MenuItem>
+                                <MenuItem value="APPROVED">Approved</MenuItem>
+                                <MenuItem value="PROCESSING">
+                                    Processing
+                                </MenuItem>
+
+                                <MenuItem value="REJECTED">Rejected</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Box>
                     <Box>
                         <DatePicker
@@ -76,27 +98,7 @@ const LoanFilters = props => {
                             }}
                         />
                     </Box>
-                    <Box>
-                        <FormControl fullWidth>
-                            <InputLabel size="small" id="status">
-                                Status
-                            </InputLabel>
-                            <Select
-                                labelId="status"
-                                size="small"
-                                value={status}
-                                onChange={val => setStatus(val.target.value)}>
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="PENDING">Pending</MenuItem>
-                                <MenuItem value="APPROVED">Approved</MenuItem>
-                                <MenuItem value="PROCESSING">
-                                    Processing
-                                </MenuItem>
 
-                                <MenuItem value="REJECTED">Rejected</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
                     <Box className="flex justify-end bg-slate-200 gap-3">
                         <Button
                             fullWidth

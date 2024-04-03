@@ -51,7 +51,7 @@ const UpdatePassword = () => {
             actions.setSubmitting(false);
 
                 if (res.code === 200) {
-                    navigate('/dashboard');
+                    navigate('/');
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                 } else {

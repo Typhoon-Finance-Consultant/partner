@@ -10,12 +10,18 @@ import {
     FormControl,
     InputLabel,
     Button,
+    Typography,
+    Divider,
+    Snackbar,
 } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as yup from 'yup';
+import { DOCUMENT_PURPOSE, DOCUMENT_LIST } from '../../../helpers/constants';
 import { styled } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
 import { getDocumentList } from '&/services/loans';
 import Loader from '&/components/common/Loader';
+import { uploadDocument } from '&/services/loans';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -27,254 +33,245 @@ const VisuallyHiddenInput = styled('input')({
     left: 0,
     whiteSpace: 'nowrap',
     width: 1,
-  });
-  
-
-const bankValidationSchema = yup.object({
-    bank: yup.string().trim().required('Bank name is required'),
-    account_number: yup.string().trim().required('Account number is required'),
-    re_enter_account_number: yup
-        .string()
-        .trim()
-        .required('Re-enter account number is required')
-        .oneOf([yup.ref('account_number')], true, 'Account numbers must match'),
-    ifsc: yup
-        .string()
-        .trim()
-        .required('IFSC code is required')
-        .length(11, 'IFSC code must be 11 characters'),
-    branch: yup.string().trim().required('Branch Name is required'),
-    branch_address: yup.string().trim().required('Branch Address is required'),
-    branch_city: yup.string().trim().required('Branch City is required'),
-    branch_state: yup.string().trim().required('Branch State is required'),
-    type: yup.string().trim().required('Please select account type'),
 });
 
-const Documents = ({ documentData }) => {
-    const { data, isLoading } = useQuery({
+const documentUploadValidationSchema = yup.object().shape({
+    password: yup
+        .string()
+        .trim()
+        .optional()
+        .min(8, 'Password must be at least 8 characters long'),
+    doc_type: yup.string().trim().oneOf(DOCUMENT_LIST, 'Invalid document type'),
+    purpose: yup
+        .string()
+        .trim()
+        .oneOf(DOCUMENT_PURPOSE, 'Invalid document purpose'),
+    file: yup
+        .mixed()
+        .required('Document file is required')
+        .test('fileType', 'Invalid file type (PDF only)', value => {
+            // Check if file is null before accessing type property
+            return value && value.type && value.type === 'application/pdf';
+        }),
+});
+const Documents = ({ loanID }) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const { data, isLoading, refetch } = useQuery({
         queryKey: ['document'],
-        queryFn: async () => getDocumentList(),
+        queryFn: async () => getDocumentList({ loan_id: loanID }),
     });
     const formik = useFormik({
         initialValues: {
-            
-
-            
+            password: '',
+            doc_type: 'PAN',
+            purpose: 'IDENTITY',
+            file: null,
+            loan_id: loanID,
         },
         onSubmit: (values, actions) => {
-            console.log('Bank account', values);
+            console.log('Document Upload', values);
+            const form = new FormData();
+            form.append('file', values.file, values?.file?.name);
+            form.append('password', values.password);
+            form.append('doc_type', values.doc_type);
+            form.append('purpose', values.purpose);
+            form.append('loan_id', loanID);
+
+            uploadDocument(form)
+                .then(res => {
+                    setSnackbarMessage(res.response || res.message);
+                    setModalOpen(true);
+                    actions.setSubmitting(false);
+                    refetch();
+                })
+                .catch(error => {
+                    setModalOpen(true);
+                    setSnackbarMessage('Something went wrong');
+                    actions.setSubmitting(false);
+                });
         },
-        validationSchema: bankValidationSchema,
+        validationSchema: documentUploadValidationSchema,
     });
-    const [formDisabled, setFormDisbaled] = useState(true);
+
+    const [formDisabled, setFormDisbaled] = useState(false);
     if (isLoading) {
-        return <Loader loaderText="Loading Bank details" />;
+        return <Loader loaderText="Loading Document List" />;
     }
-    const documentList = data?.code === 200 ? data.response : [];
+    const documentData = data?.code === 200 ? data.response : [];
     return (
         <Box>
-            <Box className="mt-5">
-                <Grid container spacing={4}>
-                    <Grid item xs={12} md={4}>
-                        <FormGroup className="mb-8">
-                           <Button>
-                            Upload Document
-                           <VisuallyHiddenInput type="file" />
+            <Box className="">
+                <Typography
+                    variant="h6"
+                    className="font-bold text-gray-500 mb-5">
+                    {' '}
+                    Uploaded Files
+                </Typography>
+                <Box className="mb-5">
+                    <Box>
+                        {documentData.map(item => {
+                            return (
+                                <Box
+                                    className="grid xs:grid-cols-2 md:grid-cols-5 border md:p-5 xs:p-2"
+                                    key={item.id}>
+                                    <Box>
+                                        <Typography className="text-sm">
+                                            Document Type
+                                        </Typography>
 
-                           </Button>
-                        </FormGroup>
-                        <FormGroup className="mb-8">
-                            <TextField
-                                name="account_number"
-                                variant="outlined"
-                                label="Account Number"
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.account_number}
-                                fullWidth
-                                disabled={formDisabled}
-                                size="small"
-                                error={
-                                    formik.touched.account_number &&
-                                    formik.errors.account_number
-                                }
-                                helperText={
-                                    formik.touched.account_number &&
-                                    formik.errors.account_number
-                                }
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <TextField
-                                name="re_enter_account_number"
-                                variant="outlined"
-                                label="Re-enter Account Number"
-                                type="password"
-                                size="small"
-                                disabled={formDisabled}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.re_enter_account_number}
-                                fullWidth
-                                error={
-                                    formik.touched.re_enter_account_number &&
-                                    formik.errors.re_enter_account_number
-                                }
-                                helperText={
-                                    formik.touched.re_enter_account_number &&
-                                    formik.errors.re_enter_account_number
-                                }
-                            />
-                        </FormGroup>
+                                        <Typography className="text-lg">
+                                            {' '}
+                                            {item.doc_type}{' '}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography className="text-sm">
+                                            Purpose
+                                        </Typography>
+
+                                        <Typography className="text-lg">
+                                            {' '}
+                                            {item.purpose}{' '}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography className="text-sm">
+                                            Password
+                                        </Typography>
+                                        <Typography className="text-lg">
+                                            {' '}
+                                            {item.password}{' '}
+                                        </Typography>
+                                    </Box>
+                                    <Box className="col-span-2">
+                                        <Typography className="text-sm">
+                                            Document Link
+                                        </Typography>
+                                        <Typography className="text-lg">
+                                            {' '}
+                                            {item.file}{' '}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            );
+                        })}
+                    </Box>
+                </Box>
+                <Grid container spacing={4}>
+                    <Grid item xs={12}>
+                        <Typography
+                            variant="h6"
+                            className="font-bold text-gray-500 mb-5">
+                            {' '}
+                            Upload New Documents
+                        </Typography>
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormControl fullWidth className="mb-8">
-                            <InputLabel size="small" id="account_type">
-                                Bank Name
+                            <InputLabel size="small" id="document_type">
+                                Document Type
                             </InputLabel>
                             <Select
-                                labelId="bank"
+                                labelId="document_type"
                                 size="small"
-                                id="bank"
                                 disabled={formDisabled}
-                                name="bank"
-                                value={formik.values.bank}
+                                name="doc_type"
+                                value={formik.values.doc_type}
                                 onChange={formik.handleChange}>
-                                
+                                {DOCUMENT_LIST.map(item => (
+                                    <MenuItem value={item}>{item}</MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                         <FormControl fullWidth className="mb-8">
-                            <InputLabel size="small" id="account_type">
-                                Account Type
+                            <InputLabel size="small" id="document_purpose">
+                                Document Purpose
                             </InputLabel>
                             <Select
-                                labelId="account_type"
+                                labelId="document_purpose"
                                 size="small"
-                                id="type"
-                                name="type"
                                 disabled={formDisabled}
-                                value={formik.values.type}
+                                name="document_purpose"
+                                value={formik.values.purpose}
                                 onChange={formik.handleChange}>
-                                <MenuItem value="SAVINGS">SAVINGS</MenuItem>
-                                <MenuItem value="CURRENT">CURRENT</MenuItem>
+                                {DOCUMENT_PURPOSE.map(item => (
+                                    <MenuItem value={item}>{item}</MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
-                        <FormGroup className="">
-                            <TextField
-                                name="branch"
-                                variant="outlined"
-                                label="Branch"
-                                size="small"
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.branch}
-                                disabled={formDisabled}
-                                fullWidth
-                                error={
-                                    formik.touched.branch &&
-                                    formik.errors.branch
-                                }
-                                helperText={
-                                    formik.touched.branch &&
-                                    formik.errors.branch
-                                }
-                            />
-                        </FormGroup>
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
                             <TextField
-                                name="branch_city"
+                                name="password"
                                 variant="outlined"
-                                label="Branch City"
+                                label="Password"
                                 type="text"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch_city}
+                                value={formik.values.password}
                                 disabled={formDisabled}
                                 fullWidth
                                 size="small"
                                 error={
-                                    formik.touched.branch_city &&
-                                    formik.errors.branch_city
+                                    formik.touched.password &&
+                                    formik.errors.password
                                 }
                                 helperText={
-                                    formik.touched.branch_city &&
-                                    formik.errors.branch_city
+                                    formik.touched.password &&
+                                    formik.errors.password
                                 }
                             />
                         </FormGroup>
                         <FormGroup className="mb-8">
-                            <TextField
-                                name="branch_state"
-                                variant="outlined"
-                                label="Branch State"
-                                type="text"
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.branch_state}
-                                disabled={formDisabled}
-                                fullWidth
-                                size="small"
-                                error={
-                                    formik.touched.branch_state &&
-                                    formik.errors.branch_state
-                                }
-                                helperText={
-                                    formik.touched.branch_state &&
-                                    formik.errors.branch_state
-                                }
-                            />
-                        </FormGroup>
-                        <FormGroup className="">
-                            <TextField
-                                name="branch_address"
-                                variant="outlined"
-                                label="Branch Address"
-                                type="text"
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.branch_address}
-                                disabled={formDisabled}
-                                fullWidth
-                                size="small"
-                                error={
-                                    formik.touched.branch_address &&
-                                    formik.errors.branch_address
-                                }
-                                helperText={
-                                    formik.touched.branch_address &&
-                                    formik.errors.branch_address
-                                }
-                            />
+                            <Button
+                                className=""
+                                variant="contained"
+                                component="label"
+                                tabIndex={-1}
+                                role={undefined}
+                                startIcon={<CloudUploadIcon />}
+                                color="secondary">
+                                {!!formik.values.file
+                                    ? formik.values.file.name
+                                    : 'Select Document'}
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    name="file"
+                                    // value={formik.values.file}
+                                    onChange={event => {
+                                        console.log('Form Event', event);
+                                        formik.setFieldValue(
+                                            'file',
+                                            event.target.files[0],
+                                        );
+                                    }}
+                                />
+                            </Button>
                         </FormGroup>
                     </Grid>
                 </Grid>
-                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                    <div className="col-span-6">
-                       
-                    </div>
-                    <div>
+                <Divider className="mb-8" />
+                <div className="grid md:grid-cols-3">
+                    <FormGroup className="mb-8">
                         <Button
-                            variant="contained"
-                            fullWidth
-                            color="secondary"
-                            onClick={() => setFormDisbaled(prev => !prev)}>
-                            Edit
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
+                            className=""
                             variant="contained"
                             color="primary"
-                            fullWidth
-                            disabled={formik.isSubmitting}
                             onClick={formik.handleSubmit}>
-                            Submit
+                            Upload Document
                         </Button>
-                    </div>
+                    </FormGroup>
                 </div>
             </Box>
+            <Snackbar
+                open={modalOpen}
+                autoHideDuration={6000}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                onClose={() => setModalOpen(false)}
+                message={snackbarMessage}
+            />
         </Box>
     );
 };

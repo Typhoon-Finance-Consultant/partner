@@ -21,6 +21,7 @@ import Documents from '&/components/Loans/Forms/Documents';
 import Address from '&/components/Loans/Forms/Address';
 import IncomeProfile from '&/components/Loans/Forms/IncomeProfile';
 import BasicDetails from '&/components/Loans/Forms/BasicProfile';
+import References from '&/components/Loans/Forms/References';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -114,7 +115,10 @@ const LoanDetails = props => {
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={5}>
-                        References
+                        <References
+                            loanID={loanID}
+                            references={loanData?.references}
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={1}>
                         <Documents

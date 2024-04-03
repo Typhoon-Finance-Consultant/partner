@@ -12,21 +12,21 @@ const InfoCards = ({ dashboardData }) => {
     return (
         <div className="grid gap-4 md:grid-cols-4 xs:grid-cols-1 md:py-5 xs:mt-5">
             <IconCard
-                boxTitle="Pending Loans"
-                boxValue={loans.pending_loan}
+                boxTitle="Draft Loans"
+                boxValue={loans.draft_loans || 0}
                 iconName={
                     <PendingActions color="white" sx={{ fontSize: 50 }} />
                 }
             />
             <IconCard
-                boxTitle="Disbursed Loans"
+                boxTitle="In Process Loans"
                 
-                boxValue={loans.processed_loan}
+                boxValue={loans.in_process_loans|| 0}
                 iconName={<TaskAlt color="white" sx={{ fontSize: 50 }} />}
             />
             <IconCard
-                boxTitle="Rejected Loans"
-                boxValue={loans.rejected_loan}
+                boxTitle="Disbursed Loans"
+                boxValue={loans.disbursed_loans || 0}
                 iconName={<Dangerous color="white" sx={{ fontSize: 50 }} />}
             />
             <IconCard

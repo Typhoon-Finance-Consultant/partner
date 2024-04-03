@@ -52,9 +52,14 @@ export const resendVerificationLink = data => {
 };
 
 export const logout = () => {
-    const response = coreApi.makeAuthenticatedGetCall('partner/me');
+    const response = coreApi.makeAuthenticatedGetCall('auth/logout');
     return handleResponse(response);
 };
+
+export const updatePartnerProfile = (data) => {
+    const response = coreApi.makeAuthenticatedPostCall('partner/profile', data);
+    return handleResponse(response);
+}
 
 export default {
     login,
@@ -66,4 +71,5 @@ export default {
     registerPartner,
     resetPassword,
     updatePassword,
+    updatePartnerProfile
 };

@@ -12,6 +12,8 @@ import CreateLead from './pages/CreateLead';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import UpdatePassword from './pages/UpdatePassword';
+import UpdateProfile from './pages/UpdateProfile.jsx';
+import Notfound from './pages/Notfound.jsx';
 
 function App() {
     return (
@@ -27,11 +29,7 @@ function App() {
                     <Route path="/reset-password" element={<Login />} />
 
                     <Route path="" element={<AuthGuard />}>
-                        <Route
-                            path="/dashboard"
-                            element={<Dashboard />}
-                            index
-                        />
+                        <Route path="/" element={<Dashboard />} index />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/loans" element={<Loans />} />
                         <Route
@@ -52,7 +50,13 @@ function App() {
                             path="/update-password"
                             element={<UpdatePassword />}
                         />
+                        <Route
+                            path="/update-profile"
+                            element={<UpdateProfile />}
+                        />
                     </Route>
+                    <Route path="*" element={<Notfound />} />
+
                 </Route>
             </Routes>
         </BrowserRouter>

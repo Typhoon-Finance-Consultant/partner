@@ -16,9 +16,15 @@ const LoanTable = ({ loanData }) => {
     const { loan_data: loanList, count } = loanData;
     console.log('Loan Data', loanList);
     return (
-        <Box sx={{ width: '100%', overflow: 'hidden' }}>
-            <Paper>
-                <TableContainer>
+        <Box>
+            <Paper
+                sx={{
+                    overflowX: 'scroll',
+                }}>
+                <TableContainer
+                    sx={{
+                        overflowX: 'scroll',
+                    }}>
                     <Table stickyHeader>
                         <TableHead>
                             <TableRow>

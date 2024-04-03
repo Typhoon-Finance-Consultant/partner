@@ -31,13 +31,19 @@ export const getBankList = () => {
     return handleResponse(response);
 };
 
-export const getDocumentList = () => {
-    const response = coreApi.makeAuthenticatedPostCall('document/list');
+export const getDocumentList = data => {
+    const response = coreApi.makeAuthenticatedPostCall('document/list', data);
     return handleResponse(response);
 };
 
-export const uploadDocument = () => {
-    const response = coreApi.makeAuthenticatedPostCall('document/upload');
+export const uploadDocument = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'document/upload',
+        data,
+        {
+            'Content-Type': 'multipart/form-data',
+        }
+    );
     return handleResponse(response);
 };
 
@@ -80,7 +86,25 @@ export const submitLoanApplication = data => {
 };
 
 export const updateBasicDetails = data => {
-    const response = coreApi.makeAuthenticatedPostCall('profile/basic', data);
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/basic/update',
+        data,
+    );
     return handleResponse(response);
 };
 
+export const handleLeadVerification = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/verification',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const updateLoanReference = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/reference/update',
+        data,
+    );
+    return handleResponse(response);
+};

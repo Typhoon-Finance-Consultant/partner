@@ -1,9 +1,13 @@
 {
     "compilerOptions": {
+      "jsx": "react",
+      "moduleResolution": "nodenext",
       "baseUrl": "./src",
-      "target": "es6",
+      "target": "ES2021",
+      // "checkJs": true,
+      // "allowJs": true,
       "paths": {
-        "@/*": ["./src/*"],
+        // "@/*": ["./src/*"],
       }
     }
 }

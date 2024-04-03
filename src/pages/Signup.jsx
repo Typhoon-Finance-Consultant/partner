@@ -87,8 +87,8 @@ const Signup = () => {
                     if (redirectPath) {
                         return navigate(redirectPath);
                     }
-                    navigate('/dashboard');
-                    setSnackbarMessage('Login Sucessful');
+                    navigate('/');
+                    setSnackbarMessage('Signup Sucessful');
                     setModalOpen(true);
                 } else {
                     setSnackbarMessage(data.response);

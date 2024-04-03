@@ -48,7 +48,7 @@ const Login = () => {
                     if (redirectPath) {
                         return navigate(redirectPath);
                     }
-                    navigate('/dashboard'),
+                    navigate('/'),
                         setSnackbarMessage('Login Sucessful');
                     setModalOpen(true);
                 } else {

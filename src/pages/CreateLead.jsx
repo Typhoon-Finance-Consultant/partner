@@ -12,7 +12,7 @@ const CreateLead = () => {
 
     return (
         <Container maxWidth={false} className="bg-slate-100 h-screen">
-            <Box className=" grid justify-center items-center h-screen ">
+            <Box className=" grid md:justify-center md:items-center h-screen py-10 sm:py-0 ">
                 <Box>
                     {!leadID ? (
                         <LeadFormClient

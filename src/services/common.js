@@ -6,7 +6,7 @@ export const handleResponse = result => {
             console.log(
                 'API Response Data_____',
                 data?.config?.url,
-                data.data.code,
+                data?.data?.code,
             );
             return data?.data;
         })

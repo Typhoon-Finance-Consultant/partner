@@ -40,14 +40,12 @@ const Loans = () => {
     console.log('Use Effect Data Form', formData);
     return (
         <Container maxWidth={false} className="bg-slate-100 h-screen">
-            <Box>
-                <LoanFilters formData={formData} setFormData={setFormData} />
-                <LoanTable
-                    loanData={loanData}
-                    pagination={pagination}
-                    setPagination={setPageData}
-                />
-            </Box>
+            <LoanFilters formData={formData} setFormData={setFormData} />
+            <LoanTable
+                loanData={loanData}
+                pagination={pagination}
+                setPagination={setPageData}
+            />
         </Container>
     );
 };

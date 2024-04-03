@@ -11,7 +11,8 @@ import {
     InputLabel,
     Button,
     Snackbar,
-    Typography,Divider
+    Typography,
+    Divider,
 } from '@mui/material';
 import * as yup from 'yup';
 import dayjs from 'dayjs';
@@ -27,14 +28,16 @@ const basicProfileValidationSchema = yup.object({
     dob: yup.date().required('Date of birth is required').nullable(true),
 });
 
-const BasicProfile = ({ profileData }) => {
+const BasicProfile = ({ profileData, loanID }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const formik = useFormik({
         initialValues: {
+            loan_id: loanID,
             primary_applicant: {
-                marital_status: profileData?.primary_applicant?.marital_status,
-                gender: profileData?.primary_applicant?.gender,
+                marital_status:
+                    profileData?.primary_applicant?.marital_status || 'Single',
+                gender: profileData?.primary_applicant?.gender || 'Male',
                 first_name: profileData?.primary_applicant?.first_name,
                 middle_name: profileData?.primary_applicant?.middle_name,
                 last_name: profileData?.primary_applicant?.last_name,
@@ -42,19 +45,19 @@ const BasicProfile = ({ profileData }) => {
             },
             secondary_applicant: {
                 marital_status:
-                    profileData?.secondary_applicant?.marital_status,
-                gender: profileData?.secondary_applicant?.gender,
+                    profileData?.secondary_applicant?.marital_status | 'Single',
+                gender: profileData?.secondary_applicant?.gender || 'Male',
                 first_name: profileData?.secondary_applicant?.first_name,
                 middle_name: profileData?.secondary_applicant?.middle_name,
                 last_name: profileData?.secondary_applicant?.last_name,
                 dob: profileData?.secondary_applicant?.dob,
             },
         },
-        validationSchema: yup.object().shape({
-            primary_applicant: basicProfileValidationSchema.required(),
-            secondary_applicant: basicProfileValidationSchema.optional(),
-        }),
-        onsubmit: (values, action) => {
+        // validationSchema: yup.object().shape({
+        //     primary_applicant: basicProfileValidationSchema.optional(),
+        //     secondary_applicant: basicProfileValidationSchema.optional(),
+        // }),
+        onSubmit: (values, action) => {
             action.setSubmitting(true);
             const body = {
                 ...values,
@@ -199,7 +202,7 @@ const BasicProfile = ({ profileData }) => {
                                 size="small"
                                 id="primary_applicant.gender"
                                 disabled={formDisabled}
-                                name="loan_type"
+                                name="primary_applicant.gender"
                                 value={formik.values.primary_applicant.gender}
                                 onChange={formik.handleChange}>
                                 <MenuItem value="Male">Male</MenuItem>

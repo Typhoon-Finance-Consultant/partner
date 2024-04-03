@@ -6,9 +6,8 @@ export const RESPONSE_CODES = {
 
 export const IncomeTypes = {
     SALARIED: 1,
-    SELF_EMPLOYED: 2
-}
-
+    SELF_EMPLOYED: 2,
+};
 
 export const ERROR_MESSAGES = {
     multipleOf100: 'Amount should be multiple of 100',
@@ -25,16 +24,21 @@ export const ERROR_MESSAGES = {
     INSUFFICIENT_FUND: 'Insufficient Funds',
 };
 
-
 export const INDIAN_STATES = [
-    { value: 'Andaman and Nicobar Islands', label: 'Andaman and Nicobar Islands' },
+    {
+        value: 'Andaman and Nicobar Islands',
+        label: 'Andaman and Nicobar Islands',
+    },
     { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
     { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
     { value: 'Assam', label: 'Assam' },
     { value: 'Bihar', label: 'Bihar' },
     { value: 'Chandigarh', label: 'Chandigarh' },
     { value: 'Chhattisgarh', label: 'Chhattisgarh' },
-    { value: 'Dadra and Nagar Haveli and Daman and Diu', label: 'Dadra and Nagar Haveli and Daman and Diu' },
+    {
+        value: 'Dadra and Nagar Haveli and Daman and Diu',
+        label: 'Dadra and Nagar Haveli and Daman and Diu',
+    },
     { value: 'Delhi', label: 'Delhi' },
     { value: 'Goa', label: 'Goa' },
     { value: 'Gujarat', label: 'Gujarat' },
@@ -62,11 +66,10 @@ export const INDIAN_STATES = [
     { value: 'Tripura', label: 'Tripura' },
     { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
     { value: 'Uttarakhand', label: 'Uttarakhand' },
-    { value: 'West Bengal', label: 'West Bengal' }
-  ];
-  
+    { value: 'West Bengal', label: 'West Bengal' },
+];
 
-export  const DESIGNATION_OPTIONS = [
+export const DESIGNATION_OPTIONS = [
     'Software Engineer',
     'Data Scientist',
     'Product Manager',
@@ -121,5 +124,53 @@ export  const DESIGNATION_OPTIONS = [
     'Customer Service Representative',
     'Executive Assistant',
     'Human Resources Assistant',
-  ];
-  
+];
+
+export const LOAN_REFERENCE_PERSONAL_TYPES = [
+    'FATHER',
+    'MOTHER',
+    'SPOUSE',
+    'BROTHER',
+    'SISTER',
+    'SON',
+    'DAUGHTER',
+    'FRIEND',
+];
+
+export const LOAN_REFERENCE_PROFESSIONAL_TYPES = [
+    'REPORTING MANAGER',
+    'TEAM MEMBER',
+    'HR',
+    'EX COLLEGUE',
+];
+
+export const DOCUMENT_LIST = [
+    'PAN',
+    'AADHAAR_FRONT',
+    'AADHAAR_BACK',
+    'PASSPORT_FRONT',
+    'PASSPORT_BACK',
+    'DRIVING_LICENSE',
+    'CHEQUE',
+    'RENT_AGREEMENT',
+    'PROPERTY_AGREEMENT',
+    'WET_SIGNATURE',
+    'BANK_PASSBOOK',
+    'BANK_STATEMENT',
+    'VOTER_ID',
+    'SALARY_SLIP',
+    'ELECTRICITY_BILL',
+    'GAS_BILL',
+    'FORM_16',
+    'ITR',
+];
+
+export const DOCUMENT_PURPOSE = [
+    'IDENTITY',
+    'ADDRESS',
+    'BANK VERIFICATION',
+    'ON BOARDING',
+    'INCOME',
+    'PROPERTY',
+    'BANK MANDATE',
+];
