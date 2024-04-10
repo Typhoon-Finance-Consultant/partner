@@ -107,8 +107,7 @@ const Address = ({ address, loanID }) => {
                                     error={
                                         formik.touched.permanent_address
                                             ?.line1 &&
-                                        !!formik.errors.permanent_address
-                                            ?.line1
+                                        !!formik.errors.permanent_address?.line1
                                     }
                                     disabled={formDisabled}
                                     helperText={
@@ -291,12 +290,13 @@ const Address = ({ address, loanID }) => {
                             </FormControl>
                             <FormControl fullWidth className="mb-8">
                                 <TextField
-                                    name="permanent_address.city"
+                                    name="communication_address.city"
                                     label="City"
                                     size="small"
                                     disabled={formDisabled}
                                     value={
-                                        formik.values.communication_address.city
+                                        formik.values.communication_address
+                                            ?.city
                                     }
                                     onChange={formik.handleChange}
                                     error={
@@ -342,7 +342,9 @@ const Address = ({ address, loanID }) => {
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <Paper className="p-4">
-                        <Typography variant="h6">Workplace Address</Typography>
+                        <Typography variant="h6">
+                            Workplace / Shop Address
+                        </Typography>
                         <Divider className="my-2" />
                         <Box className="py-2">
                             <FormControl fullWidth className="mb-8">
@@ -357,8 +359,7 @@ const Address = ({ address, loanID }) => {
                                     error={
                                         formik.touched.workplace_address
                                             ?.line1 &&
-                                        !!formik.errors.workplace_address
-                                            ?.line1
+                                        !!formik.errors.workplace_address?.line1
                                     }
                                     disabled={formDisabled}
                                     helperText={

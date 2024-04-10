@@ -120,7 +120,7 @@ const PostLoginLayout = ({ children }) => {
                                 sx={{ mr: 2 }}>
                                 <MenuIcon />
                             </IconButton>
-                            <IconButton>
+                            <IconButton href="/">
                                 <img src={Logo} height={50} width={100} />
                             </IconButton>{' '}
                         </Box>

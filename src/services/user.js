@@ -37,7 +37,10 @@ export const forgotPassword = data => {
 };
 
 export const updatePassword = data => {
-    const response = coreApi.makeAuthenticatedPostCall('user/update-password', data);
+    const response = coreApi.makeAuthenticatedPostCall(
+        'user/update-password',
+        data,
+    );
     return handleResponse(response);
 };
 
@@ -56,10 +59,20 @@ export const logout = () => {
     return handleResponse(response);
 };
 
-export const updatePartnerProfile = (data) => {
+export const updatePartnerProfile = data => {
     const response = coreApi.makeAuthenticatedPostCall('partner/profile', data);
     return handleResponse(response);
-}
+};
+
+export const sendOTP = data => {
+    const response = coreApi.makePostCall('auth/send-otp', data);
+    return handleResponse(response);
+};
+
+export const verifyOTP = data => {
+    const response = coreApi.makePostCall('auth/verify-otp', data);
+    return handleResponse(response);
+};
 
 export default {
     login,
@@ -71,5 +84,7 @@ export default {
     registerPartner,
     resetPassword,
     updatePassword,
-    updatePartnerProfile
+    updatePartnerProfile,
+    sendOTP,
+    verifyOTP,
 };
