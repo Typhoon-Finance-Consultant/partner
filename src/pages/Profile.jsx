@@ -18,7 +18,7 @@ const Profile = props => {
     console.log('Profile Data', data);
     const profileData = data?.response || {};
     return (
-        <Container maxWidth={false} className="bg-slate-100 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 h-screen">
             <Box className="py-8 d">
                 <Box className="mb-10 divide-solid ">
                     <BasicDetails profileData={profileData} />

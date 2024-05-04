@@ -26,7 +26,7 @@ const Dashboard = () => {
     return (
         <Container
             maxWidth={false}
-            className="bg-slate-100 h-screen mt-5 sm:mt-0">
+            className="bg-slate-200 h-screen mt-5 sm:mt-0">
             {!hasBank ? (
                 <Box className="py-5 mx-5">
                     <Alert severity="warning">

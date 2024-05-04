@@ -26,7 +26,7 @@ const Invoices = () => {
     }
 
     return (
-        <Container maxWidth={false} className="h-full bg-slate-100 p-4">
+        <Container maxWidth={false} className="h-full bg-slate-200 p-4">
             <InvoiceFilter formData={formData} setFormData={setFormData} />
             <InvoiceTable
                 payoutData={payoutData}

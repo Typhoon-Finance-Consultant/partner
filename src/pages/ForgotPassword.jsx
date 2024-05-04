@@ -56,7 +56,7 @@ const ForgotPassword = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-100 h-screen">
+            className="bg-slate-200 h-screen">
             <PreloginHeader />
             <Grid container className="mt-10 ">
                 <Grid item xs={12} md={4} className="mx-auto">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useFormik } from 'formik';
 import {
     FormGroup,
@@ -21,6 +21,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getEmployerList, updateIncomeProfile } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 import { IncomeTypes, DESIGNATION_OPTIONS } from '&/helpers/constants';
+import DatePicker from '&/components/common/Form/DatePicker';
+import dayjs from 'dayjs';
 
 const incomeProfileValidationSchema = yup.object().shape({
     income_type: yup
@@ -67,17 +69,31 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
             designation: incomeProfile?.designation,
             employer: incomeProfile?.employer,
             date_of_joining_or_incorporation:
-			incomeProfile?.date_of_joining_or_incorporation,
+                incomeProfile?.date_of_joining_or_incorporation,
             total_emi_ongoing: incomeProfile?.total_emi_ongoing || 0,
             loan_id: loanID,
             legal_name: incomeProfile?.legal_name,
             entity_type: incomeProfile?.entity_type || 'SHOP',
+            total_work_experience_in_months:
+                incomeProfile?.total_work_experience_in_months || 0,
+            current_work_experience_in_months:
+                incomeProfile?.current_work_experience_in_months || 0,
         },
         // validationSchema: incomeProfileValidationSchema,
         onSubmit: (values, actions) => {
             console.log('Upload Income Response', values);
+            const body = {
+                ...values,
+
+                date_of_joining_or_incorporation:
+                    values.date_of_joining_or_incorporation
+                        ? dayjs(values.date_of_joining_or_incorporation).format(
+                              'DD/MM/YYYY',
+                          )
+                        : null,
+            };
             actions.setSubmitting(true);
-            updateIncomeProfile(values)
+            updateIncomeProfile(body)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
@@ -91,7 +107,21 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
         },
     });
     const [formDisabled, setFormDisabled] = useState(true);
+    const handleEmployerNameChange = useCallback(value => {
+        if (formik.values.employer !== value) {
+            console.log('Event Name ', value);
 
+            formik.setFieldValue('employer', value);
+        }
+    });
+
+    const handleDesignationChange = useCallback(value => {
+        if (formik.values.designation !== value) {
+            console.log('Event Name  2', value);
+
+            formik.setFieldValue('designation', value);
+        }
+    });
     if (isLoading) {
         return <Loader loaderText="Fetching Information" />;
     }
@@ -102,6 +132,7 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
     //       value: item.name,
     //   }))
     // : [];
+
     return (
         <Box className="mt-5">
             <Grid container spacing={4}>
@@ -201,13 +232,15 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
                                     autoComplete
                                     size="small"
                                     name="employer"
+                                    disabled={formDisabled}
                                     value={formik.values.employer}
-                                    onInputChange={formik.handleChange}
+                                    onInputChange={(field, value) =>
+                                        handleEmployerNameChange(value)
+                                    }
                                     renderInput={params => (
                                         <TextField
                                             {...params}
                                             label="Employer Name"
-                                            disabled={formDisabled}
                                             error={
                                                 formik.touched.employer &&
                                                 formik.errors.employer
@@ -226,13 +259,15 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
                                     id="designation"
                                     options={DESIGNATION_OPTIONS}
                                     autoComplete
-                                    onInputChange={formik.handleChange}
+                                    disabled={formDisabled}
+                                    onInputChange={(field, value) =>
+                                        handleDesignationChange(value)
+                                    }
                                     value={formik.values.designation}
                                     renderInput={params => (
                                         <TextField
                                             {...params}
                                             label="Designation"
-                                            disabled={formDisabled}
                                             error={
                                                 formik.touched.designation &&
                                                 formik.errors.designation
@@ -243,6 +278,64 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
                                             }
                                         />
                                     )}
+                                />
+                            </FormControl>
+                            <FormControl fullWidth className="mb-8">
+                                <TextField
+                                    name="total_work_experience_in_months"
+                                    variant="outlined"
+                                    label="Total Work Experience in Months"
+                                    type="text"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    value={
+                                        formik.values
+                                            .total_work_experience_in_months
+                                    }
+                                    disabled={formDisabled}
+                                    fullWidth
+                                    size="small"
+                                    error={
+                                        formik.touched
+                                            .total_work_experience_in_months &&
+                                        formik.errors
+                                            .total_work_experience_in_months
+                                    }
+                                    helperText={
+                                        formik.touched
+                                            .total_work_experience_in_months &&
+                                        formik.errors
+                                            .total_work_experience_in_months
+                                    }
+                                />
+                            </FormControl>
+                            <FormControl fullWidth className="mb-8">
+                                <TextField
+                                    name="current_work_experience_in_months"
+                                    variant="outlined"
+                                    label="Cuurent Work Experience in Months"
+                                    type="number"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    value={
+                                        formik.values
+                                            .current_work_experience_in_months
+                                    }
+                                    disabled={formDisabled}
+                                    fullWidth
+                                    size="small"
+                                    error={
+                                        formik.touched
+                                            .current_work_experience_in_months &&
+                                        formik.errors
+                                            .current_work_experience_in_months
+                                    }
+                                    helperText={
+                                        formik.touched
+                                            .current_work_experience_in_months &&
+                                        formik.errors
+                                            .current_work_experience_in_months
+                                    }
                                 />
                             </FormControl>
                         </Box>
@@ -294,6 +387,34 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
                                     }
                                 />
                             </FormControl>
+                            <FormGroup className="mb-8">
+                                <DatePicker
+                                    label="Date of Incorporation"
+                                    value={
+                                        formik.values
+                                            .date_of_joining_or_incorporation
+                                    }
+                                    onChange={value => {
+                                        formik.setFieldValue(
+                                            'date_of_joining_or_incorporation',
+                                            Date.parse(value),
+                                        );
+                                    }}
+                                    size="small"
+                                    name="date_of_joining_or_incorporation"
+                                    clearable
+                                    disabled={formDisabled}
+                                    format="DD/MM/YYYY"
+                                    disableFuture
+                                    fullWidth
+                                    slotProps={{
+                                        textField: {
+                                            size: 'small',
+                                            fullWidth: true,
+                                        },
+                                    }}
+                                />
+                            </FormGroup>
                         </Box>
                     </Grid>
                 )}

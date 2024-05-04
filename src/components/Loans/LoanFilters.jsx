@@ -12,25 +12,28 @@ import {
 import DatePicker from '&/components/common/Form/DatePicker';
 
 const LoanFilters = props => {
-    const [status, setStatus] = useState('');
-    const [fromDate, setFromDate] = useState();
-    const [toDate, setToDate] = useState();
-    const [searchString, setSearchString] = useState();
+    const { formData, setFormData, refetch, handleFormUpdate } = props;
 
-    const { formData, setFormData } = props;
+    const [status, setStatus] = useState(formData?.status);
+    const [fromDate, setFromDate] = useState(formData?.fromDate);
+    const [toDate, setToDate] = useState();
+    const [searchString, setSearchString] = useState(formData?.searchString);
+
 
     const sendFormData = () => {
-        setFormData({ status, fromDate, toDate, searchString });
+        handleFormUpdate({ status, fromDate, toDate, searchString });
     };
     const resetFormData = () => {
         setStatus('');
         setFromDate();
         setToDate();
         setSearchString('');
+        setFormData({})
+        refetch();
     };
     return (
         <Box className="py-5">
-            <Paper className="py-5 px-4 bg-gradient-to-b from-neutral-100 to-neutral-200">
+            <Paper className="py-5 px-4 ">
                 <Box className="flex-row justify-center grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
                     <Box>
                         <TextField
@@ -71,6 +74,8 @@ const LoanFilters = props => {
                             onChange={val => setFromDate(val)}
                             size="small"
                             clearable
+                            format="DD/MM/YYYY"
+
                             disableFuture
                             fullWidth
                             slotProps={{
@@ -88,6 +93,8 @@ const LoanFilters = props => {
                             onChange={val => setToDate(val)}
                             size="small"
                             clearable
+                            format="DD/MM/YYYY"
+
                             disableFuture
                             fullWidth
                             slotProps={{

@@ -78,7 +78,7 @@ const Login = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-100 h-screen"
+            className="bg-slate-200 h-screen"
             //   sx={{ minHeight: "100vh" }}
         >
             <PreloginHeader />

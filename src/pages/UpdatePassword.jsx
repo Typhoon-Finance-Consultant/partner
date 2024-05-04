@@ -63,7 +63,7 @@ const UpdatePassword = () => {
         validationSchema: validationSchema,
     });
     return (
-        <Container maxWidth={false} className="bg-slate-100 h-screen ">
+        <Container maxWidth={false} className="bg-slate-200 h-screen ">
             <Grid container className="py-10">
                 <Grid item xs={12} md={4} className="mx-auto ">
                     <Card raised className="px-4 py-3 sm:mx-2">

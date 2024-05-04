@@ -68,6 +68,7 @@ const BasicProfile = ({ profileData, loanID }) => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     action.setSubmitting(false);
+                    setFormDisabled(true)
                 })
                 .catch(error => {
                     setModalOpen(true);
@@ -214,9 +215,16 @@ const BasicProfile = ({ profileData, loanID }) => {
                             <DatePicker
                                 label="Date of Birth"
                                 value={formik.values.primary_applicant.dob}
-                                onChange={formik.handleChange}
+                                onChange={value => {
+                                    formik.setFieldValue(
+                                        'dob',
+                                        Date.parse(value),
+                                    );
+                                }}
                                 size="small"
                                 clearable
+                                disabled={formDisabled}
+                                name="dob"
                                 disableFuture
                                 fullWidth
                                 slotProps={{

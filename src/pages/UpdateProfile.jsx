@@ -24,7 +24,7 @@ const UpdateProfile = () => {
         return navigate('/profile');
     }
     return (
-        <Container maxWidth={false} className="bg-slate-100 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 h-screen">
             <Grid container className="pt-10 ">
                 <Grid item xs={12} md={6} className="mx-auto">
                     {/* <Box> */}

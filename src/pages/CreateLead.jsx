@@ -11,7 +11,7 @@ const CreateLead = () => {
     const { leadID } = useParams();
 
     return (
-        <Container maxWidth={false} className="bg-slate-100 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 h-screen">
             <Box className=" grid md:justify-center md:items-center h-screen py-10 sm:py-0 ">
                 <Box>
                     {!leadID ? (
