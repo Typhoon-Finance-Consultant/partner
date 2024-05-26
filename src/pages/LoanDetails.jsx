@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { loanDetails } from '&/services/loans';
+import { PendingActions } from '@mui/icons-material';
+
 import Loader from '&/components/common/Loader';
 import BankAccount from '&/components/Loans/Forms/BankAccount';
 import LabelValue from '&/components/common/TextInfo/LabelValue';
@@ -19,6 +21,10 @@ import LoanDetailHeader from '&/components/Loans/DetailHeader';
 import Requirements from '&/components/Loans/Forms/Requirements';
 import Documents from '&/components/Loans/Forms/Documents';
 import Address from '&/components/Loans/Forms/Address';
+import IncomeProfile from '&/components/Loans/Forms/IncomeProfile';
+import BasicDetails from '&/components/Loans/Forms/BasicProfile';
+import References from '&/components/Loans/Forms/References';
+
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -59,7 +65,7 @@ const LoanDetails = props => {
 
     const loanData = data?.code === 200 ? data.response?.loan_data : {};
     return (
-        <Container maxWidth={false} className="bg-slate-100 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 h-screen">
             <div className="p-4 flex justify-between align-middle">
                 <Button>
                     <Link to="/loans" replace>
@@ -77,38 +83,75 @@ const LoanDetails = props => {
                         scrollButtons="auto"
                         value={activeTab}
                         onChange={handleTabChange}>
-                        <Tab label="Requirements" />
-
                         <Tab label="Basic Profile" />
-                        <Tab label="Address" />
-                        <Tab label="Bank" />
-
-                        <Tab label="Income Profile" />
-                        <Tab label="References" />
                         <Tab label="Documents" />
+                        <Tab label="Bank"  iconPosition="end"
+                            icon={
+                                loanData?.bank ? null : (
+                                    <PendingActions fontSize="small" />
+                                )
+                            }/>
+
+                        <Tab label="Address" 
+                        iconPosition="end"
+                        icon={
+                            loanData?.address ? null : (
+                                <PendingActions fontSize="small" />
+                            )
+                        }
+                        />
+
+                        <Tab label="Income Profile" 
+                        
+                        iconPosition="end"
+                        icon={
+                            loanData?.income_profile ? null : (
+                                <PendingActions fontSize="small" />
+                            )
+                        }
+                        />
+                        <Tab label="References" 
+                        iconPosition="end"
+                        icon={
+                            loanData?.references ? null : (
+                                <PendingActions fontSize="small" />
+                            )
+                        }
+
+                        />
+                        <Tab label="Requirements" />
                     </Tabs>
-                    <CustomTabPanel value={activeTab} index={0}>
+                    <CustomTabPanel value={activeTab} index={6}>
                         <Requirements
                             requirementsData={loanData}
                             loanID={loanID}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={1}>
-                        Basic Profile
-                    </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={2}>
-                        <Address address={loanData?.address} loanID={loanID} />
+                    <CustomTabPanel value={activeTab} index={0}>
+                        <BasicDetails profileData={loanData} loanID={loanID} />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={3}>
-                        <BankAccount bankData={loanData?.bank} />
+                        <Address address={loanData?.address} loanID={loanID} />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={activeTab} index={2}>
+                        <BankAccount
+                            bankData={loanData?.bank}
+                            loanID={loanID}
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={4}>
-                        Income Profile
+                        <IncomeProfile
+                            loanID={loanID}
+                            incomeProfile={loanData?.income_profile}
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={5}>
-                        References
+                        <References
+                            loanID={loanID}
+                            references={loanData?.references}
+                        />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={6}>
+                    <CustomTabPanel value={activeTab} index={1}>
                         <Documents
                             documentData={loanData.documents}
                             loanID={loanID}

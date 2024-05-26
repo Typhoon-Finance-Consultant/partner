@@ -16,20 +16,40 @@ const LoanTable = ({ loanData }) => {
     const { loan_data: loanList, count } = loanData;
     console.log('Loan Data', loanList);
     return (
-        <Box sx={{ width: '100%', overflow: 'hidden' }}>
-            <Paper>
-                <TableContainer>
+        <Box>
+            <Paper
+                sx={{
+                    overflowX: 'scroll',
+                }}>
+                <TableContainer
+                    sx={{
+                        overflowX: 'scroll',
+                    }}>
                     <Table stickyHeader>
                         <TableHead>
-                            <TableRow>
-                                <TableCell>Loan ID</TableCell>
-                                <TableCell>Application Date</TableCell>
-                                <TableCell>Applicant Name</TableCell>
-                                <TableCell>Loan Amount </TableCell>
-                                <TableCell>Amount Disbursed </TableCell>
+                            <TableRow className=" font-bold text-regal-blue">
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Loan ID
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Application Date
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Applicant Name
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Loan Amount{' '}
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Amount Disbursed{' '}
+                                </TableCell>
 
-                                <TableCell>ROI </TableCell>
-                                <TableCell>Status </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    ROI{' '}
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Status{' '}
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

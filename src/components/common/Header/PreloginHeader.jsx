@@ -8,7 +8,7 @@ function PreloginHeader() {
   return (
     <AppBar position="static" color="transparent">
       <Container maxWidth="xl">
-        <IconButton>
+        <IconButton href="/">
           <img src={Logo} height={80} width={120} />
         </IconButton>{" "}
       </Container>

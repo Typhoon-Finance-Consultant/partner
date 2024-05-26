@@ -4,7 +4,7 @@ import { Typography, Paper } from '@mui/material';
 
 import LabelValue from '&/components/common/TextInfo/LabelValue';
 
-const BasicDetails = ({ profileData }) => {
+const BankDetails = ({ profileData }) => {
     return (
         <>
             <Typography variant="h5" className="ml-4">
@@ -29,7 +29,7 @@ const BasicDetails = ({ profileData }) => {
                         />
                         <LabelValue
                             labelName="Account Verified"
-                            labelValue={profileData?.bank_account.is_verified}
+                            labelValue={profileData?.bank_account?.is_verified}
                             rowClassName="mt-4"
                         />
                     </Paper>
@@ -39,17 +39,17 @@ const BasicDetails = ({ profileData }) => {
                         <LabelValue
                             labelName="Account Number"
                             labelValue={
-                                profileData?.bank_account.account_number
+                                profileData?.bank_account?.account_number
                             }
                         />
                         <LabelValue
                             labelName="Account Type"
-                            labelValue={profileData?.bank_account.account_type}
+                            labelValue={profileData?.bank_account?.account_type}
                             rowClassName="mt-4"
                         />
                         <LabelValue
                             labelName="IFSC"
-                            labelValue={profileData?.bank_account.ifsc}
+                            labelValue={profileData?.bank_account?.ifsc}
                             labelValueClassName="uppercase"
                             rowClassName="mt-4"
                         />
@@ -60,4 +60,4 @@ const BasicDetails = ({ profileData }) => {
     );
 };
 
-export default BasicDetails;
+export default BankDetails;

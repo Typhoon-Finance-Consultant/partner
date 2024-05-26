@@ -18,7 +18,7 @@ const InvoiceDetails = () => {
     }
     const invoiceData = data?.code === 200 ? data.response : {};
     return (
-        <Container maxWidth={false} className="h-full bg-slate-100 p-4">
+        <Container maxWidth={false} className="h-full bg-slate-200 p-4">
             <div className="p-4 flex justify-between mb-1 align-middle">
                 <Button>
                     <Link to="/invoices" replace>

@@ -13,10 +13,9 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Link } from 'react-router-dom';
 import userService from '&/services/user';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { selectCurrentUser, setCredentials } from '&/features/auth/authSlice';
 import PreloginHeader from '../components/common/Header/PreloginHeader';
 
@@ -49,8 +48,8 @@ const Login = () => {
                     if (redirectPath) {
                         return navigate(redirectPath);
                     }
-                    navigate('/dashboard'),
-                        setSnackbarMessage('Login Sucessful');
+                    navigate('/'),
+                        setSnackbarMessage('Login Sucessfull');
                     setModalOpen(true);
                 } else {
                     setSnackbarMessage(data.message);
@@ -79,13 +78,13 @@ const Login = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-white h-screen"
+            className="bg-slate-200 h-screen"
             //   sx={{ minHeight: "100vh" }}
         >
             <PreloginHeader />
             <Grid container className="mt-10 ">
                 <Grid item xs={12} md={4} className="mx-auto">
-                    <Card raised className="px-4 py-8">
+                    <Card raised className="px-4 py-8 sm:mx-2">
                         <CardContent>
                             <div className="w-full flex flex-col items-center">
                                 <h2 className="text-center text-blue-500 font-bold text-3xl">
@@ -96,6 +95,7 @@ const Login = () => {
                                 <div className="w-full relative">
                                     <TextField
                                         name="username"
+                                        size="small"
                                         variant="outlined"
                                         label="Username"
                                         onChange={formik.handleChange}
@@ -120,6 +120,7 @@ const Login = () => {
                                         label="Password"
                                         type="password"
                                         fullWidth
+                                        size="small"
                                         value={formik.values.password}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
@@ -133,6 +134,9 @@ const Login = () => {
                                         }
                                     />
                                 </div>
+                                <Typography className="text-right text-indigo-600">
+                                    <Link to="/forgot-password">Forgot Password?</Link>
+                                </Typography>
                             </div>
                             <div className="mt-5 b-1 mx-auto">
                                 <Button
@@ -149,14 +153,10 @@ const Login = () => {
                                 <Divider>
                                     <Typography className="my-5 text-center">
                                         Need an account?{' '}
-                                        <Link href="/signup">Sign UP</Link>
                                     </Typography>
                                 </Divider>
-                                <Typography className="my-5 text-center">
-                                    <Link href="/signup">
-                                        {' '}
-                                        Login as partner{' '}
-                                    </Link>
+                                <Typography className=" text-center">
+                                    <Link to="/signup">Sign Up</Link>
                                 </Typography>
                             </div>
                         </CardContent>

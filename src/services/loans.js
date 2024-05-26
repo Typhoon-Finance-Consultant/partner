@@ -31,20 +31,89 @@ export const getBankList = () => {
     return handleResponse(response);
 };
 
-export const getDocumentList = () => {
-    const response = coreApi.makeAuthenticatedPostCall("document/list")
+export const getDocumentList = data => {
+    const response = coreApi.makeAuthenticatedPostCall('document/list', data);
     return handleResponse(response);
+};
 
-}
-
-export const uploadDocument = () => {
-    const response = coreApi.makeAuthenticatedPostCall("document/upload")
+export const uploadDocument = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'document/upload',
+        data,
+        {
+            'Content-Type': 'multipart/form-data',
+        }
+    );
     return handleResponse(response);
+};
 
-}
-
-export const updateAddress = (data) => {
-    const response = coreApi.makeAuthenticatedPostCall("loan/address/update", data)
+export const updateAddress = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/address/update',
+        data,
+    );
     return handleResponse(response);
+};
 
+export const updateIncomeProfile = data => {
+    const response = coreApi.makeAuthenticatedPostCall('income/update', data);
+    return handleResponse(response);
+};
+
+export const getEmployerList = () => {
+    const response = coreApi.makeAuthenticatedGetCall('income/employer/list');
+    return handleResponse(response);
+};
+
+export const handleLeadCreation = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'partner/leads/create',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const checkLeadStatus = leadID => {
+    const response = coreApi.makeAuthenticatedGetCall(
+        `partner/lead-status/${leadID}`,
+    );
+    return handleResponse(response);
+};
+
+export const submitLoanApplication = data => {
+    const response = coreApi.makeAuthenticatedPostCall('loans/create', data);
+    return handleResponse(response);
+};
+
+export const updateBasicDetails = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/basic/update',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const handleLeadVerification = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/verification',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const updateLoanReference = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/reference/update',
+        data,
+    );
+    return handleResponse(response);
+};
+
+
+export const getBankDetailsUsingIFSC = data => {
+    const response = coreApi.makeAuthenticatedGetCall(
+        `bank/get-ifsc-details?ifsc=${data}`,
+        data,
+    );
+    return handleResponse(response);
 }

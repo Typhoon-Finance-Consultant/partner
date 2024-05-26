@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Container, Box } from '@mui/material';
+import { Container, Box, Typography } from '@mui/material';
 import { loansList } from '&/services/loans';
 import LoanFilters from '&/components/Loans/LoanFilters';
 import LoanTable from '&/components/Loans/LoanTable';
@@ -28,10 +28,14 @@ const Loans = () => {
     console.log('Body_____Data', body);
 
     const { data, isLoading, refetch } = useQuery({
-        queryKey: ['loanList'],
+        queryKey: ['loanList', JSON.stringify(body)],
         queryFn: async () => loansList(body),
     });
     const setPageData = useCallback(data => setPagination(data), [pagination]);
+    const handleFormUpdate = newFormData => {
+        setFormData(newFormData);
+        refetch();
+    };
 
     const loanData = data?.response;
     if (isLoading) {
@@ -39,15 +43,26 @@ const Loans = () => {
     }
     console.log('Use Effect Data Form', formData);
     return (
-        <Container maxWidth={false} className="bg-slate-100 h-screen">
-            <Box>
-                <LoanFilters formData={formData} setFormData={setFormData} />
+        <Container maxWidth={false} className="bg-slate-200 h-screen">
+            <LoanFilters
+                formData={formData}
+                setFormData={setFormData}
+                handleFormUpdate={handleFormUpdate}
+                refetch={refetch}
+            />
+            {!loanData?.loan_data?.length > 0 ? (
+                <Box className="mx-auto w-full h-screen justify-center  align-middle sm:mt-20">
+                    <Typography className="text-center sm:mt-20" variant="h3">
+                        No Loans Found
+                    </Typography>
+                </Box>
+            ) : (
                 <LoanTable
                     loanData={loanData}
                     pagination={pagination}
                     setPagination={setPageData}
                 />
-            </Box>
+            )}
         </Container>
     );
 };

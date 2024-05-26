@@ -23,8 +23,7 @@ class AxiosInstance {
                 );
                 // if (config?.headers?.Authorization) {
                 //     let checkToken = store.dispatch;
-                    
-                    
+
                 //     const user = jwtDecode(accessToken);
                 //     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
                 //     console.log('===isExpired', user);
@@ -33,14 +32,13 @@ class AxiosInstance {
                 //         let json = await userService.reLogin(payload);
                 //         if (json.success) {
                 //             config.headers.Authorization = `Bearer ${json?.data?.accessToken}`;
-                           
+
                 //         } else {
                 //             logOutUser();
                 //         }
                 //     }
                 // }
                 // Start the HTTP metric
-                
             } catch (error) {
                 // Handle any errors that occur while creating or starting the metric
                 console.log('Error creating HTTP metric:', error);
@@ -75,7 +73,7 @@ class AxiosInstance {
                 //     originalRequest._retry = true;
                 //     return axiosInstance(originalRequest);
                 // }
-        
+
                 return Promise.reject(error);
             },
         );
@@ -121,7 +119,7 @@ class AxiosInstance {
         }
     };
 
-    makeAuthenticatedPostCall = async (url, data) => {
+    makeAuthenticatedPostCall = async (url, data, customHeader={}) => {
         try {
             const accessToken = await this.getToken();
 
@@ -134,6 +132,7 @@ class AxiosInstance {
             const headers = {
                 // 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
+                ...customHeader
             };
 
             return this.axios.post(url, data, {
@@ -199,4 +198,4 @@ class CoreAPI extends AxiosInstance {
 }
 
 export const coreApi = new CoreAPI();
-console.log("ENV Variable for API Endpoint", API_BASE_URL)
+console.log('ENV Variable for API Endpoint', API_BASE_URL);
