@@ -10,22 +10,21 @@ import {
 } from '@mui/material';
 
 import DatePicker from '&/components/common/Form/DatePicker';
+import { useState } from 'react';
 
 const InvoiceFilter = props => {
-    const {
-        searchString,
-        setSearchString,
-        toDate,
-        setToDate,
-        fromDate,
-        setFromDate,
-        status,
-        setStatus,
-    } = props;
+    const { formData, handleFormUpdate } = props;
+
+    const [searchString, setSearchString] = useState(formData?.searchString);
+    const [invoiceMonth, setInvoiceMonth] = useState(formData?.invoiceMonth);
+    const [status, setStatus] = useState(formData?.status);
+    const sendFormData = () => {
+        handleFormUpdate({ searchString, invoiceMonth, status });
+    };
 
     return (
         <Box className="py-5">
-            <Paper className="py-5 px-4 bg-gradient-to-b from-neutral-50 to-neutral-200">
+            <Paper className="py-5 px-4 ">
                 <Box className="flex-row justify-center grid xs:grid-cols-1 md:grid-cols-5 gap-4 w-full">
                     <Box className="col-span-2">
                         <TextField
@@ -37,12 +36,12 @@ const InvoiceFilter = props => {
                             onChange={val => setSearchString(val.target.value)}
                         />
                     </Box>
-                  
+
                     <Box>
                         <DatePicker
                             label="Invoice Month"
-                            value={fromDate}
-                            onChange={val => setFromDate(val)}
+                            value={invoiceMonth}
+                            onChange={val => setInvoiceMonth(val)}
                             size="small"
                             clearable
                             views={['month', 'year']}
@@ -77,7 +76,11 @@ const InvoiceFilter = props => {
                         </FormControl>
                     </Box>
                     <Box className="flex justify-end bg-slate-200">
-                        <Button fullWidth size="small" variant="contained">
+                        <Button
+                            fullWidth
+                            size="small"
+                            variant="contained"
+                            onClick={sendFormData}>
                             Find
                         </Button>
                     </Box>

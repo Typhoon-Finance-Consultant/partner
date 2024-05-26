@@ -10,6 +10,8 @@ import {
     Button,
     TextField,
     Snackbar,
+    Modal,
+    Paper,
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -18,6 +20,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { selectCurrentUser, setCredentials } from '&/features/auth/authSlice';
 import PreloginHeader from '../components/common/Header/PreloginHeader';
+import { sendOTP, verifyOTP } from '../services/user';
+import Logo from '&/assets/images/brand.png';
 
 const validationSchema = yup.object().shape({
     mobile_number: yup
@@ -50,6 +54,7 @@ const validationSchema = yup.object().shape({
         .required('Confirm password is required'),
     first_name: yup.string().trim().required('First name is required'),
     last_name: yup.string().trim().optional(), // Optional last name
+    otp: yup.string().trim().min(6, 'Invalid OTP').max(6, 'Invalid OTP'),
 });
 
 const Signup = () => {
@@ -58,7 +63,56 @@ const Signup = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [modalOpen, setModalOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarMessage, setSnackMessage] = useState('');
+    const [otpVerified, setOTPVerified] = useState(false);
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+    const handleSendOTP = async data => {
+        try {
+            const response = await sendOTP({
+                key_value: data,
+                key_name: 'MOBILE',
+                purpose: 'MOBILE NUMBER VERIFICATION',
+            });
+            console.log('SEND OTP API RESPONSE', response);
+            if (response.code === 200) {
+                setSnackBarOpen(true);
+                setSnackMessage(response.response);
+            } else {
+                setSnackBarOpen(true);
+                setSnackMessage(response.message);
+            }
+        } catch (error) {
+            console.log('Error OTP', error);
+            setSnackBarOpen(true);
+        } finally {
+            console.log('API RESPONSE DONE SEND OTP');
+        }
+    };
+    const handleVerifyOTP = async (data, otp, formikSubmit) => {
+        verifyOTP({
+            key_value: data,
+            key_name: 'MOBILE',
+            purpose: 'MOBILE NUMBER VERIFICATION',
+            password: otp,
+        })
+            .then(data => {
+                console.log('VERIFY OTP API RESPONSE', data, formikSubmit);
+                if (data.code === 200) {
+                    setOTPVerified(true);
+                    setTimeout(() => formikSubmit(),250)
+                    // formikSubmit();
+                } else {
+                    setSnackBarOpen(true);
+                    setSnackMessage(data?.response?.message);
+                }
+            })
+            .catch(error => {
+                setSnackBarOpen(true);
+                console.error(error);
+            });
+    };
+
     const formik = useFormik({
         initialValues: {
             mobile_number: '',
@@ -71,6 +125,11 @@ const Signup = () => {
             last_name: '',
         },
         onSubmit: (values, actions) => {
+            if (!otpVerified) {
+                setModalOpen(true);
+                handleSendOTP(values.mobile_number);
+                return false;
+            }
             registerPartner(values).then(data => {
                 actions.setSubmitting(false);
                 console.log('formik login Actions', data);
@@ -88,11 +147,11 @@ const Signup = () => {
                         return navigate(redirectPath);
                     }
                     navigate('/');
-                    setSnackbarMessage('Signup Sucessful');
-                    setModalOpen(true);
+                    setSnackMessage('Signup Sucessful');
+                    setSnackBarOpen(true);
                 } else {
-                    setSnackbarMessage(data.response);
-                    setModalOpen(true);
+                    setSnackMessage(data.response);
+                    setSnackBarOpen(true);
                 }
             });
         },
@@ -107,13 +166,21 @@ const Signup = () => {
             className="bg-slate-200 h-screen"
             //   sx={{ minHeight: "100vh" }}
         >
-            <PreloginHeader />
-            <Grid container className="mt-10 ">
+            {/* <PreloginHeader /> */}
+            <Grid container className="pt-10 ">
                 <Grid item xs={12} md={6} className="mx-auto">
-                    <Card raised className="px-4 py-8 sm:mx-2">
+                    <div className="text-center mx-auto">
+                        <img
+                            src={Logo}
+                            height={140}
+                            width={240}
+                            className="mx-auto"
+                        />
+                    </div>
+                    <Card raised className="px-4 py-2 sm:mx-2">
                         <CardContent>
                             <div className="w-full flex flex-col items-center">
-                                <h2 className="text-center text-blue-500 font-bold text-3xl">
+                                <h2 className="text-center text-teal font-bold text-3xl">
                                     Partner Signup
                                 </h2>
                             </div>
@@ -297,7 +364,7 @@ const Signup = () => {
                                         Have an account?{' '}
                                     </Typography>
                                 </Divider>
-                                <Typography className="my-1 text-center">
+                                <Typography className="mt-1 text-center">
                                     <Link to="/login">Login</Link>
                                 </Typography>
                             </div>
@@ -306,12 +373,75 @@ const Signup = () => {
                 </Grid>
             </Grid>
             <Snackbar
-                open={modalOpen}
+                open={snackBarOpen}
                 autoHideDuration={6000}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                onClose={() => setModalOpen(false)}
+                onClose={() => setSnackBarOpen(false)}
                 message={snackbarMessage}
             />
+            <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+                <div>
+                    <Grid container className="mt-5 ">
+                        <Grid className="mx-auto" xs={12} sm={4} md={4}>
+                            <Paper className="mt-5 mb-8 px-4 py-2">
+                                <Typography variant="h6" className="mt-3">
+                                    Enter OTP Sent to{' '}
+                                    {formik.values.mobile_number}
+                                </Typography>
+                                <Divider />
+
+                                <div className="my-5">
+                                    <TextField
+                                        type="text"
+                                        name="otp"
+                                        maxLength={6}
+                                        value={formik.values.otp}
+                                        onChange={formik.handleChange}
+                                        label="OTP"
+                                        fullWidth
+                                        size="small"
+                                        variant="outlined"
+                                        disabled={formik.isSubmitting}
+                                        error={
+                                            formik.touched.otp &&
+                                            formik.errors.otp
+                                        }
+                                        helperText={
+                                            formik.touched.otp &&
+                                            formik.errors.otp
+                                        }
+                                    />
+                                </div>
+                                <div className="text-right">
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        className="mr-3"
+                                        onClick={() =>
+                                            handleSendOTP(
+                                                formik.values.mobile_number,
+                                            )
+                                        }>
+                                        Resend OTP
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() =>
+                                            handleVerifyOTP(
+                                                formik.values.mobile_number,
+                                                formik.values.otp,
+                                                formik.handleSubmit,
+                                            )
+                                        }>
+                                        Submit
+                                    </Button>
+                                </div>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </div>
+            </Modal>
         </Container>
     );
 };

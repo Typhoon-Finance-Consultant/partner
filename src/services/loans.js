@@ -108,3 +108,12 @@ export const updateLoanReference = data => {
     );
     return handleResponse(response);
 };
+
+
+export const getBankDetailsUsingIFSC = data => {
+    const response = coreApi.makeAuthenticatedGetCall(
+        `bank/get-ifsc-details?ifsc=${data}`,
+        data,
+    );
+    return handleResponse(response);
+}

@@ -12,25 +12,25 @@ import {
 import DatePicker from '&/components/common/Form/DatePicker';
 
 const LoanFilters = props => {
-    const { formData, setFormData, refetch, handleFormUpdate } = props;
+    const { formData, handleFormUpdate } = props;
 
     const [status, setStatus] = useState(formData?.status);
     const [fromDate, setFromDate] = useState(formData?.fromDate);
     const [toDate, setToDate] = useState();
     const [searchString, setSearchString] = useState(formData?.searchString);
 
-
     const sendFormData = () => {
         handleFormUpdate({ status, fromDate, toDate, searchString });
     };
-    const resetFormData = () => {
-        setStatus('');
-        setFromDate();
-        setToDate();
-        setSearchString('');
-        setFormData({})
-        refetch();
-    };
+    // const resetFormData = () => {
+    //     setFormData({});
+
+    //     setStatus('');
+    //     setFromDate();
+    //     setToDate();
+    //     setSearchString('');
+    //     refetch();
+    // };
     return (
         <Box className="py-5">
             <Paper className="py-5 px-4 ">
@@ -75,7 +75,6 @@ const LoanFilters = props => {
                             size="small"
                             clearable
                             format="DD/MM/YYYY"
-
                             disableFuture
                             fullWidth
                             slotProps={{
@@ -94,7 +93,6 @@ const LoanFilters = props => {
                             size="small"
                             clearable
                             format="DD/MM/YYYY"
-
                             disableFuture
                             fullWidth
                             slotProps={{
@@ -107,14 +105,14 @@ const LoanFilters = props => {
                     </Box>
 
                     <Box className="flex justify-end bg-slate-200 gap-3">
-                        <Button
+                        {/* <Button
                             fullWidth
                             size="small"
                             variant="contained"
                             color="secondary"
                             onClick={() => resetFormData()}>
                             Reset
-                        </Button>
+                        </Button> */}
                         <Button
                             fullWidth
                             size="small"

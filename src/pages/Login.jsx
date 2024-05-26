@@ -49,7 +49,7 @@ const Login = () => {
                         return navigate(redirectPath);
                     }
                     navigate('/'),
-                        setSnackbarMessage('Login Sucessful');
+                        setSnackbarMessage('Login Sucessfull');
                     setModalOpen(true);
                 } else {
                     setSnackbarMessage(data.message);

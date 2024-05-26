@@ -29,7 +29,7 @@ const BankDetails = ({ profileData }) => {
                         />
                         <LabelValue
                             labelName="Account Verified"
-                            labelValue={profileData?.bank_account.is_verified}
+                            labelValue={profileData?.bank_account?.is_verified}
                             rowClassName="mt-4"
                         />
                     </Paper>
@@ -39,17 +39,17 @@ const BankDetails = ({ profileData }) => {
                         <LabelValue
                             labelName="Account Number"
                             labelValue={
-                                profileData?.bank_account.account_number
+                                profileData?.bank_account?.account_number
                             }
                         />
                         <LabelValue
                             labelName="Account Type"
-                            labelValue={profileData?.bank_account.account_type}
+                            labelValue={profileData?.bank_account?.account_type}
                             rowClassName="mt-4"
                         />
                         <LabelValue
                             labelName="IFSC"
-                            labelValue={profileData?.bank_account.ifsc}
+                            labelValue={profileData?.bank_account?.ifsc}
                             labelValueClassName="uppercase"
                             rowClassName="mt-4"
                         />

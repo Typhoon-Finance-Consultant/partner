@@ -14,7 +14,11 @@ import {
 } from '@mui/material';
 import * as yup from 'yup';
 import { useQuery } from '@tanstack/react-query';
-import { getBankList, updateBankAccount } from '&/services/loans';
+import {
+    getBankList,
+    updateBankAccount,
+    getBankDetailsUsingIFSC,
+} from '&/services/loans';
 import Loader from '&/components/common/Loader';
 
 const bankValidationSchema = yup.object({
@@ -46,7 +50,7 @@ const BankAccount = ({ bankData, loanID }) => {
     });
     const formik = useFormik({
         initialValues: {
-            bank: bankData?.bank?.name,
+            bank: bankData?.bank?.name || 'HDFC BANK',
             account_number: bankData?.account_number,
             re_enter_account_number: bankData?.account_number,
             ifsc: bankData?.ifsc,
@@ -55,7 +59,7 @@ const BankAccount = ({ bankData, loanID }) => {
             branch_city: bankData?.branch_city,
             branch_state: bankData?.branch_state,
 
-            type: bankData?.account_type,
+            type: bankData?.account_type || 'SAVINGS',
             loan_id: loanID,
             bank_account_id: bankData?.id,
             action_type: bankData?.id ? 'UPDATE' : 'ADD',
@@ -77,7 +81,29 @@ const BankAccount = ({ bankData, loanID }) => {
         },
         validationSchema: bankValidationSchema,
     });
+
     const [formDisabled, setFormDisabled] = useState(true);
+    const handleIFSCChange = event => {
+        console.log('IFSC ', event.target.value, event.target.value.length);
+        if (event.target.value !== formik.values.ifsc) {
+            formik.setFieldValue('ifsc', event.target.value);
+            if (event.target.value.length === 11) {
+                getBankDetailsUsingIFSC(event.target.value).then(data => {
+                    if (data.code === 200) {
+                        console.log('IFSC Data ', data);
+                        formik.setFieldValue('branch', data?.response?.BRANCH);
+                        formik.setFieldValue('branch_city', data?.response?.CITY);
+                        formik.setFieldValue(
+                            'branch_address',
+                            data?.response?.ADDRESS,
+                        );
+                        formik.setFieldValue('branch_state', data?.response?.STATE);
+                    }
+                });
+            }
+        }
+       
+    };
     if (isLoading) {
         return <Loader loaderText="Loading Bank details" />;
     }
@@ -92,7 +118,7 @@ const BankAccount = ({ bankData, loanID }) => {
                                 name="ifsc"
                                 variant="outlined"
                                 label="IFSC"
-                                onChange={formik.handleChange}
+                                onChange={handleIFSCChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values.ifsc}
                                 fullWidth
@@ -152,11 +178,11 @@ const BankAccount = ({ bankData, loanID }) => {
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormControl fullWidth className="mb-8">
-                            <InputLabel size="small" id="account_type">
+                            <InputLabel size="small" id="bankName">
                                 Bank Name
                             </InputLabel>
                             <Select
-                                labelId="bank"
+                                labelId="bankName"
                                 size="small"
                                 id="bank"
                                 disabled={formDisabled}
@@ -193,8 +219,13 @@ const BankAccount = ({ bankData, loanID }) => {
                                 label="Branch"
                                 size="small"
                                 onChange={formik.handleChange}
+                                // InputLabelProps={{ shrink: true }}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch}
+                                value={
+                                    formik.values.branch
+                                        ? formik.values.branch
+                                        : ''
+                                }
                                 disabled={formDisabled}
                                 fullWidth
                                 error={
@@ -217,7 +248,11 @@ const BankAccount = ({ bankData, loanID }) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch_city}
+                                value={
+                                    formik.values.branch_city
+                                        ? formik.values.branch_city
+                                        : ''
+                                }
                                 disabled={formDisabled}
                                 fullWidth
                                 size="small"
@@ -239,7 +274,9 @@ const BankAccount = ({ bankData, loanID }) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch_state}
+                                value={formik.values.branch_state
+                                    ? formik.values.branch_state
+                                    : ''}
                                 disabled={formDisabled}
                                 fullWidth
                                 size="small"
@@ -261,7 +298,9 @@ const BankAccount = ({ bankData, loanID }) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch_address}
+                                value={formik.values.branch_address
+                                    ? formik.values.branch_address
+                                    : ''}
                                 disabled={formDisabled}
                                 fullWidth
                                 size="small"
