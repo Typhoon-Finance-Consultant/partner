@@ -19,16 +19,37 @@ import { Link } from 'react-router-dom';
 import { selectCurrentUser, setCredentials } from '&/features/auth/authSlice';
 import PreloginHeader from '../components/common/Header/PreloginHeader';
 
-const ForgotPassword = () => {
+
+const validationSchema = yup.object().shape({
+    token: yup
+        .string()
+        .trim()
+    ,  
+    new_password: yup
+        .string()
+        .trim()
+        .required('New Password is required')
+        .min(8, 'New Password must be at least 8 characters long'),
+    confirm_password: yup
+        .string()
+        .trim()
+        .oneOf([yup.ref('new_password')], 'Passwords must match')
+        .required('Please enter password again'),
+});
+
+const ResetPassword = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [linkSent, setLinkSent] = useState(false);
+    const [passwordUpdated, setPasswordUpdated] = useState(false);
     const formik = useFormik({
         initialValues: {
-            email: '',
+            token: '',
+            new_password: '',
+            confirm_password: ''
+
         },
         onSubmit: (values, actions) => {
-            userService.forgotPassword(values).then(data => {
+            userService.reset_password(values).then(data => {
                 actions.setSubmitting(false);
                 console.log('Forgot Password Response', data);
                 if (data.code === 200) {

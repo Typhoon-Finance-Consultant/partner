@@ -55,6 +55,9 @@ function App() {
                             element={<UpdateProfile />}
                         />
                     </Route>
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password/:token" element={<ForgotPassword />} />
+                    
                     <Route path="*" element={<Notfound />} />
 
                 </Route>
