@@ -43,7 +43,7 @@ const Loans = () => {
     }
     console.log('Use Effect Data Form', formData);
     return (
-        <Container maxWidth={false} className="bg-slate-200 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
             <LoanFilters
                 formData={formData}
                 setFormData={setFormData}
@@ -51,7 +51,7 @@ const Loans = () => {
                 refetch={refetch}
             />
             {!loanData?.loan_data?.length > 0 ? (
-                <Box className="mx-auto w-full h-screen justify-center  align-middle sm:mt-20">
+                <Box className="mx-auto w-full min-h-lvh justify-center  align-middle sm:mt-20">
                     <Typography className="text-center sm:mt-20" variant="h3">
                         No Loans Found
                     </Typography>

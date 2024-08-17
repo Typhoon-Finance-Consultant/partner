@@ -27,17 +27,34 @@ const referenceValidationSchema = yup.object().shape({
         .trim()
         .required('Reference 1 name is required'),
 
-    reference_two_name: yup
-        .string()
-        .trim()
-        .required('Reference 2 name is required'),
+    reference_two_name: yup.string().trim().optional(),
 
-    reference_one_relation: yup.string().trim().optional(),
+    reference_one_relation: yup.string().trim().required(),
     reference_two_relation: yup.string().trim().optional(),
     professional_reference_one_name: yup.string().trim().optional(),
     professional_reference_two_name: yup.string().trim().optional(),
     professional_reference_one_relation: yup.string().trim().optional(),
     professional_reference_two_relation: yup.string().trim().optional(),
+    reference_one_mobile_number: yup
+        .string()
+        .trim()
+        .required('Mobile number is required for first reference')
+        .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
+    reference_two_mobile_number: yup
+        .string()
+        .trim()
+        .optional()
+        .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
+    professional_reference_one_mobile_number: yup
+        .string()
+        .trim()
+        .required('Mobile number is required for first reference')
+        .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
+    professional_reference_two_mobile_number: yup
+        .string()
+        .trim()
+        .optional()
+        .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
 });
 const References = ({ references, loanID }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -57,6 +74,16 @@ const References = ({ references, loanID }) => {
                 references?.professional_reference_one_relation,
             professional_reference_two_relation:
                 references?.professional_reference_two_relation,
+            reference_one_mobile_number:
+                references?.reference_one_mobile_number,
+
+            reference_two_mobile_number:
+                references?.reference_two_mobile_number,
+            professional_reference_one_mobile_number:
+                references?.professional_reference_one_mobile_number,
+
+            professional_reference_two_mobile_number:
+                references?.professional_reference_two_mobile_number,
             loan_id: loanID,
         },
         onSubmit: (values, actions) => {

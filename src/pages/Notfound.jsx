@@ -8,9 +8,9 @@ const Notfound = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-200 h-screen">
+            className="bg-slate-200 min-h-lvh">
             <PreloginHeader />
-            <Box className=" grid md:justify-center md:items-center h-screen py-10 sm:py-0 ">
+            <Box className=" grid md:justify-center md:items-center min-h-lvh py-10 sm:py-0 ">
                 <Typography variant="h2">Invalid URL</Typography>
                 {/* <Typography variant='h6'>Invalid Link</Typography> */}
             </Box>

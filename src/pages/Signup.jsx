@@ -100,7 +100,7 @@ const Signup = () => {
                 console.log('VERIFY OTP API RESPONSE', data, formikSubmit);
                 if (data.code === 200) {
                     setOTPVerified(true);
-                    setTimeout(() => formikSubmit(),250)
+                    setTimeout(() => formikSubmit(), 250);
                     // formikSubmit();
                 } else {
                     setSnackBarOpen(true);
@@ -163,7 +163,7 @@ const Signup = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-200 h-screen"
+            className="bg-slate-200 min-h-lvh"
             //   sx={{ minHeight: "100vh" }}
         >
             {/* <PreloginHeader /> */}
@@ -291,8 +291,14 @@ const Signup = () => {
                                         size="small"
                                         variant="outlined"
                                         label="PAN"
-                                        onChange={formik.handleChange}
+                                        onChange={e =>
+                                            formik.setFieldValue(
+                                                'pan',
+                                                e.target.value?.toUpperCase(),
+                                            )
+                                        }
                                         onBlur={formik.handleBlur}
+                                        className="uppercase"
                                         value={formik.values.pan}
                                         fullWidth
                                         error={

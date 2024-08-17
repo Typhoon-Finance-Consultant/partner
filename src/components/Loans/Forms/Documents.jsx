@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFormik } from 'formik';
+import { ErrorMessage, useFormik } from 'formik';
 import {
     FormGroup,
     Box,
@@ -150,7 +150,7 @@ const Documents = ({ loanID }) => {
                                         </Typography>
                                         <Typography className="text-lg">
                                             {' '}
-                                            {item.file}{' '}
+                                            <a href={item.file} target='_blank'>{item.file}{' '}</a>
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -249,6 +249,7 @@ const Documents = ({ loanID }) => {
                                     }}
                                 />
                             </Button>
+                            
                         </FormGroup>
                     </Grid>
                 </Grid>

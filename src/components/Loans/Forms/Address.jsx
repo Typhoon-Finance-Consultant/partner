@@ -14,6 +14,7 @@ import {
     Typography,
     Divider,
     Snackbar,
+    Checkbox,
 } from '@mui/material';
 import * as yup from 'yup';
 import { INDIAN_STATES } from '&/helpers/constants';
@@ -87,6 +88,18 @@ const Address = ({ address, loanID }) => {
         },
     });
     const [formDisabled, setFormDisabled] = useState(true);
+    const [addressSame, setAddressSame] = useState(false)
+    const handleSameAddress = (stateValue) => {
+        setAddressSame(stateValue.target.checked)
+        if (stateValue.target.checked) {
+            formik.setFieldValue("communication_address.line1", formik.values.permanent_address.line1)
+            formik.setFieldValue("communication_address.line2", formik.values.permanent_address.line2)
+
+        }else {
+            formik.setFieldValue("communication_address", {})
+        }
+
+    }
     return (
         <Box className="mt-5">
             <Grid container spacing={4}>
@@ -204,6 +217,7 @@ const Address = ({ address, loanID }) => {
                                 </Select>
                             </FormControl>
                         </Box>
+                        <Checkbox checked={addressSame} onChange={handleSameAddress} /> Communication address is same Permanent
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -222,6 +236,8 @@ const Address = ({ address, loanID }) => {
                                     }
                                     size="small"
                                     label="Line 1"
+                                    onBlur={formik.handleBlur}
+
                                     onChange={formik.handleChange}
                                     error={
                                         formik.touched.communication_address
@@ -243,6 +259,8 @@ const Address = ({ address, loanID }) => {
                                     name="communication_address.line2"
                                     label="Line 2"
                                     size="small"
+                                onBlur={formik.handleBlur}
+
                                     value={
                                         formik.values.communication_address
                                             .line2

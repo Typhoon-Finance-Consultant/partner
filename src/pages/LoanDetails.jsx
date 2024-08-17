@@ -25,7 +25,6 @@ import IncomeProfile from '&/components/Loans/Forms/IncomeProfile';
 import BasicDetails from '&/components/Loans/Forms/BasicProfile';
 import References from '&/components/Loans/Forms/References';
 
-
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -65,7 +64,7 @@ const LoanDetails = props => {
 
     const loanData = data?.code === 200 ? data.response?.loan_data : {};
     return (
-        <Container maxWidth={false} className="bg-slate-200 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
             <div className="p-4 flex justify-between align-middle">
                 <Button>
                     <Link to="/loans" replace>
@@ -85,39 +84,42 @@ const LoanDetails = props => {
                         onChange={handleTabChange}>
                         <Tab label="Basic Profile" />
                         <Tab label="Documents" />
-                        <Tab label="Bank"  iconPosition="end"
+                        <Tab
+                            label="Bank"
+                            iconPosition="end"
                             icon={
                                 loanData?.bank ? null : (
                                     <PendingActions fontSize="small" />
                                 )
-                            }/>
-
-                        <Tab label="Address" 
-                        iconPosition="end"
-                        icon={
-                            loanData?.address ? null : (
-                                <PendingActions fontSize="small" />
-                            )
-                        }
+                            }
+                        />
+                        <Tab
+                            label="Income Profile"
+                            iconPosition="end"
+                            icon={
+                                loanData?.income_profile ? null : (
+                                    <PendingActions fontSize="small" />
+                                )
+                            }
+                        />
+                        <Tab
+                            label="Address"
+                            iconPosition="end"
+                            icon={
+                                loanData?.address ? null : (
+                                    <PendingActions fontSize="small" />
+                                )
+                            }
                         />
 
-                        <Tab label="Income Profile" 
-                        
-                        iconPosition="end"
-                        icon={
-                            loanData?.income_profile ? null : (
-                                <PendingActions fontSize="small" />
-                            )
-                        }
-                        />
-                        <Tab label="References" 
-                        iconPosition="end"
-                        icon={
-                            loanData?.references ? null : (
-                                <PendingActions fontSize="small" />
-                            )
-                        }
-
+                        <Tab
+                            label="References"
+                            iconPosition="end"
+                            icon={
+                                loanData?.references ? null : (
+                                    <PendingActions fontSize="small" />
+                                )
+                            }
                         />
                         <Tab label="Requirements" />
                     </Tabs>
@@ -130,7 +132,7 @@ const LoanDetails = props => {
                     <CustomTabPanel value={activeTab} index={0}>
                         <BasicDetails profileData={loanData} loanID={loanID} />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={3}>
+                    <CustomTabPanel value={activeTab} index={4}>
                         <Address address={loanData?.address} loanID={loanID} />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={2}>
@@ -139,7 +141,7 @@ const LoanDetails = props => {
                             loanID={loanID}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={4}>
+                    <CustomTabPanel value={activeTab} index={3}>
                         <IncomeProfile
                             loanID={loanID}
                             incomeProfile={loanData?.income_profile}

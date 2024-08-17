@@ -18,6 +18,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { selectCurrentUser, setCredentials } from '&/features/auth/authSlice';
 import PreloginHeader from '../components/common/Header/PreloginHeader';
+import Logo from '&/assets/images/brand.png';
+
 
 const Login = () => {
     const user = useSelector(selectCurrentUser);
@@ -78,16 +80,25 @@ const Login = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-200 h-screen"
+            className="bg-slate-200 min-h-lvh"
             //   sx={{ minHeight: "100vh" }}
         >
-            <PreloginHeader />
-            <Grid container className="mt-10 ">
+            {/* <PreloginHeader /> */}
+
+            <div className="text-center mx-auto">
+                        <img
+                            src={Logo}
+                            height={140}
+                            width={240}
+                            className="mx-auto"
+                        />
+                    </div>
+            <Grid container className="pt-10 ">
                 <Grid item xs={12} md={4} className="mx-auto">
                     <Card raised className="px-4 py-8 sm:mx-2">
                         <CardContent>
                             <div className="w-full flex flex-col items-center">
-                                <h2 className="text-center text-blue-500 font-bold text-3xl">
+                                <h2 className="text-center text-teal font-bold text-3xl">
                                     LOGIN
                                 </h2>
                             </div>

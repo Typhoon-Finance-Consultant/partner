@@ -16,8 +16,7 @@ import * as yup from 'yup';
 import userService from '&/services/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { selectCurrentUser, setCredentials } from '&/features/auth/authSlice';
-import PreloginHeader from '../components/common/Header/PreloginHeader';
+import Logo from '&/assets/images/brand.png';
 
 const ForgotPassword = () => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -53,14 +52,16 @@ const ForgotPassword = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-200 h-screen">
-            <PreloginHeader />
+            className="bg-slate-200 min-h-lvh">
+            <div className="text-center mx-auto">
+                <img src={Logo} height={140} width={240} className="mx-auto" />
+            </div>
             <Grid container className="mt-10 ">
                 <Grid item xs={12} md={4} className="mx-auto">
                     <Card raised className="px-4 py-8 sm:mx-2">
                         <CardContent>
                             <div className="w-full flex flex-col items-center">
-                                <h2 className="text-center text-blue-500 font-bold text-3xl">
+                                <h2 className="text-center text-teal font-bold text-3xl">
                                     Forgot Password
                                 </h2>
                             </div>
@@ -113,13 +114,15 @@ const ForgotPassword = () => {
                             {/* <Divider /> */}
                             <div className="mt-5 b-1 mx-auto">
                                 <Typography className=" text-center mt-5">
-                                    <Button
-                                        variant="outlined"
-                                        fullWidth
-                                        size="small"
-                                        className="mx-auto">
-                                        <Link to="/login">Back to Login</Link>
-                                    </Button>
+                                    <Link to="/login">
+                                        <Button
+                                            variant="outlined"
+                                            fullWidth
+                                            size="small"
+                                            className="mx-auto">
+                                            Back to Login
+                                        </Button>
+                                    </Link>
                                 </Typography>
                             </div>
                         </CardContent>

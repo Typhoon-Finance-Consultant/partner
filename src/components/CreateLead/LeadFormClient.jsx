@@ -69,7 +69,7 @@ const LeadFormClient = props => {
         },
     });
     return (
-        <Paper className="p-4 text-center ">
+        <Paper className="p-4 text-center w-full ">
             <Typography variant="h6" className="font-bold text-gray-500">
                 {' '}
                 New Application
@@ -167,7 +167,12 @@ const LeadFormClient = props => {
                         label="PAN"
                         name="pan"
                         value={formik.values.pan}
-                        onChange={formik.handleChange}
+                        onChange={e =>
+                            formik.setFieldValue(
+                                'pan',
+                                e.target.value?.toUpperCase(),
+                            )
+                        }
                         onBlur={formik.handleBlur}
                         fullWidth
                         error={formik.touched.pan && formik.errors.pan}

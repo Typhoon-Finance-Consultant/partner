@@ -50,7 +50,7 @@ const Invoices = () => {
                 handleFormUpdate={handleFormUpdate}
             />
             {!payoutData?.payout_data?.length > 0 ? (
-                <Box className="mx-auto w-full h-screen justify-center  align-middle sm:mt-20">
+                <Box className="mx-auto w-full min-h-lvh justify-center  align-middle sm:mt-20">
                     <Typography className="text-center sm:mt-20" variant="h3">
                         No Invoices Found
                     </Typography>

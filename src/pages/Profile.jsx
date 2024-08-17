@@ -22,7 +22,7 @@ const Profile = props => {
     const hasBank = profileData?.bank_account;
 
     return (
-        <Container maxWidth={false} className="bg-slate-200 h-screen">
+        <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
             {!hasBank ? (
                 <Box className="py-5 mx-5">
                     <Alert severity="warning">
