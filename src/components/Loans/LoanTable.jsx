@@ -50,6 +50,9 @@ const LoanTable = ({ loanData }) => {
                                 <TableCell className=" font-bold text-regal-blue">
                                     Status{' '}
                                 </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Staff Assigned{' '}
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -76,6 +79,8 @@ const LoanTable = ({ loanData }) => {
                                     </TableCell>
                                     <TableCell>{loan.interest_rate}</TableCell>
                                     <TableCell>{loan.status}</TableCell>
+                                    <TableCell>{loan.assigned_to}</TableCell>
+
                                 </TableRow>
                             ))}
                         </TableBody>
