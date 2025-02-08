@@ -137,27 +137,6 @@ const References = ({ references, loanID }) => {
                                 }
                             />
                         </FormGroup>
-                        <FormControl fullWidth className="mb-8">
-                            <InputLabel
-                                size="small"
-                                id="reference_one_relation_personal">
-                                Reference One Relation
-                            </InputLabel>
-                            <Select
-                                labelId="reference_one_relation_personal"
-                                size="small"
-                                id="reference_one_relation"
-                                disabled={formDisabled}
-                                name="reference_one_relation"
-                                value={formik.values.reference_one_relation}
-                                onChange={formik.handleChange}>
-                                {LOAN_REFERENCE_PERSONAL_TYPES.map(item => (
-                                    <MenuItem value={item}>{item}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
                             <TextField
                                 name="reference_two_name"
@@ -179,6 +158,27 @@ const References = ({ references, loanID }) => {
                                 }
                             />
                         </FormGroup>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <FormControl fullWidth className="mb-8">
+                            <InputLabel
+                                size="small"
+                                id="reference_one_relation_personal">
+                                Reference One Relation
+                            </InputLabel>
+                            <Select
+                                labelId="reference_one_relation_personal"
+                                size="small"
+                                id="reference_one_relation"
+                                disabled={formDisabled}
+                                name="reference_one_relation"
+                                value={formik.values.reference_one_relation}
+                                onChange={formik.handleChange}>
+                                {LOAN_REFERENCE_PERSONAL_TYPES.map(item => (
+                                    <MenuItem value={item}>{item}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <FormControl fullWidth className="mb-8">
                             <InputLabel
                                 size="small"
@@ -198,6 +198,58 @@ const References = ({ references, loanID }) => {
                                 ))}
                             </Select>
                         </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <FormGroup className="mb-8">
+                            <TextField
+                                name="reference_one_mobile_number"
+                                variant="outlined"
+                                label="Reference One Mobile"
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={
+                                    formik.values.reference_one_mobile_number
+                                }
+                                fullWidth
+                                size="small"
+                                disabled={formDisabled}
+                                error={
+                                    formik.touched
+                                        .reference_one_mobile_number &&
+                                    formik.errors.reference_one_mobile_number
+                                }
+                                helperText={
+                                    formik.touched
+                                        .reference_one_mobile_number &&
+                                    formik.errors.reference_one_mobile_number
+                                }
+                            />
+                        </FormGroup>
+                        <FormGroup className="mb-8">
+                            <TextField
+                                name="reference_two_mobile_number"
+                                variant="outlined"
+                                label="Reference Two Mobile"
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={
+                                    formik.values.reference_two_mobile_number
+                                }
+                                fullWidth
+                                disabled={formDisabled}
+                                size="small"
+                                error={
+                                    formik.touched
+                                        .reference_two_mobile_number &&
+                                    formik.errors.reference_two_mobile_number
+                                }
+                                helperText={
+                                    formik.touched
+                                        .reference_two_mobile_number &&
+                                    formik.errors.reference_two_mobile_number
+                                }
+                            />
+                        </FormGroup>
                     </Grid>
                 </Grid>
                 <Divider />
@@ -238,30 +290,6 @@ const References = ({ references, loanID }) => {
                                 }
                             />
                         </FormGroup>
-                        <FormControl fullWidth className="mb-8">
-                            <InputLabel
-                                size="small"
-                                id="reference_one_relation_professiona">
-                                Professional Reference One Relation
-                            </InputLabel>
-                            <Select
-                                labelId="reference_one_relation_professional"
-                                size="small"
-                                id="professional_reference_one_relation"
-                                disabled={formDisabled}
-                                name="professional_reference_one_relation"
-                                value={
-                                    formik.values
-                                        .professional_reference_one_relation
-                                }
-                                onChange={formik.handleChange}>
-                                {LOAN_REFERENCE_PROFESSIONAL_TYPES.map(item => (
-                                    <MenuItem value={item}>{item}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
                             <TextField
                                 name="professional_reference_two_name"
@@ -290,11 +318,36 @@ const References = ({ references, loanID }) => {
                                 }
                             />
                         </FormGroup>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <FormControl fullWidth className="mb-8">
+                            <InputLabel
+                                size="small"
+                                id="reference_one_relation_professiona">
+                                Professional Reference One Relation
+                            </InputLabel>
+                            <Select
+                                labelId="reference_one_relation_professional"
+                                size="small"
+                                id="professional_reference_one_relation"
+                                disabled={formDisabled}
+                                name="professional_reference_one_relation"
+                                value={
+                                    formik.values
+                                        .professional_reference_one_relation
+                                }
+                                onChange={formik.handleChange}>
+                                {LOAN_REFERENCE_PROFESSIONAL_TYPES.map(item => (
+                                    <MenuItem value={item}>{item}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
                         <FormControl fullWidth className="mb-8">
                             <InputLabel
                                 size="small"
                                 id="reference_two_relation_professional">
-                                Reference Two Relation
+                                Professional Reference Two Relation
                             </InputLabel>
                             <Select
                                 labelId="reference_two_relation_professional"
@@ -313,6 +366,59 @@ const References = ({ references, loanID }) => {
                             </Select>
                         </FormControl>
                     </Grid>
+                    <Grid item xs={12} md={4}>
+                        <FormGroup className="mb-8">
+                            <TextField
+                                name="professional_reference_one_mobile_number"
+                                variant="outlined"
+                                label="Professional Reference One Mobile"
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={
+                                    formik.values.professional_reference_one_mobile_number
+                                }
+                                fullWidth
+                                size="small"
+                                disabled={formDisabled}
+                                error={
+                                    formik.touched
+                                        .professional_reference_one_mobile_number &&
+                                    formik.errors.professional_reference_one_mobile_number
+                                }
+                                helperText={
+                                    formik.touched
+                                        .professional_reference_one_mobile_number &&
+                                    formik.errors.professional_reference_one_mobile_number
+                                }
+                            />
+                        </FormGroup>
+                        <FormGroup className="mb-8">
+                            <TextField
+                                name="professional_reference_two_mobile_number"
+                                variant="outlined"
+                                label="Professional Reference Two Mobile"
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={
+                                    formik.values.professional_reference_two_mobile_number
+                                }
+                                fullWidth
+                                disabled={formDisabled}
+                                size="small"
+                                error={
+                                    formik.touched
+                                        .professional_reference_two_mobile_number &&
+                                    formik.errors.professional_reference_two_mobile_number
+                                }
+                                helperText={
+                                    formik.touched
+                                        .professional_reference_two_mobile_number &&
+                                    formik.errors.professional_reference_two_mobile_number
+                                }
+                            />
+                        </FormGroup>
+                    </Grid>
+
                 </Grid>
                 <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
                     <div className="col-span-6"></div>

@@ -10,6 +10,7 @@ import {
     FormControl,
     InputLabel,
     Button,
+    Typography,
 } from '@mui/material';
 import * as yup from 'yup';
 import { useQuery } from '@tanstack/react-query';
@@ -39,6 +40,7 @@ const Requirements = ({ requirementsData }) => {
         <Box className="mt-5">
             <Grid container spacing={4}>
                 <Grid item xs={12} md={4}>
+
                     <FormControl fullWidth className="mb-8">
                         <InputLabel size="small" id="category">
                             Loan Category
@@ -118,6 +120,15 @@ const Requirements = ({ requirementsData }) => {
                             }
                         />
                     </FormGroup>
+                  
+                </Grid>
+                <Grid item xs={12} md={4}>
+                {requirementsData?.provider?.name ? (
+                        <FormGroup className="mb-8">
+                            <Typography className="font-bold text-sm text-gray-400">Loan Provider : </Typography>
+                            <Typography className="text-lg">{requirementsData?.provider?.name}</Typography>
+                        </FormGroup>
+                    ) : null}
                 </Grid>
             </Grid>
             <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
