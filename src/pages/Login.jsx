@@ -103,7 +103,6 @@ const Login = () => {
             setOtpModalOpen(false);
         }
     };
->>>>>>> e85d874 (Initial commit- Raj)
     const formik = useFormik({
         initialValues: {
             username: '',
