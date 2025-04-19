@@ -37,20 +37,23 @@ const LoanTable = ({ loanData }) => {
                                 <TableCell className=" font-bold text-regal-blue">
                                     Applicant Name
                                 </TableCell>
-                                <TableCell className=" font-bold text-regal-blue">
-                                    Loan Amount{' '}
-                                </TableCell>
+
                                 <TableCell className=" font-bold text-regal-blue">
                                     Amount Disbursed{' '}
                                 </TableCell>
                                 <TableCell className=" font-bold text-regal-blue">
                                     Loan Provider{' '}
                                 </TableCell>
-                                <TableCell className=" font-bold text-regal-blue">
-                                    ROI{' '}
-                                </TableCell>
+
                                 <TableCell className=" font-bold text-regal-blue">
                                     Status{' '}
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+
+                                    Payout %{' '}
+                                </TableCell>
+                                <TableCell className=" font-bold text-regal-blue">
+                                    Comission
                                 </TableCell>
                                 <TableCell className=" font-bold text-regal-blue">
                                     Staff Assigned{' '}
@@ -75,15 +78,15 @@ const LoanTable = ({ loanData }) => {
                                     <TableCell>
                                         {loan.primary_applicant.full_name}
                                     </TableCell>
-                                    <TableCell>{loan.amount}</TableCell>
                                     <TableCell>
                                         {loan.amount_disbursed}
                                     </TableCell>
                                     <TableCell>
                                         {loan?.provider?.name}
                                     </TableCell>
-                                    <TableCell>{loan.interest_rate}</TableCell>
                                     <TableCell>{loan.status}</TableCell>
+                                    <TableCell>{loan.partner_commission*100/loan.amount_disbursed}</TableCell>
+                                    <TableCell>{loan.partner_commission}</TableCell>
                                     <TableCell>{loan.assigned_to}</TableCell>
 
                                 </TableRow>

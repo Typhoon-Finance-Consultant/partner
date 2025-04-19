@@ -54,7 +54,8 @@ const incomeProfileValidationSchema = yup.object().shape({
     remark: yup.string().trim().optional(),
 });
 
-const IncomeProfile = ({ loanID, incomeProfile }) => {
+
+const IncomeProfile = ({ loanID, incomeProfile, status }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
@@ -419,28 +420,31 @@ const IncomeProfile = ({ loanID, incomeProfile }) => {
                     </Grid>
                 )}
             </Grid>
-            <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                <div className="col-span-6"></div>
-                <div>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        color="secondary"
-                        onClick={() => setFormDisabled(prev => !prev)}>
-                        Edit
-                    </Button>
+
+            {status !== 'Loan Disbursal Complete' && (
+                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                    <div className="col-span-6"></div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            color="secondary"
+                            onClick={() => setFormDisabled(prev => !prev)}>
+                            Edit
+                        </Button>
+                    </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            disabled={formik.isSubmitting}
+                            onClick={formik.handleSubmit}>
+                            Submit
+                        </Button>
+                    </div>
                 </div>
-                <div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        disabled={formik.isSubmitting}
-                        onClick={formik.handleSubmit}>
-                        Submit
-                    </Button>
-                </div>
-            </div>
+            )}
             <Snackbar
                 open={modalOpen}
                 autoHideDuration={6000}

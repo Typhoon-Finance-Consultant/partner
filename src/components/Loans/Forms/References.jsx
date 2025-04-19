@@ -56,7 +56,8 @@ const referenceValidationSchema = yup.object().shape({
         .optional()
         .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
 });
-const References = ({ references, loanID }) => {
+
+const References = ({ references, loanID, status }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -375,7 +376,8 @@ const References = ({ references, loanID }) => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 value={
-                                    formik.values.professional_reference_one_mobile_number
+                                    formik.values
+                                        .professional_reference_one_mobile_number
                                 }
                                 fullWidth
                                 size="small"
@@ -383,12 +385,15 @@ const References = ({ references, loanID }) => {
                                 error={
                                     formik.touched
                                         .professional_reference_one_mobile_number &&
-                                    formik.errors.professional_reference_one_mobile_number
+                                    formik.errors
+                                        .professional_reference_one_mobile_number
                                 }
                                 helperText={
                                     formik.touched
                                         .professional_reference_one_mobile_number &&
-                                    formik.errors.professional_reference_one_mobile_number
+
+                                    formik.errors
+                                        .professional_reference_one_mobile_number
                                 }
                             />
                         </FormGroup>
@@ -400,7 +405,9 @@ const References = ({ references, loanID }) => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 value={
-                                    formik.values.professional_reference_two_mobile_number
+
+                                    formik.values
+                                        .professional_reference_two_mobile_number
                                 }
                                 fullWidth
                                 disabled={formDisabled}
@@ -408,40 +415,46 @@ const References = ({ references, loanID }) => {
                                 error={
                                     formik.touched
                                         .professional_reference_two_mobile_number &&
-                                    formik.errors.professional_reference_two_mobile_number
+
+                                    formik.errors
+                                        .professional_reference_two_mobile_number
                                 }
                                 helperText={
                                     formik.touched
                                         .professional_reference_two_mobile_number &&
-                                    formik.errors.professional_reference_two_mobile_number
+
+                                    formik.errors
+                                        .professional_reference_two_mobile_number
                                 }
                             />
                         </FormGroup>
                     </Grid>
 
                 </Grid>
-                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                    <div className="col-span-6"></div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            color="secondary"
-                            onClick={() => setFormDisabled(prev => !prev)}>
-                            Edit
-                        </Button>
+                {status !== 'Loan Disbursal Complete' && (
+                    <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                        <div className="col-span-6"></div>
+                        <div>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                color="secondary"
+                                onClick={() => setFormDisabled(prev => !prev)}>
+                                Edit
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                disabled={formik.isSubmitting}
+                                onClick={formik.handleSubmit}>
+                                Submit
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={formik.isSubmitting}
-                            onClick={formik.handleSubmit}>
-                            Submit
-                        </Button>
-                    </div>
-                </div>
+                )}
             </Box>
             <Snackbar
                 open={modalOpen}

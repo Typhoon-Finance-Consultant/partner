@@ -28,9 +28,18 @@ const InvoiceDetailsTable = ({ invoiceData }) => {
                     )}
                 />
                 <Divider className="my-2" />
+
                 <LabelValue
                     labelName="Invoice Link"
-                    labelValue={invoiceData.invoice}
+                    labelValue={
+                        <a
+                            href={invoiceData.invoice}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'blue', textDecoration: 'none' }}>
+                            Open Invoice
+                        </a>
+                    }
                 />
                 <Divider className="my-2" />
                 <LabelValue

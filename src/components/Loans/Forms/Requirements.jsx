@@ -131,6 +131,9 @@ const Requirements = ({ requirementsData }) => {
                     ) : null}
                 </Grid>
             </Grid>
+
+            {requirementsData.status !== 'Loan Disbursal Complete' && (
+
             <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
                 <div className="col-span-6"></div>
                 <div>
@@ -152,7 +155,8 @@ const Requirements = ({ requirementsData }) => {
                         Submit
                     </Button>
                 </div>
-            </div>
+
+            </div>)}
         </Box>
     );
 };

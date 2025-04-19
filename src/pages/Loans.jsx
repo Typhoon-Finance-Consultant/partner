@@ -25,7 +25,7 @@ const Loans = () => {
         limit: pagination.limit,
         offset: pagination.offset,
     };
-    console.log('Body_____Data', body);
+
 
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['loanList', JSON.stringify(body)],
@@ -41,7 +41,6 @@ const Loans = () => {
     if (isLoading) {
         return <Loader />;
     }
-    console.log('Use Effect Data Form', formData);
     return (
         <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
             <LoanFilters

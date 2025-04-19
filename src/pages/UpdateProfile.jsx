@@ -11,7 +11,7 @@ const UpdateProfile = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
         queryKey: ['dashboard'],
-        queryFn: async () => user.getDashboardData(),
+        queryFn: async () => user.me(),
     });
     const navigate = useNavigate();
     if (isLoading) {

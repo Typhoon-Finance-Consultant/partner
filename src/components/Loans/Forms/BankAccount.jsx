@@ -41,7 +41,9 @@ const bankValidationSchema = yup.object({
     type: yup.string().trim().required('Please select account type'),
 });
 
-const BankAccount = ({ bankData, loanID }) => {
+
+const BankAccount = ({ bankData, loanID, status }) => {
+>>>>>>> e85d874 (Initial commit- Raj)
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
@@ -90,7 +92,6 @@ const BankAccount = ({ bankData, loanID }) => {
             if (event.target.value.length === 11) {
                 getBankDetailsUsingIFSC(event.target.value).then(data => {
                     if (data.code === 200) {
-                        console.log('IFSC Data ', data);
                         formik.setFieldValue('branch', data?.response?.BRANCH);
                         formik.setFieldValue('branch_city', data?.response?.CITY);
                         formik.setFieldValue(
@@ -98,6 +99,7 @@ const BankAccount = ({ bankData, loanID }) => {
                             data?.response?.ADDRESS,
                         );
                         formik.setFieldValue('branch_state', data?.response?.STATE);
+                        formik.setFieldValue('bank', data?.response?.BANK); 
                     }
                 });
             }
@@ -316,6 +318,8 @@ const BankAccount = ({ bankData, loanID }) => {
                         </FormGroup>
                     </Grid>
                 </Grid>
+
+                {status !== 'Loan Disbursal Complete' && (
                 <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
                     <div className="col-span-6">
                         Account Verification :{' '}
@@ -341,6 +345,8 @@ const BankAccount = ({ bankData, loanID }) => {
                         </Button>
                     </div>
                 </div>
+
+                )}
             </Box>
             <Snackbar
                 open={modalOpen}

@@ -13,7 +13,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { loanDetails } from '&/services/loans';
 import { PendingActions } from '@mui/icons-material';
-
 import Loader from '&/components/common/Loader';
 import BankAccount from '&/components/Loans/Forms/BankAccount';
 import LabelValue from '&/components/common/TextInfo/LabelValue';
@@ -133,30 +132,38 @@ const LoanDetails = props => {
                         <BasicDetails profileData={loanData} loanID={loanID} />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={4}>
-                        <Address address={loanData?.address} loanID={loanID} />
+                        <Address
+                            address={loanData?.address}
+                            loanID={loanID}
+                            status={loanData.status}
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={2}>
                         <BankAccount
                             bankData={loanData?.bank}
                             loanID={loanID}
+                            status={loanData.status}
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={3}>
                         <IncomeProfile
                             loanID={loanID}
                             incomeProfile={loanData?.income_profile}
+                            status={loanData.status}
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={5}>
                         <References
                             loanID={loanID}
                             references={loanData?.references}
+                            status={loanData.status}
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={activeTab} index={1}>
                         <Documents
                             documentData={loanData.documents}
                             loanID={loanID}
+                            status={loanData.status}
                         />
                     </CustomTabPanel>
                 </Paper>

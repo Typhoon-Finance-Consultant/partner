@@ -55,7 +55,7 @@ const InvoiceFilter = props => {
                             }}
                         />
                     </Box>
-                    <Box>
+                    {/* <Box>
                         <FormControl fullWidth>
                             <InputLabel size="small" id="status">
                                 Status
@@ -65,16 +65,17 @@ const InvoiceFilter = props => {
                                 size="small"
                                 value={status}
                                 onChange={val => setStatus(val.target.value)}>
-                                <MenuItem value="PENDING">Pending</MenuItem>
-                                <MenuItem value="APPROVED">Approved</MenuItem>
-                                <MenuItem value="PROCESSING">
-                                    Processing
-                                </MenuItem>
+                                <MenuItem value="C">Created</MenuItem>
+                                <MenuItem value="V">Verified</MenuItem>
+                                <MenuItem value="T">Transfer Initiated</MenuItem>
+                                <MenuItem value="H">On Hold</MenuItem>
+                                <MenuItem value="S">Transfer Complete</MenuItem>
 
-                                <MenuItem value="REJECTED">Rejected</MenuItem>
+
+
                             </Select>
                         </FormControl>
-                    </Box>
+                    </Box> */}
                     <Box className="flex justify-end bg-slate-200">
                         <Button
                             fullWidth

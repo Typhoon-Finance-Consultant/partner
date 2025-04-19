@@ -54,7 +54,8 @@ const documentUploadValidationSchema = yup.object().shape({
             return value && value.type && value.type === 'application/pdf';
         }),
 });
-const Documents = ({ loanID }) => {
+
+const Documents = ({ loanID, status }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading, refetch } = useQuery({
@@ -70,7 +71,6 @@ const Documents = ({ loanID }) => {
             loan_id: loanID,
         },
         onSubmit: (values, actions) => {
-            console.log('Document Upload', values);
             const form = new FormData();
             form.append('file', values.file, values?.file?.name);
             form.append('password', values.password);
@@ -254,6 +254,9 @@ const Documents = ({ loanID }) => {
                     </Grid>
                 </Grid>
                 <Divider className="mb-8" />
+
+                {status !== 'Loan Disbursal Complete' && (
+
                 <div className="grid md:grid-cols-3">
                     <FormGroup className="mb-8">
                         <Button
@@ -264,7 +267,8 @@ const Documents = ({ loanID }) => {
                             Upload Document
                         </Button>
                     </FormGroup>
-                </div>
+
+                </div>)}
             </Box>
             <Snackbar
                 open={modalOpen}

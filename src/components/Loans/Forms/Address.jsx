@@ -39,7 +39,8 @@ const addressValidationSchema = yup.object().shape({
     workplace_address: addressSchema.required(),
 });
 
-const Address = ({ address, loanID }) => {
+
+const Address = ({ address, loanID, status }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const formik = useFormik({
@@ -88,18 +89,23 @@ const Address = ({ address, loanID }) => {
         },
     });
     const [formDisabled, setFormDisabled] = useState(true);
-    const [addressSame, setAddressSame] = useState(false)
-    const handleSameAddress = (stateValue) => {
-        setAddressSame(stateValue.target.checked)
+
+    const [addressSame, setAddressSame] = useState(false);
+    const handleSameAddress = stateValue => {
+        setAddressSame(stateValue.target.checked);
         if (stateValue.target.checked) {
-            formik.setFieldValue("communication_address.line1", formik.values.permanent_address.line1)
-            formik.setFieldValue("communication_address.line2", formik.values.permanent_address.line2)
-
-        }else {
-            formik.setFieldValue("communication_address", {})
+            formik.setFieldValue(
+                'communication_address.line1',
+                formik.values.permanent_address.line1,
+            );
+            formik.setFieldValue(
+                'communication_address.line2',
+                formik.values.permanent_address.line2,
+            );
+        } else {
+            formik.setFieldValue('communication_address', {});
         }
-
-    }
+    };
     return (
         <Box className="mt-5">
             <Grid container spacing={4}>
@@ -217,7 +223,12 @@ const Address = ({ address, loanID }) => {
                                 </Select>
                             </FormControl>
                         </Box>
-                        <Checkbox checked={addressSame} onChange={handleSameAddress} /> Communication address is same Permanent
+
+                        <Checkbox
+                            checked={addressSame}
+                            onChange={handleSameAddress}
+                        />{' '}
+                        Communication address is same as Permanent
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -237,7 +248,6 @@ const Address = ({ address, loanID }) => {
                                     size="small"
                                     label="Line 1"
                                     onBlur={formik.handleBlur}
-
                                     onChange={formik.handleChange}
                                     error={
                                         formik.touched.communication_address
@@ -259,8 +269,7 @@ const Address = ({ address, loanID }) => {
                                     name="communication_address.line2"
                                     label="Line 2"
                                     size="small"
-                                onBlur={formik.handleBlur}
-
+                                    onBlur={formik.handleBlur}
                                     value={
                                         formik.values.communication_address
                                             .line2
@@ -479,28 +488,32 @@ const Address = ({ address, loanID }) => {
                     </Paper>
                 </Grid>
             </Grid>
-            <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                <div className="col-span-6"></div>
-                <div>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        color="secondary"
-                        onClick={() => setFormDisabled(prev => !prev)}>
-                        Edit
-                    </Button>
+
+
+            {status !== 'Loan Disbursal Complete' && (
+                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                    <div className="col-span-6"></div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            color="secondary"
+                            onClick={() => setFormDisabled(prev => !prev)}>
+                            Edit
+                        </Button>
+                    </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            disabled={formik.isSubmitting}
+                            onClick={formik.handleSubmit}>
+                            Submit
+                        </Button>
+                    </div>
                 </div>
-                <div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        disabled={formik.isSubmitting}
-                        onClick={formik.handleSubmit}>
-                        Submit
-                    </Button>
-                </div>
-            </div>
+            )}
             <Snackbar
                 open={modalOpen}
                 autoHideDuration={6000}

@@ -30,9 +30,11 @@ const InvoiceTable = ({ payoutData }) => {
                                 <TableCell>Invoice Duration</TableCell>
                                 <TableCell>Invoice Status</TableCell>
                                 <TableCell>Invoice Amount</TableCell>
-                                <TableCell>GST</TableCell>
-                                <TableCell>Deductions</TableCell>
+
+                                {/* <TableCell>GST</TableCell>
+                                <TableCell>Deductions</TableCell> */}
                                 <TableCell>Total Payout</TableCell>
+                                <TableCell>Invoice Link</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -55,16 +57,30 @@ const InvoiceTable = ({ payoutData }) => {
                                     <TableCell>
                                         {invoice.payout_amount}
                                     </TableCell>
-                                    <TableCell>
+
+                                    {/* <TableCell>
                                         {parseFloat(invoice.sgst) +
                                             parseFloat(invoice.cgst) +
                                             parseFloat(invoice.igst)}
                                     </TableCell>
                                     <TableCell>
                                         {invoice.deductions || 0}
-                                    </TableCell>
+
+                                    </TableCell> */}
                                     <TableCell>
                                         {invoice.total_payable}
+                                    </TableCell>
+                                    <TableCell>
+                                        <a
+                                            href={invoice.invoice}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                color: 'blue',
+                                                textDecoration: 'none',
+                                            }}>
+                                            Open Invoice
+                                        </a>{' '}
                                     </TableCell>
                                 </TableRow>
                             ))}

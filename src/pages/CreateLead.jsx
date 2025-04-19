@@ -12,8 +12,9 @@ const CreateLead = () => {
 
     return (
         <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
-            <Box className=" grid md:justify-center md:items-center md:grid-cols-2  min-h-lvh py-10 sm:py-0 ">
-                <Box >
+
+<Box className="grid place-items-center min-h-lvh sm:py-0">
+<Box >
                     {!leadID ? (
                         <LeadFormClient
                             setModalOpen={setModalOpen}

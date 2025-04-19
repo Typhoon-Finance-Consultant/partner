@@ -57,13 +57,42 @@ const LoanFilters = props => {
                                 value={status}
                                 onChange={val => setStatus(val.target.value)}>
                                 <MenuItem value="">All</MenuItem>
-                                <MenuItem value="PENDING">Pending</MenuItem>
-                                <MenuItem value="APPROVED">Approved</MenuItem>
-                                <MenuItem value="PROCESSING">
-                                    Processing
-                                </MenuItem>
 
-                                <MenuItem value="REJECTED">Rejected</MenuItem>
+                                <MenuItem value="0">Created</MenuItem>
+                                <MenuItem value="1">
+                                    Proof of identity Complete
+                                </MenuItem>
+                                <MenuItem value="2">
+                                    Proof of Address Complete
+                                </MenuItem>
+                                <MenuItem value="3">
+                                    Income proof added
+                                </MenuItem>
+                                <MenuItem value="4">
+                                    Personal Details Updated
+                                </MenuItem>
+                                <MenuItem value="5">
+                                    Documents Uploaded
+                                </MenuItem>
+                                <MenuItem value="6">Profile Submitted</MenuItem>
+                                <MenuItem value="7">Staff Verified</MenuItem>
+                                <MenuItem value="9">Provider Verified</MenuItem>
+                                <MenuItem value="10">Fees Pending</MenuItem>
+                                <MenuItem value="11">
+                                    Document Verification Complete
+                                </MenuItem>
+                                <MenuItem value="12">Visit Completed</MenuItem>
+                                <MenuItem value="14">Loan Sanctioned</MenuItem>
+                                <MenuItem value="15">
+                                    Loan Disbursal Complete{' '}
+                                </MenuItem>
+                                <MenuItem value="16">Staff Declined </MenuItem>
+                                <MenuItem value="17">
+                                    Provider Declined{' '}
+                                </MenuItem>
+                                <MenuItem value="18">
+                                    Client Not Interested{' '}
+                                </MenuItem>
                             </Select>
                         </FormControl>
                     </Box>

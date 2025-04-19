@@ -116,4 +116,10 @@ export const getBankDetailsUsingIFSC = data => {
         data,
     );
     return handleResponse(response);
+
 }
+
+export const getPinCode = data => {
+    const response = coreApi.makeAuthenticatedGetCall(`loan/address/pincode?pincode=${data}`, data);
+    return handleResponse(response);
+};

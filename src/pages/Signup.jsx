@@ -89,7 +89,8 @@ const Signup = () => {
             console.log('API RESPONSE DONE SEND OTP');
         }
     };
-    const handleVerifyOTP = async (data, otp, formikSubmit) => {
+
+    const handleVerifyOTP = async (data, otp) => {
         verifyOTP({
             key_value: data,
             key_name: 'MOBILE',
@@ -97,18 +98,25 @@ const Signup = () => {
             password: otp,
         })
             .then(data => {
-                console.log('VERIFY OTP API RESPONSE', data, formikSubmit);
+                console.log('VERIFY OTP API RESPONSE', data);
                 if (data.code === 200) {
                     setOTPVerified(true);
-                    setTimeout(() => formikSubmit(), 250);
-                    // formikSubmit();
+                    // Complete the registration process
+                    if (typeof window.completeRegistration === 'function') {
+                        window.completeRegistration();
+                    }
                 } else {
                     setSnackBarOpen(true);
-                    setSnackMessage(data?.response?.message);
+                    setSnackMessage(
+                        data?.response?.data?.response ||
+                            'OTP verification failed',
+                    );
                 }
             })
             .catch(error => {
                 setSnackBarOpen(true);
+
+                setSnackMessage('Error verifying OTP');
                 console.error(error);
             });
     };
@@ -125,35 +133,56 @@ const Signup = () => {
             last_name: '',
         },
         onSubmit: (values, actions) => {
-            if (!otpVerified) {
-                setModalOpen(true);
-                handleSendOTP(values.mobile_number);
-                return false;
-            }
-            registerPartner(values).then(data => {
-                actions.setSubmitting(false);
-                console.log('formik login Actions', data);
+            registerPartner(values)
+                .then(data => {
+                    actions.setSubmitting(false);
+                    console.log('formik login Actions', data);
 
-                if (data.code === 200) {
-                    dispatch(
-                        setCredentials({
+                    if (data.code === 200) {
+                        // Registration successful, now send OTP
+                        setSnackMessage(
+                            'Registration successful! Verify your mobile number',
+                        );
+                        setSnackBarOpen(true);
+                        handleSendOTP(values.mobile_number);
+                        setModalOpen(true);
+                        // Store user credentials temporarily
+                        const credentials = {
                             user: data.response.user,
                             accessToken: data.response.access_token,
                             refreshToken: data.response.refresh_token,
-                        }),
-                    );
-                    const redirectPath = state?.pathname;
-                    if (redirectPath) {
-                        return navigate(redirectPath);
+                        };
+                        window.completeRegistration = () => {
+                            // Set credentials in Redux
+                            dispatch(setCredentials(credentials));
+
+                            // Navigate to appropriate page
+                            const redirectPath = state?.pathname;
+                            if (redirectPath) {
+                                navigate(redirectPath);
+                            } else {
+                                navigate('/');
+                            }
+
+                            setSnackMessage(
+                                'Signup and verification successful!',
+                            );
+                            setSnackBarOpen(true);
+                            setModalOpen(false);
+                        };
+                    } else {
+                        // Registration failed
+                        actions.setSubmitting(false);
+                        setSnackMessage(data.response || 'Registration failed');
+                        setSnackBarOpen(true);
                     }
-                    navigate('/');
-                    setSnackMessage('Signup Sucessful');
+                })
+                .catch(error => {
+                    actions.setSubmitting(false);
+                    console.error('Registration error:', error);
+                    setSnackMessage('An error occurred during registration');
                     setSnackBarOpen(true);
-                } else {
-                    setSnackMessage(data.response);
-                    setSnackBarOpen(true);
-                }
-            });
+                });
         },
         validationSchema: validationSchema,
     });

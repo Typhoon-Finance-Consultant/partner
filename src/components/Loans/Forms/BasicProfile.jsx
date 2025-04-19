@@ -68,7 +68,7 @@ const BasicProfile = ({ profileData, loanID }) => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     action.setSubmitting(false);
-                    setFormDisabled(true)
+                    setFormDisabled(true);
                 })
                 .catch(error => {
                     setModalOpen(true);
@@ -239,28 +239,32 @@ const BasicProfile = ({ profileData, loanID }) => {
                     <Divider />
                 </Grid>
             </Grid>
-            <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                <div className="col-span-6"></div>
-                <div>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        color="secondary"
-                        onClick={() => setFormDisabled(prev => !prev)}>
-                        Edit
-                    </Button>
+
+
+            {profileData.status !== 'Loan Disbursal Complete' && (
+                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                    <div className="col-span-6"></div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            color="secondary"
+                            onClick={() => setFormDisabled(prev => !prev)}>
+                            Edit
+                        </Button>
+                    </div>{' '}
+                    <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            disabled={formik.isSubmitting}
+                            onClick={formik.handleSubmit}>
+                            Submit
+                        </Button>
+                    </div>
                 </div>
-                <div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        disabled={formik.isSubmitting}
-                        onClick={formik.handleSubmit}>
-                        Submit
-                    </Button>
-                </div>
-            </div>
+            )}
             <Snackbar
                 open={modalOpen}
                 autoHideDuration={6000}
