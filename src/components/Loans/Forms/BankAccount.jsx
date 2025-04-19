@@ -43,7 +43,6 @@ const bankValidationSchema = yup.object({
 
 
 const BankAccount = ({ bankData, loanID, status }) => {
->>>>>>> e85d874 (Initial commit- Raj)
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
