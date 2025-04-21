@@ -49,9 +49,16 @@ const documentUploadValidationSchema = yup.object().shape({
     file: yup
         .mixed()
         .required('Document file is required')
-        .test('fileType', 'Invalid file type (PDF only)', value => {
-            // Check if file is null before accessing type property
-            return value && value.type && value.type === 'application/pdf';
+        .test('fileType', 'Only pdf, jpeg, png, jpg and gif files are allowed', value => {
+            if (!value) return false;
+            const acceptableTypes = [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'image/jpg',
+                'image/gif',
+            ];
+            return value.type && acceptableTypes.includes(value.type);
         }),
 });
 
@@ -71,6 +78,7 @@ const Documents = ({ loanID, status }) => {
             loan_id: loanID,
         },
         onSubmit: (values, actions) => {
+            console.log('Form Values', values);
             const form = new FormData();
             form.append('file', values.file, values?.file?.name);
             form.append('password', values.password);
@@ -150,7 +158,9 @@ const Documents = ({ loanID, status }) => {
                                         </Typography>
                                         <Typography className="text-lg">
                                             {' '}
-                                            <a href={item.file} target='_blank'>{item.file}{' '}</a>
+                                            <a href={item.file} target="_blank">
+                                                {item.file}{' '}
+                                            </a>
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -185,14 +195,14 @@ const Documents = ({ loanID, status }) => {
                             </Select>
                         </FormControl>
                         <FormControl fullWidth className="mb-8">
-                            <InputLabel size="small" id="document_purpose">
+                            <InputLabel size="small" id="purpose">
                                 Document Purpose
                             </InputLabel>
                             <Select
-                                labelId="document_purpose"
+                                labelId="purpose"
                                 size="small"
                                 disabled={formDisabled}
-                                name="document_purpose"
+                                name="purpose"
                                 value={formik.values.purpose}
                                 onChange={formik.handleChange}>
                                 {DOCUMENT_PURPOSE.map(item => (
@@ -249,26 +259,32 @@ const Documents = ({ loanID, status }) => {
                                     }}
                                 />
                             </Button>
-                            
+                            {formik.errors.file && (
+                                <Typography
+                                    color="error"
+                                    variant="caption"
+                                    style={{ marginTop: '5px' }}>
+                                    {formik.errors.file}
+                                </Typography>
+                            )}
                         </FormGroup>
                     </Grid>
                 </Grid>
                 <Divider className="mb-8" />
 
                 {status !== 'Loan Disbursal Complete' && (
-
-                <div className="grid md:grid-cols-3">
-                    <FormGroup className="mb-8">
-                        <Button
-                            className=""
-                            variant="contained"
-                            color="primary"
-                            onClick={formik.handleSubmit}>
-                            Upload Document
-                        </Button>
-                    </FormGroup>
-
-                </div>)}
+                    <div className="grid md:grid-cols-3">
+                        <FormGroup className="mb-8">
+                            <Button
+                                className=""
+                                variant="contained"
+                                color="primary"
+                                onClick={formik.handleSubmit}>
+                                Upload Document
+                            </Button>
+                        </FormGroup>
+                    </div>
+                )}
             </Box>
             <Snackbar
                 open={modalOpen}

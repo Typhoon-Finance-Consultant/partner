@@ -27,34 +27,34 @@ const referenceValidationSchema = yup.object().shape({
         .trim()
         .required('Reference 1 name is required'),
 
-    reference_two_name: yup.string().trim().optional(),
+    // reference_two_name: yup.string().trim().optional(),
 
     reference_one_relation: yup.string().trim().required(),
-    reference_two_relation: yup.string().trim().optional(),
+    // reference_two_relation: yup.string().trim().optional(),
     professional_reference_one_name: yup.string().trim().optional(),
-    professional_reference_two_name: yup.string().trim().optional(),
+    // professional_reference_two_name: yup.string().trim().optional(),
     professional_reference_one_relation: yup.string().trim().optional(),
-    professional_reference_two_relation: yup.string().trim().optional(),
+    // professional_reference_two_relation: yup.string().trim().optional(),
     reference_one_mobile_number: yup
         .string()
         .trim()
         .required('Mobile number is required for first reference')
         .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
-    reference_two_mobile_number: yup
-        .string()
-        .trim()
-        .optional()
-        .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
+    // reference_two_mobile_number: yup
+    //     .string()
+    //     .trim()
+    //     .optional()
+    //     .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
     professional_reference_one_mobile_number: yup
         .string()
         .trim()
         .required('Mobile number is required for first reference')
         .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
-    professional_reference_two_mobile_number: yup
-        .string()
-        .trim()
-        .optional()
-        .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
+    // professional_reference_two_mobile_number: yup
+    //     .string()
+    //     .trim()
+    //     .optional()
+    //     .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
 });
 
 const References = ({ references, loanID, status }) => {
@@ -64,27 +64,27 @@ const References = ({ references, loanID, status }) => {
     const formik = useFormik({
         initialValues: {
             reference_one_name: references?.reference_one_name,
-            reference_two_name: references?.reference_two_name,
+            // reference_two_name: references?.reference_two_name,
             reference_one_relation: references?.reference_one_relation,
-            reference_two_relation: references?.reference_two_relation,
+            // reference_two_relation: references?.reference_two_relation,
             professional_reference_one_name:
                 references?.professional_reference_one_name,
-            professional_reference_two_name:
-                references?.professional_reference_two_name,
+            // professional_reference_two_name:
+                // references?.professional_reference_two_name,
             professional_reference_one_relation:
                 references?.professional_reference_one_relation,
-            professional_reference_two_relation:
-                references?.professional_reference_two_relation,
+            // professional_reference_two_relation:
+                // references?.professional_reference_two_relation,
             reference_one_mobile_number:
                 references?.reference_one_mobile_number,
 
-            reference_two_mobile_number:
-                references?.reference_two_mobile_number,
+            // reference_two_mobile_number:
+                // references?.reference_two_mobile_number,
             professional_reference_one_mobile_number:
                 references?.professional_reference_one_mobile_number,
 
-            professional_reference_two_mobile_number:
-                references?.professional_reference_two_mobile_number,
+            // professional_reference_two_mobile_number:
+                // references?.professional_reference_two_mobile_number,
             loan_id: loanID,
         },
         onSubmit: (values, actions) => {
@@ -138,7 +138,7 @@ const References = ({ references, loanID, status }) => {
                                 }
                             />
                         </FormGroup>
-                        <FormGroup className="mb-8">
+                        {/* <FormGroup className="mb-8">
                             <TextField
                                 name="reference_two_name"
                                 variant="outlined"
@@ -158,7 +158,7 @@ const References = ({ references, loanID, status }) => {
                                     formik.errors.reference_two_name
                                 }
                             />
-                        </FormGroup>
+                        </FormGroup> */}
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormControl fullWidth className="mb-8">
@@ -180,7 +180,7 @@ const References = ({ references, loanID, status }) => {
                                 ))}
                             </Select>
                         </FormControl>
-                        <FormControl fullWidth className="mb-8">
+                        {/* <FormControl fullWidth className="mb-8">
                             <InputLabel
                                 size="small"
                                 id="reference_two_relation_personal">
@@ -198,7 +198,7 @@ const References = ({ references, loanID, status }) => {
                                     <MenuItem value={item}>{item}</MenuItem>
                                 ))}
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
@@ -226,7 +226,7 @@ const References = ({ references, loanID, status }) => {
                                 }
                             />
                         </FormGroup>
-                        <FormGroup className="mb-8">
+                        {/* <FormGroup className="mb-8">
                             <TextField
                                 name="reference_two_mobile_number"
                                 variant="outlined"
@@ -250,7 +250,7 @@ const References = ({ references, loanID, status }) => {
                                     formik.errors.reference_two_mobile_number
                                 }
                             />
-                        </FormGroup>
+                        </FormGroup> */}
                     </Grid>
                 </Grid>
                 <Divider />
@@ -291,7 +291,7 @@ const References = ({ references, loanID, status }) => {
                                 }
                             />
                         </FormGroup>
-                        <FormGroup className="mb-8">
+                        {/* <FormGroup className="mb-8">
                             <TextField
                                 name="professional_reference_two_name"
                                 variant="outlined"
@@ -318,7 +318,7 @@ const References = ({ references, loanID, status }) => {
                                         .professional_reference_two_name
                                 }
                             />
-                        </FormGroup>
+                        </FormGroup> */}
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormControl fullWidth className="mb-8">
@@ -344,7 +344,7 @@ const References = ({ references, loanID, status }) => {
                             </Select>
                         </FormControl>
 
-                        <FormControl fullWidth className="mb-8">
+                        {/* <FormControl fullWidth className="mb-8">
                             <InputLabel
                                 size="small"
                                 id="reference_two_relation_professional">
@@ -365,7 +365,7 @@ const References = ({ references, loanID, status }) => {
                                     <MenuItem value={item}>{item}</MenuItem>
                                 ))}
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
@@ -397,7 +397,7 @@ const References = ({ references, loanID, status }) => {
                                 }
                             />
                         </FormGroup>
-                        <FormGroup className="mb-8">
+                        {/* <FormGroup className="mb-8">
                             <TextField
                                 name="professional_reference_two_mobile_number"
                                 variant="outlined"
@@ -427,7 +427,7 @@ const References = ({ references, loanID, status }) => {
                                         .professional_reference_two_mobile_number
                                 }
                             />
-                        </FormGroup>
+                        </FormGroup> */}
                     </Grid>
 
                 </Grid>

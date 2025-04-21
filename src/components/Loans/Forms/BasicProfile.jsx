@@ -41,16 +41,21 @@ const BasicProfile = ({ profileData, loanID }) => {
                 first_name: profileData?.primary_applicant?.first_name,
                 middle_name: profileData?.primary_applicant?.middle_name,
                 last_name: profileData?.primary_applicant?.last_name,
-                dob: profileData?.primary_applicant?.dob,
+                dob: profileData?.primary_applicant?.dob
+                    ? new Date(profileData.primary_applicant.dob)
+                    : null,
             },
             secondary_applicant: {
                 marital_status:
-                    profileData?.secondary_applicant?.marital_status | 'Single',
+                    profileData?.secondary_applicant?.marital_status ||
+                    'Single', // Fixed the | to ||
                 gender: profileData?.secondary_applicant?.gender || 'Male',
                 first_name: profileData?.secondary_applicant?.first_name,
                 middle_name: profileData?.secondary_applicant?.middle_name,
                 last_name: profileData?.secondary_applicant?.last_name,
-                dob: profileData?.secondary_applicant?.dob,
+                dob: profileData?.secondary_applicant?.dob
+                    ? new Date(profileData.secondary_applicant.dob)
+                    : null,
             },
         },
         // validationSchema: yup.object().shape({
@@ -59,11 +64,27 @@ const BasicProfile = ({ profileData, loanID }) => {
         // }),
         onSubmit: (values, action) => {
             action.setSubmitting(true);
-            const body = {
+            const formattedValues = {
                 ...values,
-                dob: dayjs(values.dob).format('DD/MM/YYYY'),
+                primary_applicant: {
+                    ...values.primary_applicant,
+                    dob: values.primary_applicant.dob
+                        ? dayjs(values.primary_applicant.dob).format(
+                              'DD/MM/YYYY',
+                          )
+                        : null,
+                },
+                secondary_applicant: {
+                    ...values.secondary_applicant,
+                    dob: values.secondary_applicant.dob
+                        ? dayjs(values.secondary_applicant.dob).format(
+                              'DD/MM/YYYY',
+                          )
+                        : null,
+                },
             };
-            updateBasicDetails(body)
+
+            updateBasicDetails(formattedValues)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
@@ -214,11 +235,18 @@ const BasicProfile = ({ profileData, loanID }) => {
                         <FormGroup className="mb-8">
                             <DatePicker
                                 label="Date of Birth"
-                                value={formik.values.primary_applicant.dob}
+                                value={
+                                    formik.values.primary_applicant.dob
+                                        ? dayjs(
+                                              formik.values.primary_applicant
+                                                  .dob,
+                                          )
+                                        : null
+                                }
                                 onChange={value => {
                                     formik.setFieldValue(
-                                        'dob',
-                                        Date.parse(value),
+                                        'primary_applicant.dob',
+                                        value ? value.toDate() : null, // Store as JavaScript Date object
                                     );
                                 }}
                                 size="small"
@@ -231,6 +259,18 @@ const BasicProfile = ({ profileData, loanID }) => {
                                     textField: {
                                         size: 'small',
                                         fullWidth: true,
+                                        error:
+                                            formik.touched?.primary_applicant
+                                                ?.dob &&
+                                            Boolean(
+                                                formik.errors?.primary_applicant
+                                                    ?.dob,
+                                            ),
+                                        helperText:
+                                            formik.touched?.primary_applicant
+                                                ?.dob &&
+                                            formik.errors?.primary_applicant
+                                                ?.dob,
                                     },
                                 }}
                             />
@@ -239,7 +279,6 @@ const BasicProfile = ({ profileData, loanID }) => {
                     <Divider />
                 </Grid>
             </Grid>
-
 
             {profileData.status !== 'Loan Disbursal Complete' && (
                 <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">

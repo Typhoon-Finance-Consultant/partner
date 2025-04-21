@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import {
     FormGroup,
@@ -11,36 +11,80 @@ import {
     InputLabel,
     Button,
     Typography,
+    Snackbar,
 } from '@mui/material';
 import * as yup from 'yup';
-import { useQuery } from '@tanstack/react-query';
-import { getBankList } from '&/services/loans';
+import { updateLoanRequirements } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 
 const requirementsValidationSchema = yup.object({
     amount: yup
         .number()
-        .min(10000)
-        .max(10000000)
         .required('Please enter Loan Amount'),
-    tenure_in_months: yup.number(),
+    tenure_in_months: yup
+        .number()
+        .required('Tenure is required')
+        .positive('Tenure must be a positive number'),
+    loan_type: yup.string().required('Loan type is required'),
+    category: yup.string().required('Loan category is required'),
 });
 
-const Requirements = ({ requirementsData }) => {
+const Requirements = ({ requirementsData, loanID }) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    
     const formik = useFormik({
         initialValues: {
-            category: requirementsData?.category,
-            tenure_in_months: requirementsData?.tenure_in_months,
-            amount: requirementsData?.amount,
-            loan_type: requirementsData?.loan_type,
+            category: requirementsData?.category || '',
+            tenure_in_months: requirementsData?.tenure_in_months || '',
+            amount: requirementsData?.amount || '',
+            loan_type: requirementsData?.loan_type || '',
+            loan_id: loanID,
+        },
+        validationSchema: requirementsValidationSchema,
+        onSubmit: (values, actions) => {
+            actions.setSubmitting(true);            
+            updateLoanRequirements(values)
+                .then(res => {
+                    setSnackbarMessage(res.response || res.message);
+                    setModalOpen(true);
+                    actions.setSubmitting(false);
+                    setFormDisabled(true);
+                })
+                .catch(error => {
+                    setModalOpen(true);
+                    setSnackbarMessage('Something went wrong');
+                    actions.setSubmitting(false);
+                });
         },
     });
+    
+    // Effect to set category based on loan_type whenever loan_type changes
+    useEffect(() => {
+        const loanType = formik.values.loan_type;
+        if (loanType) {
+            // Set category based on loan type rules
+            const newCategory = (loanType === 'HL' || loanType === 'LAP') ? 'S' : 'U';
+            formik.setFieldValue('category', newCategory);
+        }
+    }, [formik.values.loan_type]);
+    
     const [formDisabled, setFormDisabled] = useState(true);
+    
+    // Custom handler for loan type changes
+    const handleLoanTypeChange = (event) => {
+        const newLoanType = event.target.value;
+        formik.setFieldValue('loan_type', newLoanType);
+        
+        // Immediately set category based on the new loan type
+        const newCategory = (newLoanType === 'HL' || newLoanType === 'LAP') ? 'S' : 'U';
+        formik.setFieldValue('category', newCategory);
+    };
+    
     return (
         <Box className="mt-5">
             <Grid container spacing={4}>
                 <Grid item xs={12} md={4}>
-
                     <FormControl fullWidth className="mb-8">
                         <InputLabel size="small" id="category">
                             Loan Category
@@ -49,9 +93,9 @@ const Requirements = ({ requirementsData }) => {
                             labelId="category"
                             size="small"
                             id="category"
-                            disabled={formDisabled}
+                            disabled={true} // Category is auto-set based on loan_type
                             name="category"
-                            value={formik.values.category}
+                            value={formik.values.category || ''}
                             onChange={formik.handleChange}>
                             <MenuItem value="S">Secured</MenuItem>
                             <MenuItem value="U">Unsecured</MenuItem>
@@ -67,8 +111,8 @@ const Requirements = ({ requirementsData }) => {
                             id="loan_type"
                             disabled={formDisabled}
                             name="loan_type"
-                            value={formik.values.loan_type}
-                            onChange={formik.handleChange}>
+                            value={formik.values.loan_type || ''}
+                            onChange={handleLoanTypeChange}>
                             <MenuItem value="PL">Personal Loan</MenuItem>
                             <MenuItem value="HL">Home Loan</MenuItem>
                             <MenuItem value="BL">Business Loan</MenuItem>
@@ -157,6 +201,14 @@ const Requirements = ({ requirementsData }) => {
                 </div>
 
             </div>)}
+            
+            <Snackbar
+                open={modalOpen}
+                autoHideDuration={6000}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                onClose={() => setModalOpen(false)}
+                message={snackbarMessage}
+            />
         </Box>
     );
 };

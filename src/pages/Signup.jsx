@@ -34,7 +34,7 @@ const validationSchema = yup.object().shape({
         .trim()
         .email('Invalid email format')
         .required('Email is required'),
-    entity_name: yup.string().trim().required('Entity name is required'),
+    entity_name: yup.string().trim(),
     pan: yup
         .string()
         .trim()
@@ -450,7 +450,7 @@ const Signup = () => {
                                 <div className="text-right">
                                     <Button
                                         variant="contained"
-                                        color="secondary"
+                                        color="primary"
                                         className="mr-3"
                                         onClick={() =>
                                             handleSendOTP(
@@ -461,7 +461,7 @@ const Signup = () => {
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        color="primary"
+                                        color="secondary"
                                         onClick={() =>
                                             handleVerifyOTP(
                                                 formik.values.mobile_number,

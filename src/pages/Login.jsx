@@ -115,6 +115,13 @@ const Login = () => {
 
                 if (data.code === 200) {
                     // Store the credentials
+                    if (!data?.response?.user?.is_partner) {
+                        setSnackbarMessage(
+                            'Customer account detected, Please login at customer portal (https://customer.typhoonfincare.in/login)',
+                        );
+                        setModalOpen(true);
+                        return false;
+                    }
                     const credentials = {
                         user: data.response.user,
                         accessToken: data.response.access_token,
@@ -301,7 +308,7 @@ const Login = () => {
                                 <div className="text-right">
                                     <Button
                                         variant="contained"
-                                        color="secondary"
+                                        color="primary"
                                         className="mr-3"
                                         onClick={() =>
                                             handleSendOTP(mobileNumber)
@@ -310,7 +317,7 @@ const Login = () => {
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        color="primary"
+                                        color="secondary"
                                         onClick={handleVerifyOTP}>
                                         Submit
                                     </Button>

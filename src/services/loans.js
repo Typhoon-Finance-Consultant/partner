@@ -109,6 +109,13 @@ export const updateLoanReference = data => {
     return handleResponse(response);
 };
 
+export const updateLoanRequirements = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'loan/requirement/update',
+        data,
+    );
+    return handleResponse(response);
+};
 
 export const getBankDetailsUsingIFSC = data => {
     const response = coreApi.makeAuthenticatedGetCall(

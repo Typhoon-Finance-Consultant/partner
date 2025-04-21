@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import * as yup from 'yup';
 import { INDIAN_STATES } from '&/helpers/constants';
-import { updateAddress } from '&/services/loans';
+import { updateAddress, getPinCode } from '&/services/loans';
 
 const addressSchema = yup.object().shape({
     line1: yup.string().trim().required('Address Line 1 is required'),
@@ -38,7 +38,6 @@ const addressValidationSchema = yup.object().shape({
     ), // Optional communication address with conditional requirement
     workplace_address: addressSchema.required(),
 });
-
 
 const Address = ({ address, loanID, status }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -88,22 +87,84 @@ const Address = ({ address, loanID, status }) => {
                 });
         },
     });
+    const handlePinCode = (event, addressType) => {
+        const pincode = event.target.value;
+        const fieldPath = `${addressType}.pincode`;
+        
+        // Update the pincode field for the specific address type
+        formik.setFieldValue(fieldPath, pincode);
+        
+        // When we have a complete 6-digit pincode, fetch and update city and state
+        if (pincode.length === 6) {
+            getPinCode(pincode).then(data => {
+                if (data.code === 200) {
+                    // Find the matching state value in INDIAN_STATES
+                    const validState = INDIAN_STATES.find(
+                        state => state.label === data.response?.state
+                    );
+                    
+                    // Update city and state for the specific address type
+                    formik.setFieldValue(
+                        `${addressType}.city`, 
+                        data?.response?.city || ''
+                    );
+                    
+                    formik.setFieldValue(
+                        `${addressType}.state`,
+                        validState ? validState.value : data.response?.state
+                    );
+                    
+                    console.log(`Updated ${addressType} with:`, {
+                        city: data?.response?.city,
+                        state: validState ? validState.value : data.response?.state
+                    });
+                }
+            });
+        }
+    };
     const [formDisabled, setFormDisabled] = useState(true);
 
     const [addressSame, setAddressSame] = useState(false);
     const handleSameAddress = stateValue => {
         setAddressSame(stateValue.target.checked);
+
         if (stateValue.target.checked) {
-            formik.setFieldValue(
-                'communication_address.line1',
-                formik.values.permanent_address.line1,
-            );
-            formik.setFieldValue(
-                'communication_address.line2',
-                formik.values.permanent_address.line2,
+            // Get current permanent address with all properties
+            const permanentAddress = formik.values.permanent_address;
+
+            // Ensure all values exist to avoid undefined errors
+            const communicationAddress = {
+                line1: permanentAddress.line1 || '',
+                line2: permanentAddress.line2 || '',
+                city: permanentAddress.city || '',
+                state: permanentAddress.state || '',
+                pincode: permanentAddress.pincode || '',
+                type: 'COMM',
+            };
+
+            // Update each field individually to ensure proper state management
+            Object.keys(communicationAddress).forEach(key => {
+                formik.setFieldValue(
+                    `communication_address.${key}`,
+                    communicationAddress[key],
+                );
+            });
+
+            // Log to verify values
+            console.log(
+                'Setting communication address to:',
+                communicationAddress,
             );
         } else {
-            formik.setFieldValue('communication_address', {});
+            // Clear communication address
+            formik.setFieldValue('communication_address', {
+                line1: '',
+                line2: '',
+                city: '',
+                state: '',
+                pincode: '',
+                type: 'COMM',
+            });
         }
     };
     return (
@@ -167,7 +228,7 @@ const Address = ({ address, loanID, status }) => {
                                         formik.values.permanent_address.pincode
                                     }
                                     disabled={formDisabled}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => handlePinCode(e, 'permanent_address')}
                                     error={
                                         formik.touched.permanent_address
                                             ?.pincode &&
@@ -212,18 +273,19 @@ const Address = ({ address, loanID, status }) => {
                                     disabled={formDisabled}
                                     name="permanent_address.state"
                                     value={
-                                        formik.values.permanent_address.state
+                                        formik.values.permanent_address
+                                            .state || ''
                                     }
                                     onChange={formik.handleChange}>
-                                    {INDIAN_STATES.map(item => (
-                                        <MenuItem value={item.value}>
+                                    {INDIAN_STATES.map((item, index) => (
+                                        <MenuItem value={item.value} key={index}>
                                             {item.label}
+                                            
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
                         </Box>
-
                         <Checkbox
                             checked={addressSame}
                             onChange={handleSameAddress}
@@ -300,7 +362,7 @@ const Address = ({ address, loanID, status }) => {
                                             .pincode
                                     }
                                     disabled={formDisabled}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => handlePinCode(e, 'communication_address')}
                                     error={
                                         formik.touched.communication_address
                                             ?.pincode &&
@@ -354,11 +416,13 @@ const Address = ({ address, loanID, status }) => {
                                     name="communication_address.state"
                                     value={
                                         formik.values.communication_address
-                                            .state
+                                            .state || ''
                                     }
                                     onChange={formik.handleChange}>
                                     {INDIAN_STATES.map(item => (
-                                        <MenuItem value={item.value}>
+                                        <MenuItem
+                                            key={item.value}
+                                            value={item.value}>
                                             {item.label}
                                         </MenuItem>
                                     ))}
@@ -427,7 +491,7 @@ const Address = ({ address, loanID, status }) => {
                                         formik.values.workplace_address.pincode
                                     }
                                     disabled={formDisabled}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => handlePinCode(e, 'workplace_address')}
                                     error={
                                         formik.touched.workplace_address
                                             ?.pincode &&
@@ -474,7 +538,8 @@ const Address = ({ address, loanID, status }) => {
                                     disabled={formDisabled}
                                     name="workplace_address.state"
                                     value={
-                                        formik.values.workplace_address.state
+                                        formik.values.workplace_address
+                                            .state || ''
                                     }
                                     onChange={formik.handleChange}>
                                     {INDIAN_STATES.map(item => (
@@ -488,7 +553,6 @@ const Address = ({ address, loanID, status }) => {
                     </Paper>
                 </Grid>
             </Grid>
-
 
             {status !== 'Loan Disbursal Complete' && (
                 <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">

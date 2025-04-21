@@ -85,7 +85,7 @@ const LoanTable = ({ loanData }) => {
                                         {loan?.provider?.name}
                                     </TableCell>
                                     <TableCell>{loan.status}</TableCell>
-                                    <TableCell>{loan.partner_commission*100/loan.amount_disbursed}</TableCell>
+                                    <TableCell>{loan.partner_commission*100/loan.amount_disbursed||'Not Calculated'}</TableCell>
                                     <TableCell>{loan.partner_commission}</TableCell>
                                     <TableCell>{loan.assigned_to}</TableCell>
 
