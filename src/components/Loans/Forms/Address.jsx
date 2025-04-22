@@ -289,6 +289,8 @@ const Address = ({ address, loanID, status }) => {
                         <Checkbox
                             checked={addressSame}
                             onChange={handleSameAddress}
+                            disabled={formDisabled}
+
                         />{' '}
                         Communication address is same as Permanent
                     </Paper>

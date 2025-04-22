@@ -230,25 +230,26 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                                 <Autocomplete
                                     id="employer"
                                     options={employerNameList}
+                                    freeSolo
                                     autoComplete
                                     size="small"
                                     name="employer"
                                     disabled={formDisabled}
                                     value={formik.values.employer}
-                                    onInputChange={(field, value) =>
-                                        handleEmployerNameChange(value)
-                                    }
+                                    onInputChange={(event, value) => handleEmployerNameChange(value)}
+                                    onChange={(event, value) => {
+                                        // This handles both selection from dropdown and custom text entry
+                                        formik.setFieldValue('employer', value);
+                                    }}
                                     renderInput={params => (
                                         <TextField
                                             {...params}
                                             label="Employer Name"
-                                            error={
-                                                formik.touched.employer &&
-                                                formik.errors.employer
-                                            }
+                                            placeholder="Type or select an employer"
+                                            error={formik.touched.employer && formik.errors.employer}
                                             helperText={
-                                                formik.touched.employer &&
-                                                formik.errors.employer
+                                                (formik.touched.employer && formik.errors.employer) ||
+                                                "Type to search or add a new employer"
                                             }
                                         />
                                     )}
@@ -260,6 +261,7 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                                     id="designation"
                                     options={DESIGNATION_OPTIONS}
                                     autoComplete
+                                    freeSolo
                                     disabled={formDisabled}
                                     onInputChange={(field, value) =>
                                         handleDesignationChange(value)
