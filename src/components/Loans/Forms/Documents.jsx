@@ -49,20 +49,24 @@ const documentUploadValidationSchema = yup.object().shape({
     file: yup
         .mixed()
         .required('Document file is required')
-        .test('fileType', 'Only pdf, jpeg, png, jpg and gif files are allowed', value => {
-            if (!value) return false;
-            const acceptableTypes = [
-                'application/pdf',
-                'image/jpeg',
-                'image/png',
-                'image/jpg',
-                'image/gif',
-            ];
-            return value.type && acceptableTypes.includes(value.type);
-        }),
+        .test(
+            'fileType',
+            'Only pdf, jpeg, png, jpg and gif files are allowed',
+            value => {
+                if (!value) return false;
+                const acceptableTypes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg',
+                    'image/gif',
+                ];
+                return value.type && acceptableTypes.includes(value.type);
+            },
+        ),
 });
 
-const Documents = ({ loanID, status }) => {
+const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading, refetch } = useQuery({
@@ -273,16 +277,29 @@ const Documents = ({ loanID, status }) => {
                 <Divider className="mb-8" />
 
                 {status !== 'Loan Disbursal Complete' && (
-                    <div className="grid md:grid-cols-3">
-                        <FormGroup className="mb-8">
+                    <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                        <div className="col-span-6"></div>
+                        <div>
                             <Button
-                                className=""
+                                variant="contained"
+                                fullWidth
+                                color="secondary"
+                                disabled={
+                                    formik.isSubmitting || activeTab === 0
+                                }
+                                onClick={() => setActiveTab(prev => prev - 1)}>
+                                Back
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                // className=""
                                 variant="contained"
                                 color="primary"
                                 onClick={formik.handleSubmit}>
                                 Upload Document
                             </Button>
-                        </FormGroup>
+                        </div>
                     </div>
                 )}
             </Box>

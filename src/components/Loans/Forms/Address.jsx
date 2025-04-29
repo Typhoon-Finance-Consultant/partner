@@ -39,7 +39,7 @@ const addressValidationSchema = yup.object().shape({
     workplace_address: addressSchema.required(),
 });
 
-const Address = ({ address, loanID, status }) => {
+const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const formik = useFormik({
@@ -72,12 +72,12 @@ const Address = ({ address, loanID, status }) => {
         },
         validationSchema: addressValidationSchema,
         onSubmit: (values, actions) => {
-            console.log('Upload Address Response', values);
             actions.setSubmitting(true);
             updateAddress(values)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
+                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
                 })
                 .catch(error => {
@@ -90,39 +90,41 @@ const Address = ({ address, loanID, status }) => {
     const handlePinCode = (event, addressType) => {
         const pincode = event.target.value;
         const fieldPath = `${addressType}.pincode`;
-        
+
         // Update the pincode field for the specific address type
         formik.setFieldValue(fieldPath, pincode);
-        
+
         // When we have a complete 6-digit pincode, fetch and update city and state
         if (pincode.length === 6) {
             getPinCode(pincode).then(data => {
                 if (data.code === 200) {
                     // Find the matching state value in INDIAN_STATES
                     const validState = INDIAN_STATES.find(
-                        state => state.label === data.response?.state
+                        state => state.label === data.response?.state,
                     );
-                    
+
                     // Update city and state for the specific address type
                     formik.setFieldValue(
-                        `${addressType}.city`, 
-                        data?.response?.city || ''
+                        `${addressType}.city`,
+                        data?.response?.city || '',
                     );
-                    
+
                     formik.setFieldValue(
                         `${addressType}.state`,
-                        validState ? validState.value : data.response?.state
+                        validState ? validState.value : data.response?.state,
                     );
-                    
+
                     console.log(`Updated ${addressType} with:`, {
                         city: data?.response?.city,
-                        state: validState ? validState.value : data.response?.state
+                        state: validState
+                            ? validState.value
+                            : data.response?.state,
                     });
                 }
             });
         }
     };
-    const [formDisabled, setFormDisabled] = useState(true);
+    const [formDisabled, setFormDisabled] = useState(false);
 
     const [addressSame, setAddressSame] = useState(false);
     const handleSameAddress = stateValue => {
@@ -228,7 +230,9 @@ const Address = ({ address, loanID, status }) => {
                                         formik.values.permanent_address.pincode
                                     }
                                     disabled={formDisabled}
-                                    onChange={(e) => handlePinCode(e, 'permanent_address')}
+                                    onChange={e =>
+                                        handlePinCode(e, 'permanent_address')
+                                    }
                                     error={
                                         formik.touched.permanent_address
                                             ?.pincode &&
@@ -273,14 +277,15 @@ const Address = ({ address, loanID, status }) => {
                                     disabled={formDisabled}
                                     name="permanent_address.state"
                                     value={
-                                        formik.values.permanent_address
-                                            .state || ''
+                                        formik.values.permanent_address.state ||
+                                        ''
                                     }
                                     onChange={formik.handleChange}>
                                     {INDIAN_STATES.map((item, index) => (
-                                        <MenuItem value={item.value} key={index}>
+                                        <MenuItem
+                                            value={item.value}
+                                            key={index}>
                                             {item.label}
-                                            
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -290,7 +295,6 @@ const Address = ({ address, loanID, status }) => {
                             checked={addressSame}
                             onChange={handleSameAddress}
                             disabled={formDisabled}
-
                         />{' '}
                         Communication address is same as Permanent
                     </Paper>
@@ -364,7 +368,12 @@ const Address = ({ address, loanID, status }) => {
                                             .pincode
                                     }
                                     disabled={formDisabled}
-                                    onChange={(e) => handlePinCode(e, 'communication_address')}
+                                    onChange={e =>
+                                        handlePinCode(
+                                            e,
+                                            'communication_address',
+                                        )
+                                    }
                                     error={
                                         formik.touched.communication_address
                                             ?.pincode &&
@@ -493,7 +502,9 @@ const Address = ({ address, loanID, status }) => {
                                         formik.values.workplace_address.pincode
                                     }
                                     disabled={formDisabled}
-                                    onChange={(e) => handlePinCode(e, 'workplace_address')}
+                                    onChange={e =>
+                                        handlePinCode(e, 'workplace_address')
+                                    }
                                     error={
                                         formik.touched.workplace_address
                                             ?.pincode &&
@@ -540,8 +551,8 @@ const Address = ({ address, loanID, status }) => {
                                     disabled={formDisabled}
                                     name="workplace_address.state"
                                     value={
-                                        formik.values.workplace_address
-                                            .state || ''
+                                        formik.values.workplace_address.state ||
+                                        ''
                                     }
                                     onChange={formik.handleChange}>
                                     {INDIAN_STATES.map(item => (
@@ -564,8 +575,9 @@ const Address = ({ address, loanID, status }) => {
                             variant="contained"
                             fullWidth
                             color="secondary"
-                            onClick={() => setFormDisabled(prev => !prev)}>
-                            Edit
+                            disabled={formik.isSubmitting || activeTab === 0}
+                            onClick={() => setActiveTab(prev => prev - 1)}>
+                            Back
                         </Button>
                     </div>
                     <div>

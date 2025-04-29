@@ -42,7 +42,7 @@ const bankValidationSchema = yup.object({
 });
 
 
-const BankAccount = ({ bankData, loanID, status }) => {
+const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
@@ -72,6 +72,7 @@ const BankAccount = ({ bankData, loanID, status }) => {
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
+                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
                 })
                 .catch(error => {
@@ -83,7 +84,7 @@ const BankAccount = ({ bankData, loanID, status }) => {
         validationSchema: bankValidationSchema,
     });
 
-    const [formDisabled, setFormDisabled] = useState(true);
+    const [formDisabled, setFormDisabled] = useState(false);
     const handleIFSCChange = event => {
         console.log('IFSC ', event.target.value, event.target.value.length);
         if (event.target.value !== formik.values.ifsc) {
@@ -325,12 +326,13 @@ const BankAccount = ({ bankData, loanID, status }) => {
                         {bankData?.is_verified ? 'Complete' : 'Pending'}
                     </div>
                     <div>
-                        <Button
+                    <Button
                             variant="contained"
                             fullWidth
                             color="secondary"
-                            onClick={() => setFormDisabled(prev => !prev)}>
-                            Edit
+                            disabled={formik.isSubmitting || activeTab === 0}
+                            onClick={() => setActiveTab(prev => prev - 1)}>
+                            Back
                         </Button>
                     </div>
                     <div>

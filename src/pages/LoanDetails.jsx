@@ -7,7 +7,7 @@ import {
     Tabs,
     Paper,
     Typography,
-    Grid,
+    // Grid,
     Button,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ import Loader from '&/components/common/Loader';
 import BankAccount from '&/components/Loans/Forms/BankAccount';
 import LabelValue from '&/components/common/TextInfo/LabelValue';
 import LoanDetailHeader from '&/components/Loans/DetailHeader';
-import Requirements from '&/components/Loans/Forms/Requirements';
+// import Requirements from '&/components/Loans/Forms/Requirements';
 import Documents from '&/components/Loans/Forms/Documents';
 import Address from '&/components/Loans/Forms/Address';
 import IncomeProfile from '&/components/Loans/Forms/IncomeProfile';
@@ -76,22 +76,11 @@ const LoanDetails = props => {
                 <LoanDetailHeader loanData={loanData} />
                 <Paper>
                     <Tabs
-                        //  orientation="vertical"
                         variant="scrollable"
                         scrollButtons="auto"
                         value={activeTab}
                         onChange={handleTabChange}>
                         <Tab label="Basic Profile" />
-                        <Tab label="Documents" />
-                        <Tab
-                            label="Bank"
-                            iconPosition="end"
-                            icon={
-                                loanData?.bank ? null : (
-                                    <PendingActions fontSize="small" />
-                                )
-                            }
-                        />
                         <Tab
                             label="Income Profile"
                             iconPosition="end"
@@ -110,6 +99,15 @@ const LoanDetails = props => {
                                 )
                             }
                         />
+                        <Tab
+                            label="Bank"
+                            iconPosition="end"
+                            icon={
+                                loanData?.bank ? null : (
+                                    <PendingActions fontSize="small" />
+                                )
+                            }
+                        />
 
                         <Tab
                             label="References"
@@ -120,50 +118,68 @@ const LoanDetails = props => {
                                 )
                             }
                         />
-                        <Tab label="Requirements" />
+                        <Tab label="Documents" />
+
+                        {/* <Tab label="Requirements" /> */}
                     </Tabs>
-                    <CustomTabPanel value={activeTab} index={6}>
+                    {/* <CustomTabPanel value={activeTab} index={6}>
                         <Requirements
                             requirementsData={loanData}
                             loanID={loanID}
                         />
-                    </CustomTabPanel>
+                    </CustomTabPanel> */}
                     <CustomTabPanel value={activeTab} index={0}>
-                        <BasicDetails profileData={loanData} loanID={loanID} />
+                        <BasicDetails
+                            profileData={loanData}
+                            loanID={loanID}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                        />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={4}>
+                    <CustomTabPanel value={activeTab} index={2}>
                         <Address
                             address={loanData?.address}
                             loanID={loanID}
                             status={loanData.status}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={2}>
+                    <CustomTabPanel value={activeTab} index={3}>
                         <BankAccount
                             bankData={loanData?.bank}
                             loanID={loanID}
                             status={loanData.status}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={3}>
+                    <CustomTabPanel value={activeTab} index={1}>
                         <IncomeProfile
                             loanID={loanID}
                             incomeProfile={loanData?.income_profile}
                             status={loanData.status}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={5}>
+                    <CustomTabPanel value={activeTab} index={4}>
                         <References
                             loanID={loanID}
                             references={loanData?.references}
                             status={loanData.status}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
                         />
                     </CustomTabPanel>
-                    <CustomTabPanel value={activeTab} index={1}>
+                    <CustomTabPanel value={activeTab} index={5}>
                         <Documents
                             documentData={loanData.documents}
                             loanID={loanID}
                             status={loanData.status}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                            
                         />
                     </CustomTabPanel>
                 </Paper>

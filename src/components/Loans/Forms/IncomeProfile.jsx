@@ -54,8 +54,13 @@ const incomeProfileValidationSchema = yup.object().shape({
     remark: yup.string().trim().optional(),
 });
 
-
-const IncomeProfile = ({ loanID, incomeProfile, status }) => {
+const IncomeProfile = ({
+    loanID,
+    incomeProfile,
+    status,
+    setActiveTab,
+    activeTab,
+}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
@@ -98,6 +103,7 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
+                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
                 })
                 .catch(error => {
@@ -107,10 +113,9 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                 });
         },
     });
-    const [formDisabled, setFormDisabled] = useState(true);
+    const [formDisabled, setFormDisabled] = useState(false);
     const handleEmployerNameChange = useCallback(value => {
         if (formik.values.employer !== value) {
-            console.log('Event Name ', value);
 
             formik.setFieldValue('employer', value);
         }
@@ -236,7 +241,9 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                                     name="employer"
                                     disabled={formDisabled}
                                     value={formik.values.employer}
-                                    onInputChange={(event, value) => handleEmployerNameChange(value)}
+                                    onInputChange={(event, value) =>
+                                        handleEmployerNameChange(value)
+                                    }
                                     onChange={(event, value) => {
                                         // This handles both selection from dropdown and custom text entry
                                         formik.setFieldValue('employer', value);
@@ -246,10 +253,14 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                                             {...params}
                                             label="Employer Name"
                                             placeholder="Type or select an employer"
-                                            error={formik.touched.employer && formik.errors.employer}
+                                            error={
+                                                formik.touched.employer &&
+                                                formik.errors.employer
+                                            }
                                             helperText={
-                                                (formik.touched.employer && formik.errors.employer) ||
-                                                "Type to search or add a new employer"
+                                                (formik.touched.employer &&
+                                                    formik.errors.employer) ||
+                                                'Type to search or add a new employer'
                                             }
                                         />
                                     )}
@@ -431,8 +442,9 @@ const IncomeProfile = ({ loanID, incomeProfile, status }) => {
                             variant="contained"
                             fullWidth
                             color="secondary"
-                            onClick={() => setFormDisabled(prev => !prev)}>
-                            Edit
+                            disabled={formik.isSubmitting || activeTab === 0}
+                            onClick={() => setActiveTab(prev => prev - 1)}>
+                            Back
                         </Button>
                     </div>
                     <div>

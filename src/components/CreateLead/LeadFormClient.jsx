@@ -186,7 +186,7 @@ const LeadFormClient = props => {
                     variant="contained"
                     onClick={formik.handleSubmit}
                     disabled={formik.isSubmitting}>
-                    Submit
+                    Next
                 </Button>
             </Box>
         </Paper>

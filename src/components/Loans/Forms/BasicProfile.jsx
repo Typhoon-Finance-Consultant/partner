@@ -18,6 +18,7 @@ import * as yup from 'yup';
 import dayjs from 'dayjs';
 import { updateBasicDetails } from '&/services/loans';
 import DatePicker from '&/components/common/Form/DatePicker';
+import { act } from 'react';
 
 const basicProfileValidationSchema = yup.object({
     marital_status: yup.string().trim().required('Marital Status is required'),
@@ -28,7 +29,7 @@ const basicProfileValidationSchema = yup.object({
     dob: yup.date().required('Date of birth is required').nullable(true),
 });
 
-const BasicProfile = ({ profileData, loanID }) => {
+const BasicProfile = ({ profileData, loanID, setActiveTab, activeTab }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const formik = useFormik({
@@ -89,6 +90,7 @@ const BasicProfile = ({ profileData, loanID }) => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     action.setSubmitting(false);
+                    setActiveTab(prev => prev + 1);
                     setFormDisabled(true);
                 })
                 .catch(error => {
@@ -98,7 +100,7 @@ const BasicProfile = ({ profileData, loanID }) => {
                 });
         },
     });
-    const [formDisabled, setFormDisabled] = useState(true);
+    const [formDisabled, setFormDisabled] = useState(false);
     return (
         <Box className="mt-5">
             <Grid container spacing={4}>
@@ -288,8 +290,9 @@ const BasicProfile = ({ profileData, loanID }) => {
                             variant="contained"
                             fullWidth
                             color="secondary"
-                            onClick={() => setFormDisabled(prev => !prev)}>
-                            Edit
+                            disabled={formik.isSubmitting || activeTab === 0}
+                            onClick={() => setActiveTab(prev => prev - 1)}>
+                            Back
                         </Button>
                     </div>{' '}
                     <div>

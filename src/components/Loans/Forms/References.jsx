@@ -57,7 +57,7 @@ const referenceValidationSchema = yup.object().shape({
     //     .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
 });
 
-const References = ({ references, loanID, status }) => {
+const References = ({ references, loanID, status, setActiveTab, activeTab }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -94,6 +94,7 @@ const References = ({ references, loanID, status }) => {
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
+                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
                 })
                 .catch(error => {
@@ -104,7 +105,7 @@ const References = ({ references, loanID, status }) => {
         },
         validationSchema: referenceValidationSchema,
     });
-    const [formDisabled, setFormDisabled] = useState(true);
+    const [formDisabled, setFormDisabled] = useState(false);
 
     return (
         <Box>
@@ -435,13 +436,14 @@ const References = ({ references, loanID, status }) => {
                     <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
                         <div className="col-span-6"></div>
                         <div>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                color="secondary"
-                                onClick={() => setFormDisabled(prev => !prev)}>
-                                Edit
-                            </Button>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            color="secondary"
+                            disabled={formik.isSubmitting || activeTab === 0}
+                            onClick={() => setActiveTab(prev => prev - 1)}>
+                            Back
+                        </Button>
                         </div>
                         <div>
                             <Button
