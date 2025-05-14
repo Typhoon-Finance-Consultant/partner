@@ -49,7 +49,6 @@ const LoanTable = ({ loanData }) => {
                                     Status{' '}
                                 </TableCell>
                                 <TableCell className=" font-bold text-regal-blue">
-
                                     Payout %{' '}
                                 </TableCell>
                                 <TableCell className=" font-bold text-regal-blue">
@@ -61,36 +60,50 @@ const LoanTable = ({ loanData }) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {loanList?.map(loan => (
-                                <TableRow key={loan.loan_id}>
-                                    <TableCell>
-                                        <Link
-                                            to={`/loan-details/${loan.loan_id}`}>
-                                            {' '}
-                                            {loan.loan_id}
-                                        </Link>{' '}
-                                    </TableCell>
-                                    <TableCell>
-                                        {dayjs(loan.created_date).format(
-                                            'DD/MM/YYYY',
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        {loan.primary_applicant.full_name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {loan.amount_disbursed}
-                                    </TableCell>
-                                    <TableCell>
-                                        {loan?.provider?.name}
-                                    </TableCell>
-                                    <TableCell>{loan.status}</TableCell>
-                                    <TableCell>{loan.partner_commission*100/loan.amount_disbursed||'Not Calculated'}</TableCell>
-                                    <TableCell>{loan.partner_commission}</TableCell>
-                                    <TableCell>{loan.assigned_to}</TableCell>
-
-                                </TableRow>
-                            ))}
+                            {loanList
+                                ?.slice() 
+                                .sort(
+                                    (a, b) =>
+                                        new Date(b.created_date) -
+                                        new Date(a.created_date),
+                                )
+                                .map(loan => (
+                                    <TableRow key={loan.loan_id}>
+                                        <TableCell>
+                                            <Link
+                                                to={`/loan-details/${loan.loan_id}`}>
+                                                {' '}
+                                                {loan.loan_id}
+                                            </Link>{' '}
+                                        </TableCell>
+                                        <TableCell>
+                                            {dayjs(loan.created_date).format(
+                                                'DD/MM/YYYY',
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan.primary_applicant.full_name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan.amount_disbursed}
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan?.provider?.name}
+                                        </TableCell>
+                                        <TableCell>{loan.status}</TableCell>
+                                        <TableCell>
+                                            {(loan.partner_commission * 100) /
+                                                loan.amount_disbursed ||
+                                                'Not Calculated'}
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan.partner_commission}
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan.assigned_to}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
