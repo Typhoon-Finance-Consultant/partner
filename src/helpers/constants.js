@@ -163,6 +163,10 @@ export const DOCUMENT_LIST = [
     'GAS_BILL',
     'FORM_16',
     'ITR',
+    'GST',
+    'GUMASTA',
+    'MSME_UDYAM',
+    'OTHER',
 ];
 
 export const DOCUMENT_PURPOSE = [
