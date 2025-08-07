@@ -252,13 +252,17 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                                     label="City"
                                     size="small"
                                     disabled={formDisabled}
-                                    value={formik.values.permanent_address.city}
+                                    value={
+                                        formik.values.permanent_address.city ||
+                                        ''
+                                    }
                                     onChange={formik.handleChange}
                                     error={
                                         formik.touched.permanent_address
                                             ?.city &&
                                         !!formik.errors.permanent_address?.city
                                     }
+                                    InputLabelProps={{ shrink: true }}
                                     helperText={
                                         formik.touched.permanent_address
                                             ?.city &&
@@ -396,7 +400,7 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                                     disabled={formDisabled}
                                     value={
                                         formik.values.communication_address
-                                            ?.city
+                                            ?.city || ''
                                     }
                                     onChange={formik.handleChange}
                                     error={
@@ -405,6 +409,7 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                                         !!formik.errors.communication_address
                                             ?.city
                                     }
+                                    InputLabelProps={{ shrink: true }}
                                     helperText={
                                         formik.touched.communication_address
                                             ?.city &&
@@ -524,13 +529,17 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                                     label="City"
                                     size="small"
                                     disabled={formDisabled}
-                                    value={formik.values.workplace_address.city}
+                                    value={
+                                        formik.values.workplace_address.city ||
+                                        ''
+                                    }
                                     onChange={formik.handleChange}
                                     error={
                                         formik.touched.workplace_address
                                             ?.city &&
                                         !!formik.errors.workplace_address?.city
                                     }
+                                    InputLabelProps={{ shrink: true }}
                                     helperText={
                                         formik.touched.workplace_address
                                             ?.city &&
