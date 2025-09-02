@@ -22,6 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getDocumentList } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 import { uploadDocument } from '&/services/loans';
+import { coreApi } from '../../../services/axiosConfig';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -107,6 +108,60 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
     });
 
     const [formDisabled, setFormDisbaled] = useState(false);
+
+    const handleOpenDocument = async documentUrl => {
+        try {
+            let fullUrl;
+
+            // Check if documentUrl is already a full URL
+            if (documentUrl.startsWith('http')) {
+                // If it's already a full URL, use it directly but replace the port
+                fullUrl = documentUrl.replace(/:\d+/, '');
+            } else {
+                // If it's a relative path, construct the full URL
+                const documentPath = documentUrl.replace('/api/', '');
+                const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(
+                    /:\d+/,
+                    '',
+                ); // Remove port
+                fullUrl = `${baseUrl}${documentPath}`;
+            }
+
+            // Make authenticated request using fetch with manual headers
+            const token = await coreApi.getToken();
+            if (!token) {
+                alert('Authentication required. Please login again.');
+                return;
+            }
+
+            const response = await fetch(fullUrl, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                // Create a blob from the response data
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                // Open the document in a new window
+                window.open(url, '_blank');
+
+                // Clean up the object URL after a short delay
+                setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+            } else {
+                throw new Error(
+                    `HTTP ${response.status}: ${response.statusText}`,
+                );
+            }
+        } catch (error) {
+            console.error('Error opening document:', error);
+            alert('Failed to open document. Please try again.');
+        }
+    };
+
     if (isLoading) {
         return <Loader loaderText="Loading Document List" />;
     }
@@ -162,9 +217,23 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
                                         </Typography>
                                         <Typography className="text-lg">
                                             {' '}
-                                            <a href={item.file} target="_blank">
-                                                {item.file}{' '}
-                                            </a>
+                                            <Button
+                                                variant="text"
+                                                size="small"
+                                                onClick={() =>
+                                                    handleOpenDocument(
+                                                        item.file,
+                                                    )
+                                                }
+                                                style={{
+                                                    color: 'blue',
+                                                    textDecoration: 'none',
+                                                    textTransform: 'none',
+                                                    padding: 0,
+                                                    minWidth: 'auto',
+                                                }}>
+                                                View Document
+                                            </Button>
                                         </Typography>
                                     </Box>
                                 </Box>
