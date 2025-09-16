@@ -29,6 +29,10 @@ const bankValidationSchema = yup.object({
         .trim()
         .required('Re-enter account number is required')
         .oneOf([yup.ref('account_number')], true, 'Account numbers must match'),
+    name_as_on_bank_account: yup
+        .string()
+        .trim()
+        .required('Name as on bank account is required'),
     ifsc: yup
         .string()
         .trim()
@@ -40,7 +44,6 @@ const bankValidationSchema = yup.object({
     branch_state: yup.string().trim().required('Branch State is required'),
     type: yup.string().trim().required('Please select account type'),
 });
-
 
 const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -54,6 +57,7 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
             bank: bankData?.bank?.name || 'HDFC BANK',
             account_number: bankData?.account_number,
             re_enter_account_number: bankData?.account_number,
+            name_as_on_bank_account: bankData?.name_as_on_bank_account,
             ifsc: bankData?.ifsc,
             branch: bankData?.branch,
             branch_address: bankData?.branch_address,
@@ -93,18 +97,23 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                 getBankDetailsUsingIFSC(event.target.value).then(data => {
                     if (data.code === 200) {
                         formik.setFieldValue('branch', data?.response?.BRANCH);
-                        formik.setFieldValue('branch_city', data?.response?.CITY);
+                        formik.setFieldValue(
+                            'branch_city',
+                            data?.response?.CITY,
+                        );
                         formik.setFieldValue(
                             'branch_address',
                             data?.response?.ADDRESS,
                         );
-                        formik.setFieldValue('branch_state', data?.response?.STATE);
-                        formik.setFieldValue('bank', data?.response?.BANK); 
+                        formik.setFieldValue(
+                            'branch_state',
+                            data?.response?.STATE,
+                        );
+                        formik.setFieldValue('bank', data?.response?.BANK);
                     }
                 });
             }
         }
-       
     };
     if (isLoading) {
         return <Loader loaderText="Loading Bank details" />;
@@ -174,6 +183,27 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                                 helperText={
                                     formik.touched.re_enter_account_number &&
                                     formik.errors.re_enter_account_number
+                                }
+                            />
+                        </FormGroup>
+                        <FormGroup className="mt-8">
+                            <TextField
+                                name="name_as_on_bank_account"
+                                variant="outlined"
+                                label="Name as on Bank Account"
+                                size="small"
+                                disabled={formDisabled}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.name_as_on_bank_account}
+                                fullWidth
+                                error={
+                                    formik.touched.name_as_on_bank_account &&
+                                    formik.errors.name_as_on_bank_account
+                                }
+                                helperText={
+                                    formik.touched.name_as_on_bank_account &&
+                                    formik.errors.name_as_on_bank_account
                                 }
                             />
                         </FormGroup>
@@ -276,9 +306,11 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch_state
-                                    ? formik.values.branch_state
-                                    : ''}
+                                value={
+                                    formik.values.branch_state
+                                        ? formik.values.branch_state
+                                        : ''
+                                }
                                 disabled={formDisabled}
                                 fullWidth
                                 size="small"
@@ -300,9 +332,11 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                                 type="text"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.branch_address
-                                    ? formik.values.branch_address
-                                    : ''}
+                                value={
+                                    formik.values.branch_address
+                                        ? formik.values.branch_address
+                                        : ''
+                                }
                                 disabled={formDisabled}
                                 fullWidth
                                 size="small"
@@ -320,33 +354,34 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                 </Grid>
 
                 {status !== 'Loan Disbursal Complete' && (
-                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                    <div className="col-span-6">
-                        Account Verification :{' '}
-                        {bankData?.is_verified ? 'Complete' : 'Pending'}
+                    <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                        <div className="col-span-6">
+                            Account Verification :{' '}
+                            {bankData?.is_verified ? 'Complete' : 'Pending'}
+                        </div>
+                        <div>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                color="secondary"
+                                disabled={
+                                    formik.isSubmitting || activeTab === 0
+                                }
+                                onClick={() => setActiveTab(prev => prev - 1)}>
+                                Back
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                disabled={formik.isSubmitting}
+                                onClick={formik.handleSubmit}>
+                                Submit
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                    <Button
-                            variant="contained"
-                            fullWidth
-                            color="secondary"
-                            disabled={formik.isSubmitting || activeTab === 0}
-                            onClick={() => setActiveTab(prev => prev - 1)}>
-                            Back
-                        </Button>
-                    </div>
-                    <div>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={formik.isSubmitting}
-                            onClick={formik.handleSubmit}>
-                            Submit
-                        </Button>
-                    </div>
-                </div>
-
                 )}
             </Box>
             <Snackbar
