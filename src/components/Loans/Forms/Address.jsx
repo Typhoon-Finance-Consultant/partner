@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import * as yup from 'yup';
 import { INDIAN_STATES } from '&/helpers/constants';
-import { updateAddress, getPinCode } from '&/services/loans';
+import { updateAddress, getPinCodeWithFallback } from '&/services/loans';
 
 const addressSchema = yup.object().shape({
     line1: yup.string().trim().required('Address Line 1 is required'),
@@ -96,32 +96,41 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
 
         // When we have a complete 6-digit pincode, fetch and update city and state
         if (pincode.length === 6) {
-            getPinCode(pincode).then(data => {
-                if (data.code === 200) {
-                    // Find the matching state value in INDIAN_STATES
-                    const validState = INDIAN_STATES.find(
-                        state => state.label === data.response?.state,
-                    );
+            getPinCodeWithFallback(pincode)
+                .then(data => {
+                    console.log('Pincode API Response:', data);
 
-                    // Update city and state for the specific address type
-                    formik.setFieldValue(
-                        `${addressType}.city`,
-                        data?.response?.city || '',
-                    );
+                    if (data.code === 200 && data.response) {
+                        // Find the matching state value in INDIAN_STATES
+                        const validState = INDIAN_STATES.find(
+                            state => state.label === data.response?.state,
+                        );
 
-                    formik.setFieldValue(
-                        `${addressType}.state`,
-                        validState ? validState.value : data.response?.state,
-                    );
+                        // Update city and state for the specific address type
+                        formik.setFieldValue(
+                            `${addressType}.city`,
+                            data?.response?.city || '',
+                        );
 
-                    console.log(`Updated ${addressType} with:`, {
-                        city: data?.response?.city,
-                        state: validState
-                            ? validState.value
-                            : data.response?.state,
-                    });
-                }
-            });
+                        formik.setFieldValue(
+                            `${addressType}.state`,
+                            validState
+                                ? validState.value
+                                : data.response?.state,
+                        );
+
+                        console.log(`Updated ${addressType} with:`, {
+                            city: data?.response?.city,
+                            state: validState
+                                ? validState.value
+                                : data.response?.state,
+                            source: data.source,
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching pincode details:', error);
+                });
         }
     };
     const [formDisabled, setFormDisabled] = useState(false);

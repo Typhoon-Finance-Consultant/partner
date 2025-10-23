@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
     getBankList,
     updateBankAccount,
-    getBankDetailsUsingIFSC,
+    getBankDetailsUsingIFSCWithFallback,
 } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 
@@ -94,24 +94,61 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
         if (event.target.value !== formik.values.ifsc) {
             formik.setFieldValue('ifsc', event.target.value);
             if (event.target.value.length === 11) {
-                getBankDetailsUsingIFSC(event.target.value).then(data => {
-                    if (data.code === 200) {
-                        formik.setFieldValue('branch', data?.response?.BRANCH);
-                        formik.setFieldValue(
-                            'branch_city',
-                            data?.response?.CITY,
-                        );
-                        formik.setFieldValue(
-                            'branch_address',
-                            data?.response?.ADDRESS,
-                        );
-                        formik.setFieldValue(
-                            'branch_state',
-                            data?.response?.STATE,
-                        );
-                        formik.setFieldValue('bank', data?.response?.BANK);
-                    }
-                });
+                getBankDetailsUsingIFSCWithFallback(event.target.value)
+                    .then(data => {
+                        console.log('IFSC API Response:', data); // Debug log
+
+                        // Check if response has the expected structure with code and response
+                        if (data?.code === 200 && data?.response) {
+                            formik.setFieldValue(
+                                'branch',
+                                data.response.BRANCH,
+                            );
+                            formik.setFieldValue(
+                                'branch_city',
+                                data.response.CITY,
+                            );
+                            formik.setFieldValue(
+                                'branch_address',
+                                data.response.ADDRESS,
+                            );
+                            formik.setFieldValue(
+                                'branch_state',
+                                data.response.STATE,
+                            );
+                            formik.setFieldValue('bank', data.response.BANK);
+
+                            console.log(
+                                'Updated bank details from:',
+                                data.source,
+                            );
+                        }
+                        // Handle direct response structure (fallback compatibility)
+                        else if (data?.BANK) {
+                            formik.setFieldValue('branch', data.BRANCH);
+                            formik.setFieldValue('branch_city', data.CITY);
+                            formik.setFieldValue(
+                                'branch_address',
+                                data.ADDRESS,
+                            );
+                            formik.setFieldValue('branch_state', data.STATE);
+                            formik.setFieldValue('bank', data.BANK);
+
+                            console.log(
+                                'Updated bank details from direct response',
+                            );
+                        }
+                        // If no valid data found
+                        else {
+                            console.error(
+                                'Invalid IFSC response structure:',
+                                data,
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching IFSC details:', error);
+                    });
             }
         }
     };
