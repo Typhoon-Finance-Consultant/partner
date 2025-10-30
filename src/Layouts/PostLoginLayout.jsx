@@ -59,14 +59,38 @@ const PostLoginLayout = ({ children }) => {
         dispatch(logOut());
     };
     const [showMenu, setShowMenu] = useState();
-    const {pathname} = useLocation();
-    const { data, isLoading } = useQuery({
+    const { pathname } = useLocation();
+    const { data, isLoading, error } = useQuery({
         queryKey: ['userProfile'],
         queryFn: async () => me(),
+        retry: (failureCount, error) => {
+            // Don't retry on 401 errors as the user will be redirected
+            if (error?.response?.status === 401) {
+                return false;
+            }
+            return failureCount < 3;
+        },
+        onError: error => {
+            // Additional error handling if needed
+            console.error('User profile fetch error:', error);
+            if (error?.response?.status === 401) {
+                // The axios interceptor should have already handled this,
+                // but we can add additional cleanup here if needed
+                console.log('401 error detected in user profile query');
+            }
+        },
     });
     if (isLoading) {
         return <Loader />;
     }
+
+    // If there's a 401 error, the axios interceptor should have already redirected
+    // But as a safety check, if we have an error and no data, redirect to login
+    if (error && !data && error?.response?.status === 401) {
+        navigate('/login');
+        return null;
+    }
+
     const userProfile = data?.code === 200 ? data.response : {};
     console.log('location Data', location);
     return (
@@ -98,7 +122,7 @@ const PostLoginLayout = ({ children }) => {
                                 key={item.name}
                                 fullWidth
                                 color="white"
-                                className={`text-gray-300 ${pathname === item.path ? " text-black bg-gray-100" : "bg-transparent"}`}
+                                className={`text-gray-300 ${pathname === item.path ? ' text-black bg-gray-100' : 'bg-transparent'}`}
                                 onClick={() => handleMenuClick(item.path)}
                                 href={item.path}>
                                 {item.name}

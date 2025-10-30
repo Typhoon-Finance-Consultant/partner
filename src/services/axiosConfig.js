@@ -4,6 +4,40 @@ import { persistor, store } from '../features/store';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Global variable to store navigation function
+let navigate = null;
+
+// Function to set the navigate function from router
+export const setNavigateFunction = navigationFunction => {
+    navigate = navigationFunction;
+};
+
+// Global logout function that handles both Redux and navigation
+const logOutUser = () => {
+    console.log('Logging out user due to 401 response');
+
+    // Clear Redux state
+    store.dispatch(logOut());
+
+    // Clear persisted data
+    if (persistor) {
+        persistor.purge();
+    }
+
+    // Clear localStorage (if any auth data is stored there)
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+
+    // Navigate to login if navigation function is available
+    if (navigate) {
+        navigate('/login', { replace: true });
+    } else {
+        // Fallback to window location if navigate is not available
+        window.location.href = '/login';
+    }
+};
+
 class AxiosInstance {
     constructor(baseURL) {
         AxiosInstance.baseURL = baseURL;
@@ -94,7 +128,7 @@ class AxiosInstance {
     };
 
     logOutUser = () => {
-        store.dispatch(logOut());
+        logOutUser(); // Use the global logout function
     };
     makeAuthenticatedGetCall = async url => {
         try {
@@ -119,7 +153,7 @@ class AxiosInstance {
         }
     };
 
-    makeAuthenticatedPostCall = async (url, data, customHeader={}) => {
+    makeAuthenticatedPostCall = async (url, data, customHeader = {}) => {
         try {
             const accessToken = await this.getToken();
 
@@ -132,7 +166,7 @@ class AxiosInstance {
             const headers = {
                 // 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
-                ...customHeader
+                ...customHeader,
             };
 
             return this.axios.post(url, data, {
