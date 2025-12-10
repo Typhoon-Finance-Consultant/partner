@@ -1,13 +1,148 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Typhoon Fincare - Partners</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/favicon_io/apple-touch-icon.png" />
+
+        <!-- Enhanced viewport for mobile optimization -->
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+
+        <!-- PWA Meta Tags -->
+        <meta name="theme-color" content="#FF0000" />
+        <meta
+            name="description"
+            content="Typhoon Fincare Partner Portal - Manage loans, applications, and invoices" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Typhoon Partner" />
+
+        <!-- Prevent text size adjustment on orientation change -->
+        <meta name="format-detection" content="telephone=no" />
+
+        <title>Typhoon Fincare - Partners</title>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.jsx"></script>
+        <script>
+            // Service worker registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function () {
+                    navigator.serviceWorker.register('/service-worker.js').then(
+                        function (registration) {
+                            console.log(
+                                'ServiceWorker registration successful with scope: ',
+                                registration.scope,
+                            );
+                        },
+                        function (err) {
+                            console.log(
+                                'ServiceWorker registration failed: ',
+                                err,
+                            );
+                        },
+                    );
+                });
+            }
+
+            // PWA install/open prompt logic
+            let deferredPrompt;
+            let isStandalone =
+                window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true;
+
+            function showPWAPrompt(type) {
+                const promptDiv = document.createElement('div');
+                promptDiv.style.position = 'fixed';
+                promptDiv.style.bottom = '24px';
+                promptDiv.style.left = '50%';
+                promptDiv.style.transform = 'translateX(-50%)';
+                promptDiv.style.background = '#fff';
+                promptDiv.style.color = '#FF0000';
+                promptDiv.style.border = '1px solid #FF0000';
+                promptDiv.style.borderRadius = '8px';
+                promptDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+                promptDiv.style.padding = '16px 24px';
+                promptDiv.style.zIndex = '9999';
+                promptDiv.style.fontFamily = 'inherit';
+                promptDiv.style.display = 'flex';
+                promptDiv.style.alignItems = 'center';
+                promptDiv.style.gap = '12px';
+                let btn = document.createElement('button');
+                btn.style.background = '#FF0000';
+                btn.style.color = '#fff';
+                btn.style.border = 'none';
+                btn.style.borderRadius = '4px';
+                btn.style.padding = '8px 16px';
+                btn.style.cursor = 'pointer';
+                btn.style.fontWeight = 'bold';
+                btn.style.fontSize = '1rem';
+                btn.innerText = type === 'install' ? 'Install App' : 'Open App';
+                let msg = document.createElement('span');
+                msg.innerText =
+                    type === 'install'
+                        ? 'Install Typhoon Partner for a better experience.'
+                        : 'Open Typhoon Partner as an app.';
+                promptDiv.appendChild(msg);
+                promptDiv.appendChild(btn);
+                document.body.appendChild(promptDiv);
+                btn.onclick = function () {
+                    if (type === 'install' && deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(function (choiceResult) {
+                            if (choiceResult.outcome === 'accepted') {
+                                console.log('PWA installed');
+                            }
+                            promptDiv.remove();
+                        });
+                    } else if (type === 'open') {
+                        window.location.reload();
+                        promptDiv.remove();
+                    }
+                };
+                // Remove after 15 seconds or on click outside
+                setTimeout(() => promptDiv.remove(), 15000);
+                promptDiv.onclick = e => e.stopPropagation();
+                document.body.addEventListener('click', function handler() {
+                    promptDiv.remove();
+                    document.body.removeEventListener('click', handler);
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                // Show install prompt if not standalone and installable
+                if (!isStandalone) {
+                    window.addEventListener(
+                        'beforeinstallprompt',
+                        function (e) {
+                            e.preventDefault();
+                            deferredPrompt = e;
+                            showPWAPrompt('install');
+                        },
+                    );
+
+                    // Track installation in localStorage
+                    window.addEventListener('appinstalled', function () {
+                        localStorage.setItem('typhoonPWAInstalled', 'true');
+                    });
+
+                    // If installed and not in standalone, show open prompt
+                    setTimeout(function () {
+                        const isInstalled =
+                            localStorage.getItem('typhoonPWAInstalled') ===
+                            'true';
+                        if (isInstalled && !isStandalone) {
+                            showPWAPrompt('open');
+                        }
+                    }, 1000);
+                }
+                // Never show 'open' prompt in standalone mode
+            });
+        </script>
+    </body>
 </html>

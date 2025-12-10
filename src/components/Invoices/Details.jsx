@@ -89,7 +89,7 @@ const InvoiceDetailsTable = ({ invoiceData }) => {
                                     handleOpenInvoice(invoiceData.invoice)
                                 }
                                 style={{
-                                    color: 'blue',
+                                    color: 'red',
                                     textDecoration: 'none',
                                     textTransform: 'none',
                                     padding: 0,

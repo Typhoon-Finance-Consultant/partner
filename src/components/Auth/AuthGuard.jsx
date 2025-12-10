@@ -5,7 +5,6 @@ import PostLoginLayout from '&/Layouts/PostLoginLayout';
 
 const AuthGuard = () => {
     const user = useSelector(selectCurrentUser);
-    console.log('Auth User____', user);
     const location = useLocation();
     if (!user) {
         return <Navigate to="/login" state={{ from: location }} replace />;

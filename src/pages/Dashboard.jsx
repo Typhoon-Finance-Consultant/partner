@@ -1,6 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Container, Box, Grid, Alert, Typography, Divider } from '@mui/material';
+import {
+    Container,
+    Box,
+    Grid,
+    Alert,
+    Typography,
+    Divider,
+} from '@mui/material';
 import user from '&/services/user';
 import { loansList } from '&/services/loans';
 import InfoCards from '&/components/Dashboard/InfoCards';
@@ -14,42 +21,55 @@ const Dashboard = () => {
         queryKey: ['dashboard'],
         queryFn: async () => user.getDashboardData(),
     });
-    
+
     const { data: userData, isLoading: isProfileLoading } = useQuery({
         queryKey: ['userProfile'],
         queryFn: async () => user.me(),
     });
-    
-    // State for loan table - similar to Loans.jsx
+
+    // State for loan table - match Loans.jsx
     const [formData, setFormData] = useState({});
     const [pagination, setPagination] = useState({
-        limit: 10, // Setting lower limit for dashboard
-        offset: 0,
+        page: 1,
+        pageSize: 10,
     });
 
     // Parameters for loans API
     const loanQueryParams = {
-        from_date: !!formData.fromDate ? formData.fromDate.format('DD/MM/YYYY') : undefined,
-        to_date: !!formData.toDate ? formData.toDate.format('DD/MM/YYYY') : undefined,
+        from_date: !!formData.fromDate
+            ? formData.fromDate.format('DD/MM/YYYY')
+            : undefined,
+        to_date: !!formData.toDate
+            ? formData.toDate.format('DD/MM/YYYY')
+            : undefined,
         status: formData.status,
         search_string: formData.searchString,
-        limit: pagination.limit,
-        offset: pagination.offset,
     };
 
     // Loan data query
-    const { 
-        data: loanData, 
-        isLoading: isLoanLoading, 
-        refetch: refetchLoans
+    const {
+        data: loanData,
+        isLoading: isLoanLoading,
+        refetch: refetchLoans,
     } = useQuery({
-        queryKey: ['dashboardLoanList', JSON.stringify(loanQueryParams)],
-        queryFn: async () => loansList(loanQueryParams),
+        queryKey: [
+            'dashboardLoanList',
+            JSON.stringify(loanQueryParams),
+            pagination.page,
+            pagination.pageSize,
+        ],
+        queryFn: async () =>
+            loansList(loanQueryParams, pagination.page, pagination.pageSize),
     });
-    
-    // Callback to update pagination
-    const setPageData = useCallback(data => setPagination(data), []);
-    
+
+    // Pagination handlers
+    const handlePageChange = useCallback(newPage => {
+        setPagination(prev => ({ ...prev, page: newPage }));
+    }, []);
+    const handlePageSizeChange = useCallback(newPageSize => {
+        setPagination({ page: 1, pageSize: newPageSize });
+    }, []);
+
     // Handler for form updates
     const handleFormUpdate = newFormData => {
         setFormData(newFormData);
@@ -59,45 +79,58 @@ const Dashboard = () => {
     if (isLoading || isProfileLoading || isLoanLoading) {
         return <Loader />;
     }
-    
+
     const dashboardData = data?.response || {};
     const userProfile = userData?.code === 200 ? userData.response : {};
-    const loansResponse = loanData?.response;
+    const loansResponse = loanData;
     const hasBank = userProfile?.bank_account;
 
     return (
         <Container
             maxWidth={false}
-            className="bg-slate-200 min-h-lvh mt-5 sm:mt-0">
+            className="bg-slate-200 min-h-screen px-0 sm:px-3">
             {!hasBank ? (
-                <Box className="py-5 mx-5">
-                    <Alert severity="warning">
+                <Box className="py-3 sm:py-5 px-3 sm:px-5">
+                    <Alert
+                        severity="warning"
+                        sx={{
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                        }}>
                         Profile is incomplete, Please{' '}
-                        <Link className="text-sky-500" to="/update-profile">
+                        <Link
+                            className="text-sky-500 underline"
+                            to="/update-profile">
                             click here
                         </Link>{' '}
                         to continue
                     </Alert>
                 </Box>
             ) : null}
-            
+
             <Grid container>
                 <Grid item xs={12}>
                     <InfoCards dashboardData={dashboardData} />
                 </Grid>
             </Grid>
-            
+
             {/* Loan Table Section */}
-            <Box >
-                <Typography variant="h5" className="my-4 font-bold">
+            <Box className="px-2 sm:px-0">
+                <Typography
+                    variant="h5"
+                    className="my-3 sm:my-4 font-bold px-1"
+                    sx={{
+                        fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                    }}>
                     Recent Loans
                 </Typography>
-                
-              
-                
-                {!loansResponse?.loan_data?.length > 0 ? (
-                    <Box className="mx-auto w-full justify-center align-middle my-10">
-                        <Typography className="text-center" variant="h6">
+
+                {!loansResponse?.results?.length ? (
+                    <Box className="mx-auto w-full justify-center align-middle my-6 sm:my-10 px-4">
+                        <Typography
+                            className="text-center text-gray-500"
+                            sx={{
+                                fontSize: { xs: '1rem', sm: '1.25rem' },
+                            }}>
                             No Loans Found
                         </Typography>
                     </Box>
@@ -105,7 +138,8 @@ const Dashboard = () => {
                     <LoanTable
                         loanData={loansResponse}
                         pagination={pagination}
-                        setPagination={setPageData}
+                        onPageChange={handlePageChange}
+                        onPageSizeChange={handlePageSizeChange}
                     />
                 )}
             </Box>

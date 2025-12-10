@@ -10,9 +10,8 @@ import {
     Button,
     TextField,
     Snackbar,
-
     Modal,
-    Paper
+    Paper,
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -43,7 +42,6 @@ const Login = () => {
                 key_name: 'MOBILE',
                 purpose: 'MOBILE NUMBER VERIFICATION',
             });
-            console.log('SEND OTP API RESPONSE', response);
             if (response.code === 200) {
                 setSnackbarMessage(response.response);
                 setModalOpen(true);
@@ -52,7 +50,6 @@ const Login = () => {
                 setModalOpen(true);
             }
         } catch (error) {
-            console.log('Error OTP', error);
             setSnackbarMessage('Failed to send OTP');
             setModalOpen(true);
         }
@@ -67,7 +64,6 @@ const Login = () => {
                 password: otp,
             });
 
-            console.log('VERIFY OTP API RESPONSE', response);
             if (response.code === 200) {
                 // OTP verified successfully
                 // Complete the login process
@@ -111,7 +107,6 @@ const Login = () => {
         onSubmit: (values, actions) => {
             userService.login(values).then(data => {
                 actions.setSubmitting(false);
-                console.log('formik login Actions', data);
 
                 if (data.code === 200) {
                     // Store the credentials
@@ -166,7 +161,6 @@ const Login = () => {
     });
 
     useEffect(() => {
-        console.log('Statefrom rendered', state?.pathname);
         if (user) {
             if (state?.pathname && state?.pathname !== 'login') {
                 return navigate(state?.pathname);
@@ -180,21 +174,28 @@ const Login = () => {
             fixed={false}
             maxWidth={false}
             disableGutters={true}
-            className="bg-slate-200 min-h-lvh"
-            //   sx={{ minHeight: "100vh" }}
-        >
+            className="bg-slate-200 min-h-screen px-4 sm:px-0">
             {/* <PreloginHeader /> */}
 
-            <div className="text-center mx-auto">
-
-                <img src={Logo} height={140} width={240} className="mx-auto" />
+            <div className="text-center mx-auto pt-6 sm:pt-8">
+                <img
+                    src={Logo}
+                    className="mx-auto h-20 w-auto sm:h-28 md:h-32"
+                    alt="Logo"
+                />
             </div>
-            <Grid container className="pt-10 ">
-                <Grid item xs={12} md={4} className="mx-auto">
-                    <Card raised className="px-4 py-8 sm:mx-2">
-                        <CardContent>
-                            <div className="w-full flex flex-col items-center">
-                                <h2 className="text-center text-teal font-bold text-3xl">
+            <Grid container className="pt-6 sm:pt-10 pb-6">
+                <Grid
+                    item
+                    xs={12}
+                    sm={10}
+                    md={6}
+                    lg={4}
+                    className="mx-auto px-2 sm:px-0">
+                    <Card raised className="px-4 sm:px-6 py-6 sm:py-8">
+                        <CardContent className="px-2 sm:px-4">
+                            <div className="w-full flex flex-col items-center mb-4">
+                                <h2 className="text-center text-teal font-bold text-2xl sm:text-3xl">
                                     LOGIN
                                 </h2>
                             </div>
@@ -242,7 +243,6 @@ const Login = () => {
                                     />
                                 </div>
                                 <Typography className="text-right text-indigo-600">
-
                                     <Link to="/forgot-password">
                                         Forgot Password?
                                     </Link>

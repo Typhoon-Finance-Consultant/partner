@@ -63,23 +63,36 @@ const LoanDetails = props => {
 
     const loanData = data?.code === 200 ? data.response?.loan_data : {};
     return (
-        <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
-            <div className="p-4 flex justify-between align-middle">
-                <Button>
-                    <Link to="/loans" replace>
+        <Container
+            maxWidth={false}
+            className="bg-slate-200 min-h-screen px-2 sm:px-3">
+            <div className="py-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ minWidth: { xs: '100%', sm: 'auto' } }}>
+                    <Link to="/loans" replace className="no-underline">
                         Go Back
                     </Link>
                 </Button>
                 <LabelValue labelName="Loan ID" labelValue={loanID} />
             </div>
-            <Box className="w-full ">
+            <Box className="w-full pb-4">
                 <LoanDetailHeader loanData={loanData} />
-                <Paper>
+                <Paper elevation={2}>
                     <Tabs
                         variant="scrollable"
                         scrollButtons="auto"
+                        allowScrollButtonsMobile
                         value={activeTab}
-                        onChange={handleTabChange}>
+                        onChange={handleTabChange}
+                        sx={{
+                            '& .MuiTab-root': {
+                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                minHeight: { xs: 48, sm: 60 },
+                                py: { xs: 1, sm: 1.5 },
+                            },
+                        }}>
                         <Tab label="Basic Profile" />
                         <Tab
                             label="Income Profile"
@@ -179,7 +192,6 @@ const LoanDetails = props => {
                             status={loanData.status}
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
-                            
                         />
                     </CustomTabPanel>
                 </Paper>

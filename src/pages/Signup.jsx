@@ -74,7 +74,6 @@ const Signup = () => {
                 key_name: 'MOBILE',
                 purpose: 'MOBILE NUMBER VERIFICATION',
             });
-            console.log('SEND OTP API RESPONSE', response);
             if (response.code === 200) {
                 setSnackBarOpen(true);
                 setSnackMessage(response.response);
@@ -83,10 +82,9 @@ const Signup = () => {
                 setSnackMessage(response.message);
             }
         } catch (error) {
-            console.log('Error OTP', error);
             setSnackBarOpen(true);
         } finally {
-            console.log('API RESPONSE DONE SEND OTP');
+            console.error('Error sending OTP', error);
         }
     };
 
@@ -98,7 +96,6 @@ const Signup = () => {
             password: otp,
         })
             .then(data => {
-                console.log('VERIFY OTP API RESPONSE', data);
                 if (data.code === 200) {
                     setOTPVerified(true);
                     // Complete the registration process
@@ -136,7 +133,6 @@ const Signup = () => {
             registerPartner(values)
                 .then(data => {
                     actions.setSubmitting(false);
-                    console.log('formik login Actions', data);
 
                     if (data.code === 200) {
                         // Registration successful, now send OTP

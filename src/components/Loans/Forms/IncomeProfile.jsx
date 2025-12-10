@@ -84,10 +84,11 @@ const IncomeProfile = ({
                 incomeProfile?.total_work_experience_in_months || 0,
             current_work_experience_in_months:
                 incomeProfile?.current_work_experience_in_months || 0,
+            work_email: incomeProfile?.work_email || '',
+            office_number: incomeProfile?.office_number || '',
         },
         // validationSchema: incomeProfileValidationSchema,
         onSubmit: (values, actions) => {
-            console.log('Upload Income Response', values);
             const body = {
                 ...values,
 
@@ -113,18 +114,17 @@ const IncomeProfile = ({
                 });
         },
     });
-    const [formDisabled, setFormDisabled] = useState(false);
+    const [formDisabled, setFormDisabled] = useState(
+        status === 'Loan Disbursal Complete',
+    );
     const handleEmployerNameChange = useCallback(value => {
         if (formik.values.employer !== value) {
-
             formik.setFieldValue('employer', value);
         }
     });
 
     const handleDesignationChange = useCallback(value => {
         if (formik.values.designation !== value) {
-            console.log('Event Name  2', value);
-
             formik.setFieldValue('designation', value);
         }
     });
@@ -140,10 +140,10 @@ const IncomeProfile = ({
     // : [];
 
     return (
-        <Box className="mt-5">
-            <Grid container spacing={4}>
+        <Box className="mt-3 sm:mt-5 px-2 sm:px-0">
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                 <Grid item xs={12} md={4}>
-                    <Box className="py-2">
+                    <Box className="py-1 sm:py-2">
                         <FormControl fullWidth className="mb-8">
                             <InputLabel size="small" id="income_type">
                                 Income Type
@@ -229,131 +229,187 @@ const IncomeProfile = ({
                     </Box>
                 </Grid>
                 {formik.values.income_type === 1 ? (
-                    <Grid item xs={12} md={4}>
-                        <Box className="py-2">
-                            <FormControl fullWidth className="mb-8">
-                                <Autocomplete
-                                    id="employer"
-                                    options={employerNameList}
-                                    freeSolo
-                                    autoComplete
-                                    size="small"
-                                    name="employer"
-                                    disabled={formDisabled}
-                                    value={formik.values.employer}
-                                    onInputChange={(event, value) =>
-                                        handleEmployerNameChange(value)
-                                    }
-                                    onChange={(event, value) => {
-                                        // This handles both selection from dropdown and custom text entry
-                                        formik.setFieldValue('employer', value);
-                                    }}
-                                    renderInput={params => (
-                                        <TextField
-                                            {...params}
-                                            label="Employer Name"
-                                            placeholder="Type or select an employer"
-                                            error={
-                                                formik.touched.employer &&
-                                                formik.errors.employer
-                                            }
-                                            helperText={
-                                                (formik.touched.employer &&
-                                                    formik.errors.employer) ||
-                                                'Type to search or add a new employer'
-                                            }
-                                        />
-                                    )}
-                                />
-                            </FormControl>
-                            <FormControl fullWidth className="mb-8">
-                                <Autocomplete
-                                    size="small"
-                                    id="designation"
-                                    options={DESIGNATION_OPTIONS}
-                                    autoComplete
-                                    freeSolo
-                                    disabled={formDisabled}
-                                    onInputChange={(field, value) =>
-                                        handleDesignationChange(value)
-                                    }
-                                    value={formik.values.designation}
-                                    renderInput={params => (
-                                        <TextField
-                                            {...params}
-                                            label="Designation"
-                                            error={
-                                                formik.touched.designation &&
-                                                formik.errors.designation
-                                            }
-                                            helperText={
-                                                formik.touched.designation &&
-                                                formik.errors.designation
-                                            }
-                                        />
-                                    )}
-                                />
-                            </FormControl>
-                            <FormControl fullWidth className="mb-8">
-                                <TextField
-                                    name="total_work_experience_in_months"
-                                    variant="outlined"
-                                    label="Total Work Experience in Months"
-                                    type="text"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    value={
-                                        formik.values
-                                            .total_work_experience_in_months
-                                    }
-                                    disabled={formDisabled}
-                                    fullWidth
-                                    size="small"
-                                    error={
-                                        formik.touched
-                                            .total_work_experience_in_months &&
-                                        formik.errors
-                                            .total_work_experience_in_months
-                                    }
-                                    helperText={
-                                        formik.touched
-                                            .total_work_experience_in_months &&
-                                        formik.errors
-                                            .total_work_experience_in_months
-                                    }
-                                />
-                            </FormControl>
-                            <FormControl fullWidth className="mb-8">
-                                <TextField
-                                    name="current_work_experience_in_months"
-                                    variant="outlined"
-                                    label="Cuurent Work Experience in Months"
-                                    type="number"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    value={
-                                        formik.values
-                                            .current_work_experience_in_months
-                                    }
-                                    disabled={formDisabled}
-                                    fullWidth
-                                    size="small"
-                                    error={
-                                        formik.touched
-                                            .current_work_experience_in_months &&
-                                        formik.errors
-                                            .current_work_experience_in_months
-                                    }
-                                    helperText={
-                                        formik.touched
-                                            .current_work_experience_in_months &&
-                                        formik.errors
-                                            .current_work_experience_in_months
-                                    }
-                                />
-                            </FormControl>
-                        </Box>
-                    </Grid>
+                    <>
+                        <Grid item xs={12} md={4}>
+                            <Box className="py-2">
+                                <FormControl fullWidth className="mb-8">
+                                    <Autocomplete
+                                        id="employer"
+                                        options={employerNameList}
+                                        freeSolo
+                                        autoComplete
+                                        size="small"
+                                        name="employer"
+                                        disabled={formDisabled}
+                                        value={formik.values.employer}
+                                        onInputChange={(event, value) =>
+                                            handleEmployerNameChange(value)
+                                        }
+                                        onChange={(event, value) => {
+                                            // This handles both selection from dropdown and custom text entry
+                                            formik.setFieldValue(
+                                                'employer',
+                                                value,
+                                            );
+                                        }}
+                                        renderInput={params => (
+                                            <TextField
+                                                {...params}
+                                                label="Employer Name"
+                                                placeholder="Type or select an employer"
+                                                error={
+                                                    formik.touched.employer &&
+                                                    formik.errors.employer
+                                                }
+                                                helperText={
+                                                    (formik.touched.employer &&
+                                                        formik.errors
+                                                            .employer) ||
+                                                    'Type to search or add a new employer'
+                                                }
+                                            />
+                                        )}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth className="mb-8">
+                                    <Autocomplete
+                                        size="small"
+                                        id="designation"
+                                        options={DESIGNATION_OPTIONS}
+                                        autoComplete
+                                        freeSolo
+                                        disabled={formDisabled}
+                                        onInputChange={(field, value) =>
+                                            handleDesignationChange(value)
+                                        }
+                                        value={formik.values.designation}
+                                        renderInput={params => (
+                                            <TextField
+                                                {...params}
+                                                label="Designation"
+                                                error={
+                                                    formik.touched
+                                                        .designation &&
+                                                    formik.errors.designation
+                                                }
+                                                helperText={
+                                                    formik.touched
+                                                        .designation &&
+                                                    formik.errors.designation
+                                                }
+                                            />
+                                        )}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth className="mb-8">
+                                    <TextField
+                                        name="total_work_experience_in_months"
+                                        variant="outlined"
+                                        label="Total Work Experience in Months"
+                                        type="text"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        value={
+                                            formik.values
+                                                .total_work_experience_in_months
+                                        }
+                                        disabled={formDisabled}
+                                        fullWidth
+                                        size="small"
+                                        error={
+                                            formik.touched
+                                                .total_work_experience_in_months &&
+                                            formik.errors
+                                                .total_work_experience_in_months
+                                        }
+                                        helperText={
+                                            formik.touched
+                                                .total_work_experience_in_months &&
+                                            formik.errors
+                                                .total_work_experience_in_months
+                                        }
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth className="mb-8">
+                                    <TextField
+                                        name="current_work_experience_in_months"
+                                        variant="outlined"
+                                        label="Cuurent Work Experience in Months"
+                                        type="number"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        value={
+                                            formik.values
+                                                .current_work_experience_in_months
+                                        }
+                                        disabled={formDisabled}
+                                        fullWidth
+                                        size="small"
+                                        error={
+                                            formik.touched
+                                                .current_work_experience_in_months &&
+                                            formik.errors
+                                                .current_work_experience_in_months
+                                        }
+                                        helperText={
+                                            formik.touched
+                                                .current_work_experience_in_months &&
+                                            formik.errors
+                                                .current_work_experience_in_months
+                                        }
+                                    />
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Box className="py-2">
+                                <FormControl fullWidth className="mb-8">
+                                    <TextField
+                                        name="work_email"
+                                        variant="outlined"
+                                        label="Work Email"
+                                        type="email"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        value={formik.values.work_email}
+                                        disabled={formDisabled}
+                                        fullWidth
+                                        size="small"
+                                        error={
+                                            formik.touched.work_email &&
+                                            formik.errors.work_email
+                                        }
+                                        helperText={
+                                            formik.touched.work_email &&
+                                            formik.errors.work_email
+                                        }
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth className="mb-8">
+                                    <TextField
+                                        name="office_number"
+                                        variant="outlined"
+                                        label="Office Number"
+                                        type="tel"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        value={formik.values.office_number}
+                                        disabled={formDisabled}
+                                        fullWidth
+                                        size="small"
+                                        error={
+                                            formik.touched.office_number &&
+                                            formik.errors.office_number
+                                        }
+                                        helperText={
+                                            formik.touched.office_number &&
+                                            formik.errors.office_number
+                                        }
+                                    />
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                    </>
                 ) : (
                     <Grid item xs={12} md={4}>
                         <Box className="py-2">
@@ -435,25 +491,29 @@ const IncomeProfile = ({
             </Grid>
 
             {status !== 'Loan Disbursal Complete' && (
-                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                    <div className="col-span-6"></div>
-                    <div>
+                <div className="grid grid-cols-2 md:grid-cols-8 gap-2 sm:gap-3 md:gap-4 mt-4 sm:mt-6 md:mt-8">
+                    <div className="hidden md:block md:col-span-6"></div>
+                    <div className="col-span-1 md:col-span-1">
                         <Button
                             variant="contained"
                             fullWidth
                             color="secondary"
+                            size="small"
                             disabled={formik.isSubmitting || activeTab === 0}
-                            onClick={() => setActiveTab(prev => prev - 1)}>
+                            onClick={() => setActiveTab(prev => prev - 1)}
+                            sx={{ py: { xs: 1, sm: 1.5 } }}>
                             Back
                         </Button>
                     </div>
-                    <div>
+                    <div className="col-span-1 md:col-span-1">
                         <Button
                             variant="contained"
                             color="primary"
                             fullWidth
+                            size="small"
                             disabled={formik.isSubmitting}
-                            onClick={formik.handleSubmit}>
+                            onClick={formik.handleSubmit}
+                            sx={{ py: { xs: 1, sm: 1.5 } }}>
                             Submit
                         </Button>
                     </div>

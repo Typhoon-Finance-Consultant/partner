@@ -69,12 +69,16 @@ const LeadFormClient = props => {
         },
     });
     return (
-        <Paper className="p-4 text-center w-full ">
-            <Typography variant="h6" className="font-bold text-gray-500">
-                {' '}
+        <Paper className="p-4 sm:p-6 text-center w-full" elevation={2}>
+            <Typography
+                variant="h6"
+                className="font-bold text-gray-500"
+                sx={{
+                    fontSize: { xs: '1rem', sm: '1.25rem' },
+                }}>
                 New Application
             </Typography>
-            <Divider className="my-2" />
+            <Divider className="my-2 sm:my-3" />
             <Box className="pt-3 mb-4">
                 <Box>
                     <FormControl fullWidth className="mb-4">
@@ -116,7 +120,7 @@ const LeadFormClient = props => {
                         </FormControl>
                     </Box>
 
-                    <Box className="pt-3 grid md:grid-cols-2 xs:grid-cols-1 gap-4 mb-4">
+                    <Box className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                         <Box>
                             <FormControl fullWidth className="">
                                 <TextField
@@ -184,8 +188,10 @@ const LeadFormClient = props => {
                 <Button
                     fullWidth
                     variant="contained"
+                    size="large"
                     onClick={formik.handleSubmit}
-                    disabled={formik.isSubmitting}>
+                    disabled={formik.isSubmitting}
+                    sx={{ py: { xs: 1.5, sm: 1.75 } }}>
                     Next
                 </Button>
             </Box>

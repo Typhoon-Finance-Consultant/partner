@@ -17,7 +17,6 @@ const Profile = props => {
     if (isLoading) {
         return <Loader />;
     }
-    console.log('Profile Data', data);
     const profileData = data?.response || {};
     const hasBank = profileData?.bank_account;
 

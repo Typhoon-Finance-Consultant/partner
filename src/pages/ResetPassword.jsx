@@ -19,12 +19,8 @@ import { Link } from 'react-router-dom';
 import { selectCurrentUser, setCredentials } from '&/features/auth/authSlice';
 import PreloginHeader from '../components/common/Header/PreloginHeader';
 
-
 const validationSchema = yup.object().shape({
-    token: yup
-        .string()
-        .trim()
-    ,  
+    token: yup.string().trim(),
     new_password: yup
         .string()
         .trim()
@@ -45,13 +41,11 @@ const ResetPassword = () => {
         initialValues: {
             token: '',
             new_password: '',
-            confirm_password: ''
-
+            confirm_password: '',
         },
         onSubmit: (values, actions) => {
             userService.reset_password(values).then(data => {
                 actions.setSubmitting(false);
-                console.log('Forgot Password Response', data);
                 if (data.code === 200) {
                     setLinkSent(true);
                 } else {

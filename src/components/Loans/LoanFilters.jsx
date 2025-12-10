@@ -32,13 +32,13 @@ const LoanFilters = props => {
     //     refetch();
     // };
     return (
-        <Box className="py-5">
-            <Paper className="py-5 px-4 ">
-                <Box className="flex-row justify-center grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
-                    <Box>
+        <Box className="py-3 sm:py-5 px-2 sm:px-0">
+            <Paper className="py-4 sm:py-5 px-3 sm:px-4" elevation={2}>
+                <Box className="flex-row justify-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 w-full">
+                    <Box className="sm:col-span-2 lg:col-span-1">
                         <TextField
                             name="search_field"
-                            placeholder="Search"
+                            placeholder="Search by name, ID..."
                             value={searchString}
                             fullWidth
                             size="small"
@@ -133,7 +133,7 @@ const LoanFilters = props => {
                         />
                     </Box>
 
-                    <Box className="flex justify-end bg-slate-200 gap-3">
+                    <Box className="sm:col-span-2 lg:col-span-1 flex justify-stretch sm:justify-end gap-2 sm:gap-3">
                         {/* <Button
                             fullWidth
                             size="small"
@@ -146,6 +146,7 @@ const LoanFilters = props => {
                             fullWidth
                             size="small"
                             variant="contained"
+                            sx={{ py: { xs: 1.5, sm: 1 } }}
                             onClick={() => sendFormData()}>
                             Filter
                         </Button>

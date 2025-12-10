@@ -1,3 +1,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Mobile-first responsive styles */
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        @apply overflow-x-hidden;
+    }
+
+    /* Safe area support for notched devices */
+    @supports (padding: max(0px)) {
+        body {
+            padding-left: max(0px, env(safe-area-inset-left));
+            padding-right: max(0px, env(safe-area-inset-right));
+        }
+    }
+}
+
+@layer components {
+    /* Touch-friendly minimum target sizes */
+    .touch-target {
+        @apply min-h-[44px] min-w-[44px];
+    }
+
+    /* Mobile-optimized containers */
+    .mobile-container {
+        @apply px-4 py-3 sm:px-6 sm:py-4;
+    }
+
+    /* Responsive text sizes */
+    .text-responsive-sm {
+        @apply text-sm sm:text-base;
+    }
+
+    .text-responsive-base {
+        @apply text-base sm:text-lg;
+    }
+
+    .text-responsive-lg {
+        @apply text-lg sm:text-xl lg:text-2xl;
+    }
+
+    /* Scrollable tables */
+    .table-mobile-scroll {
+        @apply overflow-x-auto -mx-4 sm:mx-0;
+    }
+
+    .table-mobile-scroll table {
+        @apply min-w-full;
+    }
+}
+
+@layer utilities {
+    /* Hide scrollbar but keep functionality */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Aspect ratio utilities */
+    .aspect-square {
+        aspect-ratio: 1 / 1;
+    }
+
+    .aspect-video {
+        aspect-ratio: 16 / 9;
+    }
+}

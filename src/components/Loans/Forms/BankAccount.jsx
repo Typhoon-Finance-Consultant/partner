@@ -70,7 +70,6 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
             action_type: bankData?.id ? 'UPDATE' : 'ADD',
         },
         onSubmit: (values, actions) => {
-            console.log('Bank account Update Form', values);
             actions.setSubmitting(true);
             updateBankAccount(values)
                 .then(res => {
@@ -88,16 +87,15 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
         validationSchema: bankValidationSchema,
     });
 
-    const [formDisabled, setFormDisabled] = useState(false);
+    const [formDisabled, setFormDisabled] = useState(
+        status === 'Loan Disbursal Complete',
+    );
     const handleIFSCChange = event => {
-        console.log('IFSC ', event.target.value, event.target.value.length);
         if (event.target.value !== formik.values.ifsc) {
             formik.setFieldValue('ifsc', event.target.value);
             if (event.target.value.length === 11) {
                 getBankDetailsUsingIFSCWithFallback(event.target.value)
                     .then(data => {
-                        console.log('IFSC API Response:', data); // Debug log
-
                         // Check if response has the expected structure with code and response
                         if (data?.code === 200 && data?.response) {
                             formik.setFieldValue(
@@ -117,11 +115,6 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                                 data.response.STATE,
                             );
                             formik.setFieldValue('bank', data.response.BANK);
-
-                            console.log(
-                                'Updated bank details from:',
-                                data.source,
-                            );
                         }
                         // Handle direct response structure (fallback compatibility)
                         else if (data?.BANK) {
@@ -133,10 +126,6 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                             );
                             formik.setFieldValue('branch_state', data.STATE);
                             formik.setFieldValue('bank', data.BANK);
-
-                            console.log(
-                                'Updated bank details from direct response',
-                            );
                         }
                         // If no valid data found
                         else {
@@ -157,9 +146,9 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
     }
     const bankList = data?.code === 200 ? data.response : [];
     return (
-        <Box>
-            <Box className="mt-5">
-                <Grid container spacing={4}>
+        <Box className="px-2 sm:px-0">
+            <Box className="mt-3 sm:mt-5">
+                <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                     <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
                             <TextField

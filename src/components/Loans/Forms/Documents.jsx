@@ -83,7 +83,6 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
             loan_id: loanID,
         },
         onSubmit: (values, actions) => {
-            console.log('Form Values', values);
             const form = new FormData();
             form.append('file', values.file, values?.file?.name);
             form.append('password', values.password);
@@ -107,7 +106,9 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
         validationSchema: documentUploadValidationSchema,
     });
 
-    const [formDisabled, setFormDisbaled] = useState(false);
+    const [formDisabled, setFormDisbaled] = useState(
+        status === 'Loan Disbursal Complete',
+    );
 
     const handleOpenDocument = async documentUrl => {
         try {
@@ -167,27 +168,41 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
     }
     const documentData = data?.code === 200 ? data.response : [];
     return (
-        <Box>
-            <Box className="">
+        <Box className="px-2 sm:px-0">
+            <Box className="mt-3 sm:mt-5">
                 <Typography
                     variant="h6"
-                    className="font-bold text-gray-500 mb-5">
-                    {' '}
+                    className="font-bold text-gray-500 mb-3 sm:mb-5"
+                    sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                     Uploaded Files
                 </Typography>
-                <Box className="mb-5">
+                <Box className="mb-5 space-y-3 sm:space-y-4">
                     <Box>
                         {documentData.map(item => {
                             return (
                                 <Box
-                                    className="grid xs:grid-cols-2 md:grid-cols-5 border md:p-5 xs:p-2"
+                                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 border rounded p-3 sm:p-5 mb-3"
                                     key={item.id}>
                                     <Box>
-                                        <Typography className="text-sm">
+                                        <Typography
+                                            className="text-gray-500"
+                                            sx={{
+                                                fontSize: {
+                                                    xs: '0.75rem',
+                                                    sm: '0.875rem',
+                                                },
+                                            }}>
                                             Document Type
                                         </Typography>
 
-                                        <Typography className="text-lg">
+                                        <Typography
+                                            sx={{
+                                                fontSize: {
+                                                    xs: '0.875rem',
+                                                    sm: '1rem',
+                                                    md: '1.125rem',
+                                                },
+                                            }}>
                                             {' '}
                                             {item.doc_type}{' '}
                                         </Typography>
@@ -314,6 +329,7 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
                                 component="label"
                                 tabIndex={-1}
                                 role={undefined}
+                                disabled={formDisabled}
                                 startIcon={<CloudUploadIcon />}
                                 color="secondary">
                                 {!!formik.values.file
@@ -324,7 +340,6 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
                                     name="file"
                                     // value={formik.values.file}
                                     onChange={event => {
-                                        console.log('Form Event', event);
                                         formik.setFieldValue(
                                             'file',
                                             event.target.files[0],

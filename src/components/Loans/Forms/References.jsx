@@ -57,7 +57,13 @@ const referenceValidationSchema = yup.object().shape({
     //     .matches(/^\d{10}$/, 'Invalid mobile number (10 digits)'),
 });
 
-const References = ({ references, loanID, status, setActiveTab, activeTab }) => {
+const References = ({
+    references,
+    loanID,
+    status,
+    setActiveTab,
+    activeTab,
+}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -70,25 +76,24 @@ const References = ({ references, loanID, status, setActiveTab, activeTab }) => 
             professional_reference_one_name:
                 references?.professional_reference_one_name,
             // professional_reference_two_name:
-                // references?.professional_reference_two_name,
+            // references?.professional_reference_two_name,
             professional_reference_one_relation:
                 references?.professional_reference_one_relation,
             // professional_reference_two_relation:
-                // references?.professional_reference_two_relation,
+            // references?.professional_reference_two_relation,
             reference_one_mobile_number:
                 references?.reference_one_mobile_number,
 
             // reference_two_mobile_number:
-                // references?.reference_two_mobile_number,
+            // references?.reference_two_mobile_number,
             professional_reference_one_mobile_number:
                 references?.professional_reference_one_mobile_number,
 
             // professional_reference_two_mobile_number:
-                // references?.professional_reference_two_mobile_number,
+            // references?.professional_reference_two_mobile_number,
             loan_id: loanID,
         },
         onSubmit: (values, actions) => {
-            console.log('Reference Update Form', values);
             actions.setSubmitting(true);
             updateLoanReference(values)
                 .then(res => {
@@ -105,18 +110,20 @@ const References = ({ references, loanID, status, setActiveTab, activeTab }) => 
         },
         validationSchema: referenceValidationSchema,
     });
-    const [formDisabled, setFormDisabled] = useState(false);
+    const [formDisabled, setFormDisabled] = useState(
+        status === 'Loan Disbursal Complete',
+    );
 
     return (
-        <Box>
-            <Box className="">
+        <Box className="px-2 sm:px-0">
+            <Box className="mt-3 sm:mt-5">
                 <Typography
                     variant="h6"
-                    className="font-bold text-gray-500 mb-5">
-                    {' '}
+                    className="font-bold text-gray-500 mb-3 sm:mb-5"
+                    sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                     Personal Reference Details
                 </Typography>
-                <Grid container spacing={4}>
+                <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                     <Grid item xs={12} md={4}>
                         <FormGroup className="mb-8">
                             <TextField
@@ -392,7 +399,6 @@ const References = ({ references, loanID, status, setActiveTab, activeTab }) => 
                                 helperText={
                                     formik.touched
                                         .professional_reference_one_mobile_number &&
-
                                     formik.errors
                                         .professional_reference_one_mobile_number
                                 }
@@ -430,20 +436,21 @@ const References = ({ references, loanID, status, setActiveTab, activeTab }) => 
                             />
                         </FormGroup> */}
                     </Grid>
-
                 </Grid>
                 {status !== 'Loan Disbursal Complete' && (
                     <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
                         <div className="col-span-6"></div>
                         <div>
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            color="secondary"
-                            disabled={formik.isSubmitting || activeTab === 0}
-                            onClick={() => setActiveTab(prev => prev - 1)}>
-                            Back
-                        </Button>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                color="secondary"
+                                disabled={
+                                    formik.isSubmitting || activeTab === 0
+                                }
+                                onClick={() => setActiveTab(prev => prev - 1)}>
+                                Back
+                            </Button>
                         </div>
                         <div>
                             <Button

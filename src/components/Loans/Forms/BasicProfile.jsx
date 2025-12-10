@@ -100,18 +100,22 @@ const BasicProfile = ({ profileData, loanID, setActiveTab, activeTab }) => {
                 });
         },
     });
-    const [formDisabled, setFormDisabled] = useState(false);
+    const [formDisabled, setFormDisabled] = useState(
+        profileData.status === 'Loan Disbursal Complete',
+    );
     return (
-        <Box className="mt-5">
-            <Grid container spacing={4}>
+        <Box className="mt-3 sm:mt-5 px-2 sm:px-0">
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                 <Grid item xs={12}>
                     <Typography
                         variant="h6"
-                        className="font-bold text-gray-500 mb-5">
-                        {' '}
+                        className="font-bold text-gray-500 mb-3 sm:mb-5"
+                        sx={{
+                            fontSize: { xs: '1rem', sm: '1.25rem' },
+                        }}>
                         Primary Applicant
                     </Typography>
-                    <Box className="grid md:grid-cols-3 gap-4">
+                    <Box className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                         <FormGroup className="mb-8">
                             <TextField
                                 name="primary_applicant.first_name"

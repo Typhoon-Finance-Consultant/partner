@@ -29,7 +29,6 @@ const ForgotPassword = () => {
         onSubmit: (values, actions) => {
             userService.forgotPassword(values).then(data => {
                 actions.setSubmitting(false);
-                console.log('Forgot Password Response', data);
                 if (data.code === 200) {
                     setLinkSent(true);
                 } else {

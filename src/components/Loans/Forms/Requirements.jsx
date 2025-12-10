@@ -18,9 +18,7 @@ import { updateLoanRequirements } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 
 const requirementsValidationSchema = yup.object({
-    amount: yup
-        .number()
-        .required('Please enter Loan Amount'),
+    amount: yup.number().required('Please enter Loan Amount'),
     tenure_in_months: yup
         .number()
         .required('Tenure is required')
@@ -32,7 +30,7 @@ const requirementsValidationSchema = yup.object({
 const Requirements = ({ requirementsData, loanID }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    
+
     const formik = useFormik({
         initialValues: {
             category: requirementsData?.category || '',
@@ -43,7 +41,7 @@ const Requirements = ({ requirementsData, loanID }) => {
         },
         validationSchema: requirementsValidationSchema,
         onSubmit: (values, actions) => {
-            actions.setSubmitting(true);            
+            actions.setSubmitting(true);
             updateLoanRequirements(values)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
@@ -58,29 +56,33 @@ const Requirements = ({ requirementsData, loanID }) => {
                 });
         },
     });
-    
+
     // Effect to set category based on loan_type whenever loan_type changes
     useEffect(() => {
         const loanType = formik.values.loan_type;
         if (loanType) {
             // Set category based on loan type rules
-            const newCategory = (loanType === 'HL' || loanType === 'LAP') ? 'S' : 'U';
+            const newCategory =
+                loanType === 'HL' || loanType === 'LAP' ? 'S' : 'U';
             formik.setFieldValue('category', newCategory);
         }
     }, [formik.values.loan_type]);
-    
-    const [formDisabled, setFormDisabled] = useState(true);
-    
+
+    const [formDisabled, setFormDisabled] = useState(
+        requirementsData.status === 'Loan Disbursal Complete' ? true : true,
+    );
+
     // Custom handler for loan type changes
-    const handleLoanTypeChange = (event) => {
+    const handleLoanTypeChange = event => {
         const newLoanType = event.target.value;
         formik.setFieldValue('loan_type', newLoanType);
-        
+
         // Immediately set category based on the new loan type
-        const newCategory = (newLoanType === 'HL' || newLoanType === 'LAP') ? 'S' : 'U';
+        const newCategory =
+            newLoanType === 'HL' || newLoanType === 'LAP' ? 'S' : 'U';
         formik.setFieldValue('category', newCategory);
     };
-    
+
     return (
         <Box className="mt-5">
             <Grid container spacing={4}>
@@ -164,44 +166,46 @@ const Requirements = ({ requirementsData, loanID }) => {
                             }
                         />
                     </FormGroup>
-                  
                 </Grid>
                 <Grid item xs={12} md={4}>
-                {requirementsData?.provider?.name ? (
+                    {requirementsData?.provider?.name ? (
                         <FormGroup className="mb-8">
-                            <Typography className="font-bold text-sm text-gray-400">Loan Provider : </Typography>
-                            <Typography className="text-lg">{requirementsData?.provider?.name}</Typography>
+                            <Typography className="font-bold text-sm text-gray-400">
+                                Loan Provider :{' '}
+                            </Typography>
+                            <Typography className="text-lg">
+                                {requirementsData?.provider?.name}
+                            </Typography>
                         </FormGroup>
                     ) : null}
                 </Grid>
             </Grid>
 
             {requirementsData.status !== 'Loan Disbursal Complete' && (
-
-            <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
-                <div className="col-span-6"></div>
-                <div>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        color="secondary"
-                        onClick={() => setFormDisabled(prev => !prev)}>
-                        Edit
-                    </Button>
+                <div className="grid md:grid-cols-8 xs:grid-cols-2 md:gap-4 xs:gap-2  mt-8 justify-end">
+                    <div className="col-span-6"></div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            color="secondary"
+                            onClick={() => setFormDisabled(prev => !prev)}>
+                            Edit
+                        </Button>
+                    </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            disabled={formik.isSubmitting}
+                            onClick={formik.handleSubmit}>
+                            Submit
+                        </Button>
+                    </div>
                 </div>
-                <div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        disabled={formik.isSubmitting}
-                        onClick={formik.handleSubmit}>
-                        Submit
-                    </Button>
-                </div>
+            )}
 
-            </div>)}
-            
             <Snackbar
                 open={modalOpen}
                 autoHideDuration={6000}

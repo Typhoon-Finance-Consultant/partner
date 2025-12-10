@@ -27,7 +27,7 @@ import {
 import { updatePartnerProfile } from '&/services/user';
 import Loader from '&/components/common/Loader';
 import { INDIAN_STATES } from '&/helpers/constants';
-   
+
 const bankValidationSchema = yup.object({
     name_as_on_bank_account: yup.string().trim().required('Name is required'),
     bank: yup.string().trim().required('Bank name is required'),
@@ -69,7 +69,6 @@ const UpdateProfileForm = props => {
     });
     const formik = useFormik({
         initialValues: {
-
             name_as_on_bank_account: bankData?.name_as_on_bank_account,
             bank: bankData?.bank?.name || 'HDFC Bank',
             account_number: bankData?.account_number,
@@ -147,13 +146,11 @@ const UpdateProfileForm = props => {
     };
 
     const handleIFSCChange = event => {
-        // console.log('IFSC ', event.target.value, event.target.value.length);
         if (event.target.value !== formik.values.ifsc) {
             formik.setFieldValue('ifsc', event.target.value);
             if (event.target.value.length === 11) {
                 getBankDetailsUsingIFSC(event.target.value).then(data => {
                     if (data.code === 200) {
-                        // console.log('IFSC Data ', data);
                         formik.setFieldValue('branch', data?.response?.BRANCH);
                         formik.setFieldValue(
                             'branch_city',

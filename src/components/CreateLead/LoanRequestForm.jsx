@@ -61,7 +61,6 @@ const LoanRequestForm = props => {
         validationSchema: validationSchema,
         onSubmit: (values, action) => {
             action.setSubmitting(true);
-            console.log('Loan Request Form Details', values);
             submitLoanApplication(values).then(res => {
                 action.setSubmitting(false);
                 if (res.code === 200) {

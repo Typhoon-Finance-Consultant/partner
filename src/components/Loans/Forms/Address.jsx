@@ -98,8 +98,6 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
         if (pincode.length === 6) {
             getPinCodeWithFallback(pincode)
                 .then(data => {
-                    console.log('Pincode API Response:', data);
-
                     if (data.code === 200 && data.response) {
                         // Find the matching state value in INDIAN_STATES
                         const validState = INDIAN_STATES.find(
@@ -118,14 +116,6 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                                 ? validState.value
                                 : data.response?.state,
                         );
-
-                        console.log(`Updated ${addressType} with:`, {
-                            city: data?.response?.city,
-                            state: validState
-                                ? validState.value
-                                : data.response?.state,
-                            source: data.source,
-                        });
                     }
                 })
                 .catch(error => {
@@ -133,7 +123,9 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                 });
         }
     };
-    const [formDisabled, setFormDisabled] = useState(false);
+    const [formDisabled, setFormDisabled] = useState(
+        status === 'Loan Disbursal Complete',
+    );
 
     const [addressSame, setAddressSame] = useState(false);
     const handleSameAddress = stateValue => {
@@ -160,12 +152,6 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
                     communicationAddress[key],
                 );
             });
-
-            // Log to verify values
-            console.log(
-                'Setting communication address to:',
-                communicationAddress,
-            );
         } else {
             // Clear communication address
             formik.setFieldValue('communication_address', {
@@ -179,11 +165,15 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
         }
     };
     return (
-        <Box className="mt-5">
-            <Grid container spacing={4}>
+        <Box className="mt-3 sm:mt-5 px-2 sm:px-0">
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                 <Grid item xs={12} md={4}>
-                    <Paper className="p-4">
-                        <Typography variant="h6">Permanent Address</Typography>
+                    <Paper className="p-3 sm:p-4" elevation={2}>
+                        <Typography
+                            variant="h6"
+                            sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                            Permanent Address
+                        </Typography>
                         <Divider className="my-2" />
                         <Box className="py-2">
                             <FormControl fullWidth className="mb-8">

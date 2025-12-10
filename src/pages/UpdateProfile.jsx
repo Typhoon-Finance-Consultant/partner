@@ -18,7 +18,6 @@ const UpdateProfile = () => {
         return <Loader />;
     }
     const dashboardData = data?.response || {};
-    console.log('Update Profile Data', data);
     const hasBank = dashboardData?.bank_account;
     if (hasBank) {
         return navigate('/profile');

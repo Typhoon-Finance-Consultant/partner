@@ -9,8 +9,8 @@ import Loader from '&/components/common/Loader';
 const Loans = () => {
     const [formData, setFormData] = useState({});
     const [pagination, setPagination] = useState({
-        limit: 20,
-        offset: 0,
+        page: 1,
+        pageSize: 20,
     });
 
     const body = {
@@ -22,36 +22,57 @@ const Loans = () => {
             : undefined,
         status: formData.status,
         search_string: formData.searchString,
-        limit: pagination.limit,
-        offset: pagination.offset,
     };
-
 
     const { data, isLoading, refetch } = useQuery({
-        queryKey: ['loanList', JSON.stringify(body)],
-        queryFn: async () => loansList(body),
+        queryKey: [
+            'loanList',
+            JSON.stringify(body),
+            pagination.page,
+            pagination.pageSize,
+        ],
+        queryFn: async () =>
+            loansList(body, pagination.page, pagination.pageSize),
     });
-    const setPageData = useCallback(data => setPagination(data), [pagination]);
+
+    const handlePageChange = useCallback(newPage => {
+        setPagination(prev => ({ ...prev, page: newPage }));
+    }, []);
+
+    const handlePageSizeChange = useCallback(newPageSize => {
+        setPagination({ page: 1, pageSize: newPageSize });
+    }, []);
+
     const handleFormUpdate = newFormData => {
         setFormData(newFormData);
-        refetch();
+        setPagination(prev => ({ ...prev, page: 1 }));
     };
 
-    const loanData = data?.response;
+    const loanData = data;
     if (isLoading) {
         return <Loader />;
     }
     return (
-        <Container maxWidth={false} className="bg-slate-200 min-h-lvh">
+        <Container
+            maxWidth={false}
+            className="bg-slate-200 min-h-screen px-0 sm:px-3">
             <LoanFilters
                 formData={formData}
                 setFormData={setFormData}
                 handleFormUpdate={handleFormUpdate}
                 refetch={refetch}
             />
-            {!loanData?.loan_data?.length > 0 ? (
-                <Box className="mx-auto w-full min-h-lvh justify-center  align-middle sm:mt-20">
-                    <Typography className="text-center sm:mt-20" variant="h3">
+            {!loanData?.results?.length ? (
+                <Box className="mx-auto w-full min-h-[50vh] flex items-center justify-center px-4">
+                    <Typography
+                        className="text-center text-gray-500"
+                        sx={{
+                            fontSize: {
+                                xs: '1.5rem',
+                                sm: '2rem',
+                                md: '2.5rem',
+                            },
+                        }}>
                         No Loans Found
                     </Typography>
                 </Box>
@@ -59,7 +80,8 @@ const Loans = () => {
                 <LoanTable
                     loanData={loanData}
                     pagination={pagination}
-                    setPagination={setPageData}
+                    onPageChange={handlePageChange}
+                    onPageSizeChange={handlePageSizeChange}
                 />
             )}
         </Container>

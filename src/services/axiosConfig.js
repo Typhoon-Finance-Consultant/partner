@@ -14,8 +14,6 @@ export const setNavigateFunction = navigationFunction => {
 
 // Global logout function that handles both Redux and navigation
 const logOutUser = () => {
-    console.log('Logging out user due to 401 response');
-
     // Clear Redux state
     store.dispatch(logOut());
 
@@ -51,13 +49,8 @@ class AxiosInstance {
         this.headers = new Headers({});
         this.axios.interceptors.request.use(async function (config) {
             try {
-                console.log(
-                    'config?.headers?.Authorization',
-                    config?.headers?.Authorization,
-                );
                 // if (config?.headers?.Authorization) {
                 //     let checkToken = store.dispatch;
-
                 //     const user = jwtDecode(accessToken);
                 //     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
                 //     console.log('===isExpired', user);
@@ -66,7 +59,6 @@ class AxiosInstance {
                 //         let json = await userService.reLogin(payload);
                 //         if (json.success) {
                 //             config.headers.Authorization = `Bearer ${json?.data?.accessToken}`;
-
                 //         } else {
                 //             logOutUser();
                 //         }
@@ -232,4 +224,3 @@ class CoreAPI extends AxiosInstance {
 }
 
 export const coreApi = new CoreAPI();
-console.log('ENV Variable for API Endpoint', API_BASE_URL);

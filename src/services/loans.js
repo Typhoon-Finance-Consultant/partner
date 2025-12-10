@@ -1,8 +1,11 @@
 import { coreApi } from './axiosConfig';
 import { handleResponse } from './common';
 
-export const loansList = data => {
-    const response = coreApi.makeAuthenticatedPostCall('loans/list', data);
+export const loansList = (data, page = 1, pageSize = 20) => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        `loans/list?page=${page}&page_size=${pageSize}`,
+        data,
+    );
     return handleResponse(response);
 };
 
@@ -134,8 +137,6 @@ export const getBankDetailsUsingIFSCWithFallback = async ifscCode => {
         );
         const externalData = await externalResponse.json();
 
-        console.log('External IFSC API Response:', externalData);
-
         // Check if external API returned valid data
         if (externalData && externalData.IFSC && externalData.BANK) {
             return {
@@ -153,9 +154,7 @@ export const getBankDetailsUsingIFSCWithFallback = async ifscCode => {
         }
 
         // If external API fails, fallback to internal server API
-        console.log(
-            'External IFSC API failed or returned invalid data, falling back to server API',
-        );
+
         const serverResponse = await getBankDetailsUsingIFSC(ifscCode);
         return {
             ...serverResponse,
@@ -201,8 +200,6 @@ export const getPinCodeWithFallback = async pincode => {
         );
         const externalData = await externalResponse.json();
 
-        console.log('External API Response:', externalData);
-
         // Check if external API returned valid data
         if (
             externalData &&
@@ -224,9 +221,7 @@ export const getPinCodeWithFallback = async pincode => {
         }
 
         // If external API fails, fallback to internal server API
-        console.log(
-            'External API failed or returned invalid data, falling back to server API',
-        );
+
         const serverResponse = await getPinCode(pincode);
         return {
             ...serverResponse,

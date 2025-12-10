@@ -76,7 +76,6 @@ const PostLoginLayout = ({ children }) => {
             if (error?.response?.status === 401) {
                 // The axios interceptor should have already handled this,
                 // but we can add additional cleanup here if needed
-                console.log('401 error detected in user profile query');
             }
         },
     });
@@ -92,111 +91,138 @@ const PostLoginLayout = ({ children }) => {
     }
 
     const userProfile = data?.code === 200 ? data.response : {};
-    console.log('location Data', location);
     return (
-        <Grid container className="bg-white h-lvh flex ">
-            <Drawer open={showMenu} onClose={() => setShowMenu(false)}>
-                <Box
-                    className="bg-gray-400 h-full v-100  bg-gradient-to-t from-black to-gray-700 p-5"
-                    // sx={{ maxWidth: 274, minWidth: 270 }}
-                >
-                    <Box className="  justify-center align-middle text-center pt-10">
+        <Grid container className="bg-white min-h-screen flex ">
+            <Drawer
+                open={showMenu}
+                onClose={() => setShowMenu(false)}
+                sx={{
+                    '& .MuiDrawer-paper': {
+                        width: { xs: '85%', sm: 280 },
+                        maxWidth: 320,
+                    },
+                }}>
+                <Box className="bg-white h-full p-5 shadow-lg">
+                    <Box className="justify-center align-middle text-center pt-6 sm:pt-10">
                         <AccountCircle
                             fontSize="large"
-                            color="white"
                             className="text-center"
                             sx={{
-                                fontSize: 60,
-                                marginBottom: '20px',
-                                color: 'white',
+                                fontSize: { xs: 50, sm: 60 },
+                                marginBottom: '15px',
+                                color: '#FF0000',
                             }}
                         />
-                        <Typography className="text-center text-gray-300">
+                        <Typography className="text-center text-gray-800 text-sm sm:text-base px-2 break-words font-semibold">
                             {userProfile?.partner?.full_name}
                         </Typography>
                     </Box>
-                    <Divider className="py-2 border-bottom border-b border-slate-100" />
-                    <Box>
+                    <Divider className="py-2 my-4 border-gray-300" />
+                    <Box className="space-y-2">
                         {menuOptions.map(item => (
                             <Button
                                 key={item.name}
                                 fullWidth
-                                color="white"
-                                className={`text-gray-300 ${pathname === item.path ? ' text-black bg-gray-100' : 'bg-transparent'}`}
+                                className={`py-3 justify-start px-4 text-left font-medium ${
+                                    pathname === item.path
+                                        ? 'text-white hover:bg-red-700'
+                                        : 'text-gray-700 hover:bg-gray-100'
+                                }`}
                                 onClick={() => handleMenuClick(item.path)}
-                                href={item.path}>
+                                href={item.path}
+                                sx={{
+                                    textTransform: 'none',
+                                    borderRadius: '8px',
+                                    transition: 'all 0.2s',
+                                    backgroundColor:
+                                        pathname === item.path
+                                            ? '#FF0000'
+                                            : 'transparent',
+                                    '&:hover': {
+                                        backgroundColor:
+                                            pathname === item.path
+                                                ? '#CC0000'
+                                                : 'rgba(0, 0, 0, 0.04)',
+                                    },
+                                }}>
                                 {item.name}
                             </Button>
                         ))}
                     </Box>
                 </Box>
             </Drawer>
-            <Box className="flex-grow" md={9}>
-                <AppBar position="sticky" color="white">
-                    <Toolbar className="flex w-full justify-between ">
-                        <Box>
+            <Box className="flex-grow w-full" md={9}>
+                <AppBar position="sticky" color="white" elevation={1}>
+                    <Toolbar className="flex w-full justify-between min-h-[56px] sm:min-h-[64px] px-2 sm:px-4">
+                        <Box className="flex items-center">
                             <IconButton
                                 onClick={() => setShowMenu(prev => !prev)}
-                                size="large"
+                                size="medium"
                                 edge="start"
                                 color="inherit"
                                 aria-label="menu"
-                                sx={{ mr: 2 }}>
+                                className="touch-target"
+                                sx={{ mr: { xs: 0.5, sm: 2 } }}>
                                 <MenuIcon />
                             </IconButton>
-                            <IconButton href="/">
-                                <img src={Logo} height={50} width={100} />
-                            </IconButton>{' '}
+                            <IconButton href="/" sx={{ p: { xs: 0.5, sm: 1 } }}>
+                                <img
+                                    src={Logo}
+                                    className="h-8 w-auto sm:h-12 md:w-24"
+                                    alt="Logo"
+                                />
+                            </IconButton>
                         </Box>
-                        <Box className="flex ">
-                            <Typography sx={{ marginTop: '10px' }}>
+                        <Box className="flex items-center gap-1 sm:gap-2">
+                            <Typography
+                                className="hidden sm:block text-sm lg:text-base"
+                                sx={{ marginTop: '2px' }}
+                                noWrap>
                                 {userProfile?.entity_name}
                             </Typography>
-                            <div className="row">
-                                <IconButton
-                                    size="large"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
-                                    color="inherit">
-                                    <AccountCircle />
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    sx={{ marginTop: '35px' }}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={Boolean(anchorEl)}
-                                    onClose={() => setAnchorEl(null)}>
-                                    <MenuItem
-                                        sx={{ minWidth: 200 }}
-                                        onClick={() => navigate('/profile')}>
-                                        Profile
-                                    </MenuItem>
-                                    <Divider />
-
-                                    <MenuItem
-                                        sx={{ minWidth: 200 }}
-                                        onClick={() =>
-                                            navigate('/update-password')
-                                        }>
-                                        Update Password
-                                    </MenuItem>
-                                    <Divider />
-                                    <MenuItem onClick={logOutUser}>
-                                        Logout
-                                    </MenuItem>
-                                </Menu>
-                            </div>
+                            <IconButton
+                                size="medium"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={handleMenu}
+                                className="touch-target"
+                                color="primary">
+                                <AccountCircle />
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                sx={{ marginTop: '35px' }}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorEl)}
+                                onClose={() => setAnchorEl(null)}>
+                                <MenuItem
+                                    sx={{ minWidth: 180, py: 1.5 }}
+                                    onClick={() => navigate('/profile')}>
+                                    Profile
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem
+                                    sx={{ minWidth: 180, py: 1.5 }}
+                                    onClick={() =>
+                                        navigate('/update-password')
+                                    }>
+                                    Update Password
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem sx={{ py: 1.5 }} onClick={logOutUser}>
+                                    Logout
+                                </MenuItem>
+                            </Menu>
                         </Box>
                     </Toolbar>
                 </AppBar>

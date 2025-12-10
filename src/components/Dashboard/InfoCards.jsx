@@ -1,38 +1,32 @@
 import React from 'react';
 import IconCard from '../common/Cards/IconCard';
-import {
-    PendingActions,
-    TaskAlt,
-    Sync,
-    Checklist,
-} from '@mui/icons-material';
+import { PendingActions, TaskAlt, Sync, Checklist } from '@mui/icons-material';
 
 const InfoCards = ({ dashboardData }) => {
     const { loans } = dashboardData;
     return (
-        <div className="grid gap-4 md:grid-cols-4 xs:grid-cols-1 md:py-5 xs:mt-5">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4 py-3 sm:py-5 px-2 sm:px-0">
             <IconCard
                 boxTitle="Draft Loans"
                 boxValue={loans?.draft_loans || 0}
                 iconName={
-                    <PendingActions color="white" sx={{ fontSize: 50 }} />
+                    <PendingActions color="primary" sx={{ fontSize: 50 }} />
                 }
             />
             <IconCard
                 boxTitle="In Process Loans"
-                
-                boxValue={loans?.in_process_loans|| 0}
-                iconName={<Sync color="white" sx={{ fontSize: 50 }} />}
+                boxValue={loans?.in_process_loans || 0}
+                iconName={<Sync color="primary" sx={{ fontSize: 50 }} />}
             />
             <IconCard
                 boxTitle="Disbursed Loans"
                 boxValue={loans?.disbursed_loans || 0}
-                iconName={<TaskAlt color="white" sx={{ fontSize: 50 }} />}
+                iconName={<TaskAlt color="primary" sx={{ fontSize: 50 }} />}
             />
             <IconCard
                 boxTitle="Total Loans"
                 boxValue={loans?.total_loan_count || 0}
-                iconName={<Checklist color="white" sx={{ fontSize: 50 }} />}
+                iconName={<Checklist color="primary" sx={{ fontSize: 50 }} />}
             />
         </div>
     );

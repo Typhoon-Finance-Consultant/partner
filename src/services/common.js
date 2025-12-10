@@ -3,11 +3,6 @@ import { RESPONSE_CODES, ERROR_MESSAGES } from '&/helpers/constants';
 export const handleResponse = result => {
     return result
         .then(data => {
-            console.log(
-                'API Response Data_____',
-                data?.config?.url,
-                data?.data?.code,
-            );
             return data?.data;
         })
         .catch(function (error) {
@@ -20,7 +15,6 @@ export const handleResponse = result => {
 
             // Special handling for 401 errors
             if (error?.response?.status === 401) {
-                console.log('401 Unauthorized - User will be logged out');
                 // The axios interceptor should handle the logout
                 // We still need to return/throw the error for proper error handling
                 throw error;
