@@ -3,6 +3,7 @@
   functions = "netlify/functions"
   publish = "dist"
 
+# SPA fallback redirect
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -13,10 +13,20 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        outDir: 'dist',
+        assetsDir: 'assets',
+        sourcemap: false,
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+    },
     server: {
-      watch: {
-        usePolling: true
-      }
+        watch: {
+            usePolling: true,
+        },
     },
     clearScreen: false,
     resolve: {
