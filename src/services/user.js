@@ -64,6 +64,8 @@ export const updatePartnerProfile = data => {
     return handleResponse(response);
 };
 
+/* Removed updatePartnerProfileWithDocs - use updatePartnerProfile with multipart FormData instead */
+
 export const sendOTP = data => {
     const response = coreApi.makePostCall('auth/send-otp', data);
     return handleResponse(response);

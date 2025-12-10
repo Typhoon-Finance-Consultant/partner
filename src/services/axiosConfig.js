@@ -161,6 +161,11 @@ class AxiosInstance {
                 ...customHeader,
             };
 
+            // If data is FormData, explicitly clear Content-Type so axios/browser sets the multipart boundary
+            if (typeof FormData !== 'undefined' && data instanceof FormData) {
+                headers['Content-Type'] = undefined;
+            }
+
             return this.axios.post(url, data, {
                 headers,
             });

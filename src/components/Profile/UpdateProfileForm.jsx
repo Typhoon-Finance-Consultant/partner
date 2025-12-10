@@ -21,10 +21,24 @@ import {
 
 import {
     getBankList,
-    getBankDetailsUsingIFSC,
+    getBankDetailsUsingIFSCWithFallback,
     getPinCode,
 } from '&/services/loans';
 import { updatePartnerProfile } from '&/services/user';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 import Loader from '&/components/common/Loader';
 import { INDIAN_STATES } from '&/helpers/constants';
 
@@ -58,6 +72,80 @@ const bankValidationSchema = yup.object({
         .trim()
         .required('Pin Code is required')
         .matches(/^\d{6}$/, 'Invalid PIN code (6 digits)'),
+    // Document uploads
+    aadhar_file: yup
+        .mixed()
+        .required('Aadhar document is required')
+        .test(
+            'fileType',
+            'Only pdf, jpeg, png, jpg and gif files are allowed',
+            value => {
+                if (!value) return false;
+                const acceptableTypes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg',
+                    'image/gif',
+                ];
+                return value.type && acceptableTypes.includes(value.type);
+            },
+        ),
+    pan_file: yup
+        .mixed()
+        .required('PAN document is required')
+        .test(
+            'fileType',
+            'Only pdf, jpeg, png, jpg and gif files are allowed',
+            value => {
+                if (!value) return false;
+                const acceptableTypes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg',
+                    'image/gif',
+                ];
+                return value.type && acceptableTypes.includes(value.type);
+            },
+        ),
+    bank_file: yup
+        .mixed()
+        .required('Bank document is required')
+        .test(
+            'fileType',
+            'Only pdf, jpeg, png, jpg and gif files are allowed',
+            value => {
+                if (!value) return false;
+                const acceptableTypes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg',
+                    'image/gif',
+                ];
+                return value.type && acceptableTypes.includes(value.type);
+            },
+        ),
+    business_file: yup
+        .mixed()
+        .optional()
+        .nullable()
+        .test(
+            'fileType',
+            'Only pdf, jpeg, png, jpg and gif files are allowed',
+            value => {
+                if (!value) return true;
+                const acceptableTypes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg',
+                    'image/gif',
+                ];
+                return value.type && acceptableTypes.includes(value.type);
+            },
+        ),
 });
 
 const UpdateProfileForm = props => {
@@ -85,6 +173,10 @@ const UpdateProfileForm = props => {
             city: partnerProfile?.city,
             state: partnerProfile?.state || '',
             pincode: partnerProfile?.pincode, // Optional
+            aadhar_file: null,
+            pan_file: null,
+            bank_file: null,
+            business_file: null,
         },
         validationSchema: bankValidationSchema,
 
@@ -100,7 +192,46 @@ const UpdateProfileForm = props => {
                 ...values,
                 address, // Add the combined address
             };
-            updatePartnerProfile(updatedValues)
+            // Build FormData so we can send files to /crm/partner/profile
+            const form = new FormData();
+            const fileKeys = [
+                'aadhar_file',
+                'pan_file',
+                'bank_file',
+                'business_file',
+            ];
+            Object.keys(updatedValues).forEach(key => {
+                if (fileKeys.includes(key)) return; // skip files here, they'll be appended separately
+                if (
+                    updatedValues[key] !== undefined &&
+                    updatedValues[key] !== null
+                ) {
+                    form.append(key, updatedValues[key]);
+                }
+            });
+            // Attach files if present
+            if (values.aadhar_file)
+                form.append(
+                    'aadhar_file',
+                    values.aadhar_file,
+                    values.aadhar_file.name,
+                );
+            if (values.pan_file)
+                form.append('pan_file', values.pan_file, values.pan_file.name);
+            if (values.bank_file)
+                form.append(
+                    'bank_file',
+                    values.bank_file,
+                    values.bank_file.name,
+                );
+            if (values.business_file)
+                form.append(
+                    'business_file',
+                    values.business_file,
+                    values.business_file.name,
+                );
+
+            updatePartnerProfile(form)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
@@ -149,24 +280,46 @@ const UpdateProfileForm = props => {
         if (event.target.value !== formik.values.ifsc) {
             formik.setFieldValue('ifsc', event.target.value);
             if (event.target.value.length === 11) {
-                getBankDetailsUsingIFSC(event.target.value).then(data => {
-                    if (data.code === 200) {
-                        formik.setFieldValue('branch', data?.response?.BRANCH);
-                        formik.setFieldValue(
-                            'branch_city',
-                            data?.response?.CITY,
-                        );
-                        formik.setFieldValue(
-                            'branch_address',
-                            data?.response?.ADDRESS,
-                        );
-                        formik.setFieldValue(
-                            'branch_state',
-                            data?.response?.STATE,
-                        );
-                        formik.setFieldValue('bank', data?.response?.BANK);
-                    }
-                });
+                getBankDetailsUsingIFSCWithFallback(event.target.value)
+                    .then(data => {
+                        // data may be in 2 formats (server response or external API)
+                        if (data?.code === 200 && data?.response) {
+                            formik.setFieldValue(
+                                'branch',
+                                data.response.BRANCH,
+                            );
+                            formik.setFieldValue(
+                                'branch_city',
+                                data.response.CITY,
+                            );
+                            formik.setFieldValue(
+                                'branch_address',
+                                data.response.ADDRESS,
+                            );
+                            formik.setFieldValue(
+                                'branch_state',
+                                data.response.STATE,
+                            );
+                            formik.setFieldValue('bank', data.response.BANK);
+                        } else if (data?.BANK) {
+                            formik.setFieldValue('branch', data.BRANCH);
+                            formik.setFieldValue('branch_city', data.CITY);
+                            formik.setFieldValue(
+                                'branch_address',
+                                data.ADDRESS,
+                            );
+                            formik.setFieldValue('branch_state', data.STATE);
+                            formik.setFieldValue('bank', data.BANK);
+                        } else {
+                            console.error(
+                                'Invalid IFSC response structure:',
+                                data,
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching IFSC details:', error);
+                    });
             }
         }
     };
@@ -446,7 +599,143 @@ const UpdateProfileForm = props => {
                                 </FormGroup>
                             </Grid>
                         </Grid>
-                        {/* <Divider className="my-2" /> */}
+                        {/* add photo uploads here */}
+                        <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                                <Typography
+                                    variant="h6"
+                                    className="font-bold text-gray-500 mb-3">
+                                    Upload Documents
+                                </Typography>
+                                <Box className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <Box>
+                                        <Button
+                                            variant="contained"
+                                            component="label"
+                                            startIcon={<CloudUploadIcon />}
+                                            color="secondary"
+                                            fullWidth>
+                                            {formik.values.aadhar_file
+                                                ? formik.values.aadhar_file.name
+                                                : 'Upload Aadhar (Required)'}
+                                            <VisuallyHiddenInput
+                                                type="file"
+                                                name="aadhar_file"
+                                                onChange={event =>
+                                                    formik.setFieldValue(
+                                                        'aadhar_file',
+                                                        event.target.files[0],
+                                                    )
+                                                }
+                                            />
+                                        </Button>
+                                        {formik.touched.aadhar_file &&
+                                            formik.errors.aadhar_file && (
+                                                <Typography
+                                                    color="error"
+                                                    variant="caption">
+                                                    {formik.errors.aadhar_file}
+                                                </Typography>
+                                            )}
+                                    </Box>
+                                    <Box>
+                                        <Button
+                                            variant="contained"
+                                            component="label"
+                                            startIcon={<CloudUploadIcon />}
+                                            color="secondary"
+                                            fullWidth>
+                                            {formik.values.pan_file
+                                                ? formik.values.pan_file.name
+                                                : 'Upload PAN (Required)'}
+                                            <VisuallyHiddenInput
+                                                type="file"
+                                                name="pan_file"
+                                                onChange={event =>
+                                                    formik.setFieldValue(
+                                                        'pan_file',
+                                                        event.target.files[0],
+                                                    )
+                                                }
+                                            />
+                                        </Button>
+                                        {formik.touched.pan_file &&
+                                            formik.errors.pan_file && (
+                                                <Typography
+                                                    color="error"
+                                                    variant="caption">
+                                                    {formik.errors.pan_file}
+                                                </Typography>
+                                            )}
+                                    </Box>
+                                    <Box>
+                                        <Button
+                                            variant="contained"
+                                            component="label"
+                                            startIcon={<CloudUploadIcon />}
+                                            color="secondary"
+                                            fullWidth>
+                                            {formik.values.bank_file
+                                                ? formik.values.bank_file.name
+                                                : 'Upload Bank Proof (Required)'}
+                                            <VisuallyHiddenInput
+                                                type="file"
+                                                name="bank_file"
+                                                onChange={event =>
+                                                    formik.setFieldValue(
+                                                        'bank_file',
+                                                        event.target.files[0],
+                                                    )
+                                                }
+                                            />
+                                        </Button>
+                                        {formik.touched.bank_file &&
+                                            formik.errors.bank_file && (
+                                                <Typography
+                                                    color="error"
+                                                    variant="caption">
+                                                    {formik.errors.bank_file}
+                                                </Typography>
+                                            )}
+                                    </Box>
+                                    <Box>
+                                        <Button
+                                            variant="contained"
+                                            component="label"
+                                            startIcon={<CloudUploadIcon />}
+                                            color="secondary"
+                                            fullWidth>
+                                            {formik.values.business_file
+                                                ? formik.values.business_file
+                                                      .name
+                                                : 'Upload Business Doc (Optional)'}
+                                            <VisuallyHiddenInput
+                                                type="file"
+                                                name="business_file"
+                                                onChange={event =>
+                                                    formik.setFieldValue(
+                                                        'business_file',
+                                                        event.target.files[0],
+                                                    )
+                                                }
+                                            />
+                                        </Button>
+                                        {formik.touched.business_file &&
+                                            formik.errors.business_file && (
+                                                <Typography
+                                                    color="error"
+                                                    variant="caption">
+                                                    {
+                                                        formik.errors
+                                                            .business_file
+                                                    }
+                                                </Typography>
+                                            )}
+                                    </Box>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Divider className="my-2" />
                         <Typography
                             variant="h6"
                             className="text-gray-500 text-center">
