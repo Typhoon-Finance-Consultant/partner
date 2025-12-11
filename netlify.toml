@@ -3,7 +3,7 @@
   command = "npm install --force && npm run build"
   
   # Directory to publish (build output)
-  publish = "build"
+  publish = "dist"
     # Environment variables for build
   [build.environment]
     NODE_VERSION = "18"
