@@ -1,7 +1,6 @@
-const CACHE_NAME = 'typhoon-partner-cache-v1';
+const CACHE_NAME = 'typhoon-partner-cache-v2';
 const urlsToCache = [
     '/',
-    '/index.html',
     '/manifest.json',
     '/favicon_io/android-chrome-192x192.png',
     '/favicon_io/android-chrome-512x512.png',
@@ -11,6 +10,8 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+    // Force the waiting service worker to become the active service worker
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll(urlsToCache);
@@ -30,12 +31,42 @@ self.addEventListener('activate', event => {
             );
         }),
     );
+    // Claim all clients immediately
+    return self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request);
-        }),
-    );
+    const { request } = event;
+    const url = new URL(request.url);
+
+    // Network-first strategy for JS, CSS, and API calls
+    if (
+        request.url.includes('/assets/') ||
+        request.url.includes('.js') ||
+        request.url.includes('.css') ||
+        request.url.includes('/api/')
+    ) {
+        event.respondWith(
+            fetch(request)
+                .then(response => {
+                    // Clone the response before caching
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(request, responseToCache);
+                    });
+                    return response;
+                })
+                .catch(() => {
+                    // Fallback to cache if network fails
+                    return caches.match(request);
+                }),
+        );
+    } else {
+        // Cache-first strategy for static assets
+        event.respondWith(
+            caches.match(request).then(response => {
+                return response || fetch(request);
+            }),
+        );
+    }
 });
