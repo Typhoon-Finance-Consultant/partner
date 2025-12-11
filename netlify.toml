@@ -1,19 +1,32 @@
 [build]
-  command = "npm run build"
-  functions = "netlify/functions"
-  publish = "dist"
+  # Build command
+  command = "npm install --force && npm run build"
+  
+  # Directory to publish (build output)
+  publish = "build"
+    # Environment variables for build
+  [build.environment]
+    NODE_VERSION = "18"
+    NPM_FLAGS = "--force"
+    CI = "false"
+    GENERATE_SOURCEMAP = "false"
 
+# Redirect rules for React Router
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
 
-  ## (optional) Settings for Netlify Dev
-  ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
-  #[dev]
-  #  command = "yarn start" # Command to start your dev server
-  #  port = 3000 # Port that the dev server will be listening on
-  #  publish = "dist" # Folder with the static content for _redirect file
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
-  ## more info on configuring this file: https://ntl.fyi/file-based-build-config
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
