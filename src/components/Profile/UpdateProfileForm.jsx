@@ -75,12 +75,13 @@ const bankValidationSchema = yup.object({
     // Document uploads
     aadhar_file: yup
         .mixed()
-        .required('Aadhar document is required')
+        .optional()
+        .nullable()
         .test(
             'fileType',
             'Only pdf, jpeg, png, jpg and gif files are allowed',
             value => {
-                if (!value) return false;
+                if (!value) return true;
                 const acceptableTypes = [
                     'application/pdf',
                     'image/jpeg',
@@ -111,12 +112,13 @@ const bankValidationSchema = yup.object({
         ),
     bank_file: yup
         .mixed()
-        .required('Bank document is required')
+        .optional()
+        .nullable()
         .test(
             'fileType',
             'Only pdf, jpeg, png, jpg and gif files are allowed',
             value => {
-                if (!value) return false;
+                if (!value) return true;
                 const acceptableTypes = [
                     'application/pdf',
                     'image/jpeg',
@@ -617,7 +619,7 @@ const UpdateProfileForm = props => {
                                             fullWidth>
                                             {formik.values.aadhar_file
                                                 ? formik.values.aadhar_file.name
-                                                : 'Upload Aadhar (Required)'}
+                                                : 'Upload Aadhar (Optional)'}
                                             <VisuallyHiddenInput
                                                 type="file"
                                                 name="aadhar_file"
@@ -677,7 +679,7 @@ const UpdateProfileForm = props => {
                                             fullWidth>
                                             {formik.values.bank_file
                                                 ? formik.values.bank_file.name
-                                                : 'Upload Bank Proof (Required)'}
+                                                : 'Upload Bank Proof (Optional)'}
                                             <VisuallyHiddenInput
                                                 type="file"
                                                 name="bank_file"

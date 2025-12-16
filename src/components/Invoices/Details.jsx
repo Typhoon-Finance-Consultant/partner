@@ -37,8 +37,17 @@ const InvoiceDetailsTable = ({ invoiceData }) => {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
 
-                // Open the PDF in a new window
-                window.open(url, '_blank');
+                // Create a temporary anchor element to trigger download
+                const link = document.createElement('a');
+                link.href = url;
+                // Remove trailing slash and get the last part of the path
+                const filename =
+                    invoicePath.replace(/\/$/, '').split('/').pop() ||
+                    'download';
+                link.download = `invoice-${filename}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
                 // Clean up the object URL after a short delay
                 setTimeout(() => window.URL.revokeObjectURL(url), 1000);
@@ -95,7 +104,7 @@ const InvoiceDetailsTable = ({ invoiceData }) => {
                                     padding: 0,
                                     minWidth: 'auto',
                                 }}>
-                                Open Invoice
+                                Download Invoice
                             </Button>
                         ) : (
                             <span style={{ color: 'gray' }}>No Invoice</span>

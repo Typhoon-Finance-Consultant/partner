@@ -59,8 +59,17 @@ const InvoiceTable = ({ payoutData }) => {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
 
-                // Open the PDF in a new window
-                window.open(url, '_blank');
+                // Create a temporary anchor element to trigger download
+                const link = document.createElement('a');
+                link.href = url;
+                // Remove trailing slash and get the last part of the path
+                const filename =
+                    invoicePath.replace(/\/$/, '').split('/').pop() ||
+                    'download';
+                link.download = `invoice-${filename}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
                 // Clean up the object URL after a short delay
                 setTimeout(() => window.URL.revokeObjectURL(url), 1000);
@@ -168,6 +177,18 @@ const InvoiceTable = ({ payoutData }) => {
                                         fontWeight: 'bold',
                                         whiteSpace: 'nowrap',
                                     }}>
+                                    Payout Date
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        fontSize: {
+                                            xs: '0.75rem',
+                                            sm: '0.875rem',
+                                        },
+                                        py: { xs: 1.5, sm: 2 },
+                                        fontWeight: 'bold',
+                                        whiteSpace: 'nowrap',
+                                    }}>
                                     Invoice Link
                                 </TableCell>
                             </TableRow>
@@ -256,6 +277,16 @@ const InvoiceTable = ({ payoutData }) => {
                                             },
                                             py: { xs: 1, sm: 2 },
                                         }}>
+                                        {invoice.payout_date}
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            fontSize: {
+                                                xs: '0.75rem',
+                                                sm: '0.875rem',
+                                            },
+                                            py: { xs: 1, sm: 2 },
+                                        }}>
                                         {invoice.invoice ? (
                                             <Button
                                                 variant="text"
@@ -275,7 +306,7 @@ const InvoiceTable = ({ payoutData }) => {
                                                     },
                                                     py: { xs: 0.5, sm: 1 },
                                                 }}>
-                                                Open Invoice
+                                                Download Invoice
                                             </Button>
                                         ) : (
                                             <span
