@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Clear Service Worker Cache</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 600px;
+                margin: 50px auto;
+                padding: 20px;
+                text-align: center;
+            }
+            button {
+                background-color: #ff0000;
+                color: white;
+                border: none;
+                padding: 15px 30px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 10px;
+            }
+            button:hover {
+                background-color: #cc0000;
+            }
+            #status {
+                margin-top: 20px;
+                padding: 15px;
+                border-radius: 5px;
+                display: none;
+            }
+            .success {
+                background-color: #d4edda;
+                color: #155724;
+            }
+            .info {
+                background-color: #d1ecf1;
+                color: #0c5460;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Service Worker Cache Cleaner</h1>
+        <p>
+            Use this page to clear the service worker cache and force a fresh
+            reload.
+        </p>
+
+        <button onclick="clearServiceWorker()">
+            Clear Service Worker & Reload
+        </button>
+        <button onclick="clearAllCaches()">Clear All Caches</button>
+
+        <div id="status"></div>
+
+        <script>
+            async function clearServiceWorker() {
+                const status = document.getElementById('status');
+
+                try {
+                    if ('serviceWorker' in navigator) {
+                        const registrations =
+                            await navigator.serviceWorker.getRegistrations();
+
+                        for (const registration of registrations) {
+                            await registration.unregister();
+                        }
+
+                        status.textContent =
+                            'Service worker unregistered. Clearing caches...';
+                        status.className = 'info';
+                        status.style.display = 'block';
+
+                        await clearAllCaches();
+
+                        setTimeout(() => {
+                            status.textContent =
+                                'All caches cleared! Reloading...';
+                            status.className = 'success';
+                            setTimeout(() => {
+                                window.location.href = '/';
+                            }, 1000);
+                        }, 500);
+                    } else {
+                        status.textContent =
+                            'Service workers not supported in this browser';
+                        status.className = 'info';
+                        status.style.display = 'block';
+                    }
+                } catch (error) {
+                    status.textContent = 'Error: ' + error.message;
+                    status.className = 'error';
+                    status.style.display = 'block';
+                }
+            }
+
+            async function clearAllCaches() {
+                const status = document.getElementById('status');
+
+                try {
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(
+                            cacheNames.map(cacheName =>
+                                caches.delete(cacheName),
+                            ),
+                        );
+
+                        status.textContent = `Cleared ${cacheNames.length} cache(s). Reloading...`;
+                        status.className = 'success';
+                        status.style.display = 'block';
+
+                        setTimeout(() => {
+                            window.location.reload(true);
+                        }, 1500);
+                    } else {
+                        status.textContent = 'Cache API not supported';
+                        status.className = 'info';
+                        status.style.display = 'block';
+                    }
+                } catch (error) {
+                    status.textContent =
+                        'Error clearing caches: ' + error.message;
+                    status.className = 'error';
+                    status.style.display = 'block';
+                }
+            }
+        </script>
+    </body>
+</html>

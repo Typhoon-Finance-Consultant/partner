@@ -1,6 +1,5 @@
-const CACHE_NAME = 'typhoon-partner-cache-v2';
+const CACHE_NAME = 'typhoon-partner-cache-v3';
 const urlsToCache = [
-    '/',
     '/manifest.json',
     '/favicon_io/android-chrome-192x192.png',
     '/favicon_io/android-chrome-512x512.png',
@@ -39,21 +38,33 @@ self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Network-first strategy for JS, CSS, and API calls
+    // Skip caching for service worker itself
+    if (request.url.includes('service-worker.js')) {
+        return;
+    }
+
+    // Network-only strategy for API calls and module scripts
     if (
-        request.url.includes('/assets/') ||
-        request.url.includes('.js') ||
-        request.url.includes('.css') ||
-        request.url.includes('/api/')
+        request.url.includes('/api/') ||
+        request.destination === 'script' ||
+        request.destination === 'worker'
     ) {
+        event.respondWith(fetch(request));
+        return;
+    }
+
+    // Network-first strategy for CSS and other assets
+    if (request.url.includes('/assets/') || request.url.includes('.css')) {
         event.respondWith(
             fetch(request)
                 .then(response => {
-                    // Clone the response before caching
-                    const responseToCache = response.clone();
-                    caches.open(CACHE_NAME).then(cache => {
-                        cache.put(request, responseToCache);
-                    });
+                    // Only cache successful responses
+                    if (response && response.status === 200) {
+                        const responseToCache = response.clone();
+                        caches.open(CACHE_NAME).then(cache => {
+                            cache.put(request, responseToCache);
+                        });
+                    }
                     return response;
                 })
                 .catch(() => {
@@ -62,7 +73,7 @@ self.addEventListener('fetch', event => {
                 }),
         );
     } else {
-        // Cache-first strategy for static assets
+        // Cache-first strategy for static assets (images, fonts, manifest)
         event.respondWith(
             caches.match(request).then(response => {
                 return response || fetch(request);
