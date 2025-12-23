@@ -196,7 +196,7 @@ const Login = () => {
                         <CardContent className="px-2 sm:px-4">
                             <div className="w-full flex flex-col items-center mb-4">
                                 <h2 className="text-center text-teal font-bold text-2xl sm:text-3xl">
-                                    LOGIN
+                                    PARTNER LOGIN
                                 </h2>
                             </div>
                             <div className="w-full flex flex-col gap-6 mt-10">
