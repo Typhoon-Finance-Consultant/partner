@@ -16,6 +16,7 @@ import {
 import * as yup from 'yup';
 import { updateLoanRequirements } from '&/services/loans';
 import Loader from '&/components/common/Loader';
+import { useQueryClient } from '@tanstack/react-query';
 
 const requirementsValidationSchema = yup.object({
     amount: yup.number().required('Please enter Loan Amount'),
@@ -28,6 +29,7 @@ const requirementsValidationSchema = yup.object({
 });
 
 const Requirements = ({ requirementsData, loanID }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -45,6 +47,7 @@ const Requirements = ({ requirementsData, loanID }) => {
             updateLoanRequirements(values)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setModalOpen(true);
                     actions.setSubmitting(false);
                     setFormDisabled(true);

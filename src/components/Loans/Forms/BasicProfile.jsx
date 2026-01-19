@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { updateBasicDetails } from '&/services/loans';
 import DatePicker from '&/components/common/Form/DatePicker';
 import { act } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 const basicProfileValidationSchema = yup.object({
     marital_status: yup.string().trim().required('Marital Status is required'),
@@ -30,6 +31,7 @@ const basicProfileValidationSchema = yup.object({
 });
 
 const BasicProfile = ({ profileData, loanID, setActiveTab, activeTab }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const formik = useFormik({
@@ -87,6 +89,7 @@ const BasicProfile = ({ profileData, loanID, setActiveTab, activeTab }) => {
 
             updateBasicDetails(formattedValues)
                 .then(res => {
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     action.setSubmitting(false);

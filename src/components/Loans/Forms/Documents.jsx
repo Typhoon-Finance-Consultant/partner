@@ -18,7 +18,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as yup from 'yup';
 import { DOCUMENT_PURPOSE, DOCUMENT_LIST } from '../../../helpers/constants';
 import { styled } from '@mui/material/styles';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDocumentList } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 import { uploadDocument } from '&/services/loans';
@@ -68,6 +68,7 @@ const documentUploadValidationSchema = yup.object().shape({
 });
 
 const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading, refetch } = useQuery({
@@ -92,6 +93,7 @@ const Documents = ({ loanID, status, setActiveTab, activeTab }) => {
 
             uploadDocument(form)
                 .then(res => {
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     actions.setSubmitting(false);

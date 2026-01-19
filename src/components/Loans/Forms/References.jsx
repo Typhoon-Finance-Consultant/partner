@@ -20,6 +20,7 @@ import {
     LOAN_REFERENCE_PERSONAL_TYPES,
     LOAN_REFERENCE_PROFESSIONAL_TYPES,
 } from '&/helpers/constants';
+import { useQueryClient } from '@tanstack/react-query';
 
 const referenceValidationSchema = yup.object().shape({
     reference_one_name: yup
@@ -64,6 +65,7 @@ const References = ({
     setActiveTab,
     activeTab,
 }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -97,6 +99,7 @@ const References = ({
             actions.setSubmitting(true);
             updateLoanReference(values)
                 .then(res => {
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     setActiveTab(prev => prev + 1);

@@ -17,7 +17,7 @@ import {
     Autocomplete,
 } from '@mui/material';
 import * as yup from 'yup';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getEmployerList, updateIncomeProfile } from '&/services/loans';
 import Loader from '&/components/common/Loader';
 import { IncomeTypes, DESIGNATION_OPTIONS } from '&/helpers/constants';
@@ -61,6 +61,7 @@ const IncomeProfile = ({
     setActiveTab,
     activeTab,
 }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
@@ -103,6 +104,7 @@ const IncomeProfile = ({
             updateIncomeProfile(body)
                 .then(res => {
                     setSnackbarMessage(res.response || res.message);
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setModalOpen(true);
                     setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);

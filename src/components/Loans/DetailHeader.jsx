@@ -1,7 +1,95 @@
-import React from 'react';
-import { Paper, Grid, Box, Typography, Button } from '@mui/material';
+import React, { useState } from 'react';
+import {
+    Paper,
+    Grid,
+    Box,
+    Typography,
+    Button,
+    Snackbar,
+    Alert,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    CircularProgress,
+} from '@mui/material';
+import { useLendenClub } from '&/hooks/useLendenClub';
+import { mapLoanDataToLendenPayload } from '&/helpers/lenden';
 
 const LoanDetailHeader = ({ loanData }) => {
+    const { submitLoan, loading } = useLendenClub();
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'info',
+    });
+
+    const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
+    const handleVerifyClick = () => {
+        setShowConfirmDialog(true);
+    };
+
+    const handleConfirmSubmit = async () => {
+        setShowConfirmDialog(false);
+        try {
+            // Prepare payload
+            // Note: useLendenClub hook handles consent generation internally
+            const payload = mapLoanDataToLendenPayload(loanData).payload;
+
+            // Remove redundant fields that useLendenClub will add/manage
+            delete payload.consent_data;
+            delete payload.redirection_url; // Hook sets default
+
+            await submitLoan(
+                payload,
+                // Success Callback
+                data => {
+                    if (data.isDuplicate) {
+                        setSnackbar({
+                            open: true,
+                            message: `Customer exists. Status: ${data.existingLead.status}`,
+                            severity: 'warning',
+                        });
+                    } else {
+                        // Success - Show link
+                        const link = data.redirectionLink;
+                        navigator.clipboard.writeText(link);
+                        setSnackbar({
+                            open: true,
+                            message: 'Lead Created! Link copied to clipboard.',
+                            severity: 'success',
+                        });
+                        setTimeout(
+                            () =>
+                                alert(
+                                    `Lead Created! Share this link:\n\n${link}`,
+                                ),
+                            500,
+                        );
+                    }
+                },
+                // Error Callback
+                errMsg => {
+                    setSnackbar({
+                        open: true,
+                        message: errMsg,
+                        severity: 'error',
+                    });
+                },
+            );
+        } catch (error) {
+            console.error(error);
+            setSnackbar({
+                open: true,
+                message: error.message || 'Verification Failed',
+                severity: 'error',
+            });
+        }
+    };
+
     return (
         <Paper className="p-3 sm:p-4 mb-3 sm:mb-5" elevation={2}>
             <Box>
@@ -22,6 +110,8 @@ const LoanDetailHeader = ({ loanData }) => {
                                     size="small"
                                     variant="contained"
                                     fullWidth
+                                    onClick={handleVerifyClick}
+                                    disabled={loading}
                                     sx={{
                                         fontSize: {
                                             xs: '0.75rem',
@@ -29,7 +119,18 @@ const LoanDetailHeader = ({ loanData }) => {
                                         },
                                         py: { xs: 1, sm: 0.75 },
                                     }}>
-                                    Submit for Verification
+                                    {loading ? (
+                                        <>
+                                            <CircularProgress
+                                                size={16}
+                                                sx={{ mr: 1 }}
+                                                color="inherit"
+                                            />
+                                            Submitting...
+                                        </>
+                                    ) : (
+                                        'Submit for Verification'
+                                    )}
                                 </Button>
                             </Box>
                         </Box>
@@ -151,6 +252,50 @@ const LoanDetailHeader = ({ loanData }) => {
                     </Grid>
                 </Grid>
             </Box>
+
+            {/* Confirmation Dialog */}
+            <Dialog
+                open={showConfirmDialog}
+                onClose={() => setShowConfirmDialog(false)}
+                aria-labelledby="submit-dialog-title"
+                aria-describedby="submit-dialog-description">
+                <DialogTitle id="submit-dialog-title">
+                    Submit Application to Lender?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="submit-dialog-description">
+                        You are about to submit this loan application to
+                        LendenClub. You will be redirected to their platform to
+                        complete KYC and other formalities. Do you want to
+                        proceed?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setShowConfirmDialog(false)}
+                        color="inherit">
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmSubmit}
+                        variant="contained"
+                        autoFocus>
+                        Yes, Submit
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}>
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Paper>
     );
 };

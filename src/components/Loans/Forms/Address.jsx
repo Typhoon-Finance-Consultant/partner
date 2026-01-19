@@ -19,6 +19,7 @@ import {
 import * as yup from 'yup';
 import { INDIAN_STATES } from '&/helpers/constants';
 import { updateAddress, getPinCodeWithFallback } from '&/services/loans';
+import { useQueryClient } from '@tanstack/react-query';
 
 const addressSchema = yup.object().shape({
     line1: yup.string().trim().required('Address Line 1 is required'),
@@ -40,6 +41,7 @@ const addressValidationSchema = yup.object().shape({
 });
 
 const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const formik = useFormik({
@@ -75,6 +77,7 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
             actions.setSubmitting(true);
             updateAddress(values)
                 .then(res => {
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     setActiveTab(prev => prev + 1);

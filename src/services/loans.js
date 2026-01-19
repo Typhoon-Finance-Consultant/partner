@@ -243,3 +243,34 @@ export const getPinCodeWithFallback = async pincode => {
         }
     }
 };
+
+export const lendenDedupe = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'lendenclub/prod/dedupe',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const lendenPreApproval = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'lendenclub/prod/preapproval-offer',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const lendenCreateLead = data => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'lendenclub/prod/lead/create',
+        data,
+    );
+    return handleResponse(response);
+};
+
+export const lendenLeadStatus = leadID => {
+    const response = coreApi.makeAuthenticatedGetCall(
+        `lendenclub/prod/lead/status/${leadID}`,
+    );
+    return handleResponse(response);
+};

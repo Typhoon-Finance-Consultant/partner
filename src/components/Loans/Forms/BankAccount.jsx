@@ -13,7 +13,7 @@ import {
     Snackbar,
 } from '@mui/material';
 import * as yup from 'yup';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     getBankList,
     updateBankAccount,
@@ -46,6 +46,7 @@ const bankValidationSchema = yup.object({
 });
 
 const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
+    const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { data, isLoading } = useQuery({
@@ -73,6 +74,7 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
             actions.setSubmitting(true);
             updateBankAccount(values)
                 .then(res => {
+                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     setActiveTab(prev => prev + 1);
