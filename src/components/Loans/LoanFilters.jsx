@@ -32,13 +32,13 @@ const LoanFilters = props => {
     //     refetch();
     // };
     return (
-        <Box className="py-3 sm:py-5 px-2 sm:px-0">
-            <Paper className="py-4 sm:py-5 px-3 sm:px-4" elevation={2}>
-                <Box className="flex-row justify-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 w-full">
-                    <Box className="sm:col-span-2 lg:col-span-1">
+        <Box className="py-2 sm:py-5 px-2 sm:px-0">
+            <Paper className="py-2 sm:py-5 px-2 sm:px-4" elevation={2}>
+                <Box className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4 w-full">
+                    <Box>
                         <TextField
                             name="search_field"
-                            placeholder="Search by name, ID..."
+                            placeholder="Search..."
                             value={searchString}
                             fullWidth
                             size="small"
@@ -57,7 +57,6 @@ const LoanFilters = props => {
                                 value={status}
                                 onChange={val => setStatus(val.target.value)}>
                                 <MenuItem value="">All</MenuItem>
-
                                 <MenuItem value="0">Created</MenuItem>
                                 <MenuItem value="1">
                                     Proof of identity Complete
@@ -98,7 +97,7 @@ const LoanFilters = props => {
                     </Box>
                     <Box>
                         <DatePicker
-                            label="Start Date"
+                            label="From"
                             value={fromDate}
                             onChange={val => setFromDate(val)}
                             size="small"
@@ -110,13 +109,14 @@ const LoanFilters = props => {
                                 textField: {
                                     size: 'small',
                                     fullWidth: true,
+                                    placeholder: 'DD/MM/YYYY',
                                 },
                             }}
                         />
                     </Box>
-                    <Box>
+                    <Box className="flex gap-2">
                         <DatePicker
-                            label="End Date"
+                            label="To"
                             value={toDate}
                             onChange={val => setToDate(val)}
                             size="small"
@@ -128,25 +128,29 @@ const LoanFilters = props => {
                                 textField: {
                                     size: 'small',
                                     fullWidth: true,
+                                    placeholder: 'DD/MM/YYYY',
                                 },
                             }}
                         />
-                    </Box>
-
-                    <Box className="sm:col-span-2 lg:col-span-1 flex justify-stretch sm:justify-end gap-2 sm:gap-3">
-                        {/* <Button
-                            fullWidth
+                        <Button
+                            className="lg:hidden"
                             size="small"
                             variant="contained"
-                            color="secondary"
-                            onClick={() => resetFormData()}>
-                            Reset
-                        </Button> */}
+                            sx={{
+                                minWidth: 'auto',
+                                px: 2,
+                            }}
+                            onClick={() => sendFormData()}>
+                            Go
+                        </Button>
+                    </Box>
+
+                    <Box className="hidden lg:flex justify-end">
                         <Button
                             fullWidth
                             size="small"
                             variant="contained"
-                            sx={{ py: { xs: 1.5, sm: 1 } }}
+                            sx={{ py: 1 }}
                             onClick={() => sendFormData()}>
                             Filter
                         </Button>

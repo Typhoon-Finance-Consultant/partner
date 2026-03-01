@@ -14,10 +14,12 @@ import {
     DialogActions,
     CircularProgress,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useLendenClub } from '&/hooks/useLendenClub';
 import { mapLoanDataToLendenPayload } from '&/helpers/lenden';
 
 const LoanDetailHeader = ({ loanData }) => {
+    const navigate = useNavigate();
     const { submitLoan, loading } = useLendenClub();
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [snackbar, setSnackbar] = useState({
@@ -54,21 +56,8 @@ const LoanDetailHeader = ({ loanData }) => {
                             severity: 'warning',
                         });
                     } else {
-                        // Success - Show link
-                        const link = data.redirectionLink;
-                        navigator.clipboard.writeText(link);
-                        setSnackbar({
-                            open: true,
-                            message: 'Lead Created! Link copied to clipboard.',
-                            severity: 'success',
-                        });
-                        setTimeout(
-                            () =>
-                                alert(
-                                    `Lead Created! Share this link:\n\n${link}`,
-                                ),
-                            500,
-                        );
+                        // Success - redirect to Loans page with Lenden tab selected
+                        navigate('/loans', { state: { activeTab: 1 } });
                     }
                 },
                 // Error Callback
@@ -129,7 +118,7 @@ const LoanDetailHeader = ({ loanData }) => {
                                             Submitting...
                                         </>
                                     ) : (
-                                        'Submit for Verification'
+                                        'Submit to LendenClub'
                                     )}
                                 </Button>
                             </Box>

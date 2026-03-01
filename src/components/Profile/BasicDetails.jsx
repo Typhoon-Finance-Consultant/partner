@@ -39,7 +39,7 @@ const BasicDetails = ({ profileData }) => {
                         <LabelValue
                             labelName="Registered on"
                             labelValue={dayjs(profileData?.created_date).format(
-                                'DD MMM YYYY',
+                                'DD/MM/YYYY',
                             )}
                             rowClassName="mt-4"
                         />

@@ -89,12 +89,20 @@ const BasicProfile = ({ profileData, loanID, setActiveTab, activeTab }) => {
 
             updateBasicDetails(formattedValues)
                 .then(res => {
-                    queryClient.invalidateQueries(['loanDetails', loanID]);
-                    setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
                     action.setSubmitting(false);
-                    setActiveTab(prev => prev + 1);
-                    setFormDisabled(true);
+                    if (res.code === 200) {
+                        queryClient.invalidateQueries(['loanDetails', loanID]);
+                        setSnackbarMessage(res.response || res.message);
+                        setActiveTab(prev => prev + 1);
+                        setFormDisabled(true);
+                    } else {
+                        setSnackbarMessage(
+                            res.response ||
+                                res.message ||
+                                'Something went wrong',
+                        );
+                    }
                 })
                 .catch(error => {
                     setModalOpen(true);
@@ -262,12 +270,14 @@ const BasicProfile = ({ profileData, loanID, setActiveTab, activeTab }) => {
                                 clearable
                                 disabled={formDisabled}
                                 name="dob"
+                                format="DD/MM/YYYY"
                                 disableFuture
                                 fullWidth
                                 slotProps={{
                                     textField: {
                                         size: 'small',
                                         fullWidth: true,
+                                        placeholder: 'DD/MM/YYYY',
                                         error:
                                             formik.touched?.primary_applicant
                                                 ?.dob &&

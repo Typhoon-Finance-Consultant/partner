@@ -66,17 +66,6 @@ const LoanDetails = props => {
         <Container
             maxWidth={false}
             className="bg-slate-200 min-h-screen px-2 sm:px-3">
-            <div className="py-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                <Button
-                    variant="outlined"
-                    size="small"
-                    sx={{ minWidth: { xs: '100%', sm: 'auto' } }}>
-                    <Link to="/loans" replace className="no-underline">
-                        Go Back
-                    </Link>
-                </Button>
-                <LabelValue labelName="Loan ID" labelValue={loanID} />
-            </div>
             <Box className="w-full pb-4">
                 <LoanDetailHeader loanData={loanData} />
                 <Paper elevation={2}>

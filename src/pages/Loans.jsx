@@ -4,6 +4,7 @@ import { Container, Box, Typography } from '@mui/material';
 import { loansList } from '&/services/loans';
 import LoanFilters from '&/components/Loans/LoanFilters';
 import LoanTable from '&/components/Loans/LoanTable';
+import LoanTabsWrapper from '&/components/Loans/LoanTabsWrapper';
 import Loader from '&/components/common/Loader';
 
 const Loans = () => {
@@ -49,6 +50,8 @@ const Loans = () => {
     };
 
     const loanData = data;
+    const lendenApplications = data?.lendenclub_applications || [];
+
     if (isLoading) {
         return <Loader />;
     }
@@ -62,28 +65,35 @@ const Loans = () => {
                 handleFormUpdate={handleFormUpdate}
                 refetch={refetch}
             />
-            {!loanData?.results?.length ? (
-                <Box className="mx-auto w-full min-h-[50vh] flex items-center justify-center px-4">
-                    <Typography
-                        className="text-center text-gray-500"
-                        sx={{
-                            fontSize: {
-                                xs: '1.5rem',
-                                sm: '2rem',
-                                md: '2.5rem',
-                            },
-                        }}>
-                        No Loans Found
-                    </Typography>
-                </Box>
-            ) : (
-                <LoanTable
-                    loanData={loanData}
-                    pagination={pagination}
-                    onPageChange={handlePageChange}
-                    onPageSizeChange={handlePageSizeChange}
-                />
-            )}
+            <LoanTabsWrapper
+                typhoonContent={
+                    !loanData?.results?.length ? (
+                        <Box className="mx-auto w-full min-h-[50vh] flex items-center justify-center px-4">
+                            <Typography
+                                className="text-center text-gray-500"
+                                sx={{
+                                    fontSize: {
+                                        xs: '1.5rem',
+                                        sm: '2rem',
+                                        md: '2.5rem',
+                                    },
+                                }}>
+                                No Loans Found
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <LoanTable
+                            loanData={loanData}
+                            pagination={pagination}
+                            onPageChange={handlePageChange}
+                            onPageSizeChange={handlePageSizeChange}
+                        />
+                    )
+                }
+                lendenApplications={lendenApplications}
+                typhoonCount={loanData?.count}
+                onLendenRefresh={refetch}
+            />
         </Container>
     );
 };

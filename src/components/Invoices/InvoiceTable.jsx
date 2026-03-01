@@ -277,7 +277,11 @@ const InvoiceTable = ({ payoutData }) => {
                                             },
                                             py: { xs: 1, sm: 2 },
                                         }}>
-                                        {invoice.payout_date}
+                                        {invoice.payout_date
+                                            ? dayjs(invoice.payout_date).format(
+                                                  'DD/MM/YYYY',
+                                              )
+                                            : '-'}
                                     </TableCell>
                                     <TableCell
                                         sx={{

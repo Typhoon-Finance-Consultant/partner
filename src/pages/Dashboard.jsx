@@ -14,6 +14,7 @@ import InfoCards from '&/components/Dashboard/InfoCards';
 import Loader from '&/components/common/Loader';
 import { Link } from 'react-router-dom';
 import LoanTable from '&/components/Loans/LoanTable';
+import LoanTabsWrapper from '&/components/Loans/LoanTabsWrapper';
 
 const Dashboard = () => {
     // Dashboard data queries
@@ -83,6 +84,7 @@ const Dashboard = () => {
     const dashboardData = data?.response || {};
     const userProfile = userData?.code === 200 ? userData.response : {};
     const loansResponse = loanData;
+    const lendenApplications = loanData?.lendenclub_applications || [];
     const hasBank = userProfile?.bank_account;
 
     return (
@@ -124,24 +126,34 @@ const Dashboard = () => {
                     Recent Loans
                 </Typography>
 
-                {!loansResponse?.results?.length ? (
-                    <Box className="mx-auto w-full justify-center align-middle my-6 sm:my-10 px-4">
-                        <Typography
-                            className="text-center text-gray-500"
-                            sx={{
-                                fontSize: { xs: '1rem', sm: '1.25rem' },
-                            }}>
-                            No Loans Found
-                        </Typography>
-                    </Box>
-                ) : (
-                    <LoanTable
-                        loanData={loansResponse}
-                        pagination={pagination}
-                        onPageChange={handlePageChange}
-                        onPageSizeChange={handlePageSizeChange}
-                    />
-                )}
+                <LoanTabsWrapper
+                    typhoonContent={
+                        !loansResponse?.results?.length ? (
+                            <Box className="mx-auto w-full justify-center align-middle my-6 sm:my-10 px-4">
+                                <Typography
+                                    className="text-center text-gray-500"
+                                    sx={{
+                                        fontSize: {
+                                            xs: '1rem',
+                                            sm: '1.25rem',
+                                        },
+                                    }}>
+                                    No Loans Found
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <LoanTable
+                                loanData={loansResponse}
+                                pagination={pagination}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                            />
+                        )
+                    }
+                    lendenApplications={lendenApplications}
+                    typhoonCount={loansResponse?.count}
+                    onLendenRefresh={refetchLoans}
+                />
             </Box>
         </Container>
     );

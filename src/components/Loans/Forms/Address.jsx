@@ -77,11 +77,19 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
             actions.setSubmitting(true);
             updateAddress(values)
                 .then(res => {
-                    queryClient.invalidateQueries(['loanDetails', loanID]);
-                    setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
-                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
+                    if (res.code === 200) {
+                        queryClient.invalidateQueries(['loanDetails', loanID]);
+                        setSnackbarMessage(res.response || res.message);
+                        setActiveTab(prev => prev + 1);
+                    } else {
+                        setSnackbarMessage(
+                            res.response ||
+                                res.message ||
+                                'Something went wrong',
+                        );
+                    }
                 })
                 .catch(error => {
                     setModalOpen(true);

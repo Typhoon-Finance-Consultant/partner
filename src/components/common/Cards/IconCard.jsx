@@ -15,16 +15,18 @@ const IconCard = props => {
             <Paper
                 elevation={0}
                 sx={{
-                    height: { xs: '120px', sm: '140px' },
+                    height: { xs: 'auto', sm: '140px' },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: { xs: 2, sm: 3 },
-                    my: { xs: 1, sm: 2, lg: 4 },
+                    padding: { xs: 1, sm: 3 },
+                    py: { xs: 1.2, sm: 3 },
+                    gap: { xs: 0, sm: 0 },
+                    my: { xs: 0.5, sm: 2, lg: 4 },
                     backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
+                    borderRadius: { xs: '8px', sm: '12px' },
                     transition: 'all 0.3s ease',
                     '&:hover': {
                         transform: 'translateY(-4px)',
@@ -33,11 +35,16 @@ const IconCard = props => {
                     },
                 }}>
                 <Box
-                    className="flex-shrink-0 mb-2"
+                    className="flex-shrink-0"
                     sx={{
+                        mb: { xs: 0.3, sm: 2 },
                         color: '#FF0000',
                         '& .MuiSvgIcon-root': {
-                            fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                            fontSize: {
+                                xs: '1.2rem',
+                                sm: '2.5rem',
+                                md: '3rem',
+                            },
                         },
                     }}>
                     {iconName}
@@ -47,12 +54,12 @@ const IconCard = props => {
                         className={`text-gray-600 font-medium ${titleClassName}`}
                         sx={{
                             fontSize: {
-                                xs: '0.75rem',
+                                xs: '0.5rem',
                                 sm: '0.875rem',
                                 md: '0.95rem',
                             },
-                            lineHeight: 1.3,
-                            mb: 0.5,
+                            lineHeight: 1.2,
+                            mb: { xs: 0.2, sm: 0.5 },
                         }}>
                         {boxTitle}
                     </Typography>
@@ -60,7 +67,7 @@ const IconCard = props => {
                         className={`text-gray-900 font-bold ${valueClassName}`}
                         sx={{
                             fontSize: {
-                                xs: '1.75rem',
+                                xs: '1.1rem',
                                 sm: '2.25rem',
                                 md: '2.5rem',
                             },

@@ -42,7 +42,7 @@ const bankValidationSchema = yup.object({
     branch_address: yup.string().trim().required('Branch Address is required'),
     branch_city: yup.string().trim().required('Branch City is required'),
     branch_state: yup.string().trim().required('Branch State is required'),
-    type: yup.string().trim().required('Please select account type'),
+    account_type: yup.string().trim().required('Please select account type'),
 });
 
 const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
@@ -65,7 +65,7 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
             branch_city: bankData?.branch_city,
             branch_state: bankData?.branch_state,
 
-            type: bankData?.account_type || 'SAVINGS',
+            account_type: bankData?.account_type || 'SAVINGS',
             loan_id: loanID,
             bank_account_id: bankData?.id,
             action_type: bankData?.id ? 'UPDATE' : 'ADD',
@@ -74,11 +74,19 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
             actions.setSubmitting(true);
             updateBankAccount(values)
                 .then(res => {
-                    queryClient.invalidateQueries(['loanDetails', loanID]);
-                    setSnackbarMessage(res.response || res.message);
                     setModalOpen(true);
-                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
+                    if (res.code === 200) {
+                        queryClient.invalidateQueries(['loanDetails', loanID]);
+                        setSnackbarMessage(res.response || res.message);
+                        setActiveTab(prev => prev + 1);
+                    } else {
+                        setSnackbarMessage(
+                            res.response ||
+                                res.message ||
+                                'Something went wrong',
+                        );
+                    }
                 })
                 .catch(error => {
                     setModalOpen(true);
@@ -263,10 +271,10 @@ const BankAccount = ({ bankData, loanID, status, setActiveTab, activeTab }) => {
                             <Select
                                 labelId="account_type"
                                 size="small"
-                                id="type"
-                                name="type"
+                                id="account_type"
+                                name="account_type"
                                 disabled={formDisabled}
-                                value={formik.values.type}
+                                value={formik.values.account_type}
                                 onChange={formik.handleChange}>
                                 <MenuItem value="SAVINGS">SAVINGS</MenuItem>
                                 <MenuItem value="CURRENT">CURRENT</MenuItem>

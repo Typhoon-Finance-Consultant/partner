@@ -64,3 +64,17 @@ export const checkLeadStatus = leadId => {
     );
     return handleResponse(response);
 };
+
+/**
+ * Smart-retry: refresh the status of a LendenClub application.
+ * Triggers the backend to re-check the lead status with LendenClub.
+ * @param {number} internalLeadId - The internal LendenClub application ID
+ * @returns {Promise} - { status, data, message }
+ */
+export const smartRetry = internalLeadId => {
+    const response = coreApi.makeAuthenticatedPostCall(
+        'lendenclub/prod/lead/smart-retry',
+        { internal_lead_id: internalLeadId },
+    );
+    return handleResponse(response);
+};

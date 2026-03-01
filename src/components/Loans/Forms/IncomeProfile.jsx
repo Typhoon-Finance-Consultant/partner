@@ -23,6 +23,9 @@ import Loader from '&/components/common/Loader';
 import { IncomeTypes, DESIGNATION_OPTIONS } from '&/helpers/constants';
 import DatePicker from '&/components/common/Form/DatePicker';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 const incomeProfileValidationSchema = yup.object().shape({
     income_type: yup
@@ -76,7 +79,12 @@ const IncomeProfile = ({
             designation: incomeProfile?.designation,
             employer: incomeProfile?.employer,
             date_of_joining_or_incorporation:
-                incomeProfile?.date_of_joining_or_incorporation,
+                incomeProfile?.date_of_joining_or_incorporation
+                    ? dayjs(
+                          incomeProfile.date_of_joining_or_incorporation,
+                          'DD/MM/YYYY',
+                      )
+                    : null,
             total_emi_ongoing: incomeProfile?.total_emi_ongoing || 0,
             loan_id: loanID,
             legal_name: incomeProfile?.legal_name,
@@ -103,11 +111,19 @@ const IncomeProfile = ({
             actions.setSubmitting(true);
             updateIncomeProfile(body)
                 .then(res => {
-                    setSnackbarMessage(res.response || res.message);
-                    queryClient.invalidateQueries(['loanDetails', loanID]);
                     setModalOpen(true);
-                    setActiveTab(prev => prev + 1);
                     actions.setSubmitting(false);
+                    if (res.code === 200) {
+                        setSnackbarMessage(res.response || res.message);
+                        queryClient.invalidateQueries(['loanDetails', loanID]);
+                        setActiveTab(prev => prev + 1);
+                    } else {
+                        setSnackbarMessage(
+                            res.response ||
+                                res.message ||
+                                'Something went wrong',
+                        );
+                    }
                 })
                 .catch(error => {
                     setModalOpen(true);
@@ -387,6 +403,35 @@ const IncomeProfile = ({
                                         }
                                     />
                                 </FormControl>
+                                <FormGroup className="mb-8">
+                                    <DatePicker
+                                        label="Date of Joining"
+                                        value={
+                                            formik.values
+                                                .date_of_joining_or_incorporation
+                                        }
+                                        onChange={value => {
+                                            formik.setFieldValue(
+                                                'date_of_joining_or_incorporation',
+                                                value || null,
+                                            );
+                                        }}
+                                        size="small"
+                                        name="date_of_joining_or_incorporation"
+                                        clearable
+                                        disabled={formDisabled}
+                                        format="DD/MM/YYYY"
+                                        disableFuture
+                                        fullWidth
+                                        slotProps={{
+                                            textField: {
+                                                size: 'small',
+                                                fullWidth: true,
+                                                placeholder: 'DD/MM/YYYY',
+                                            },
+                                        }}
+                                    />
+                                </FormGroup>
                                 <FormControl fullWidth className="mb-8">
                                     <TextField
                                         name="office_number"
@@ -469,7 +514,7 @@ const IncomeProfile = ({
                                     onChange={value => {
                                         formik.setFieldValue(
                                             'date_of_joining_or_incorporation',
-                                            Date.parse(value),
+                                            value || null,
                                         );
                                     }}
                                     size="small"
@@ -483,6 +528,7 @@ const IncomeProfile = ({
                                         textField: {
                                             size: 'small',
                                             fullWidth: true,
+                                            placeholder: 'DD/MM/YYYY',
                                         },
                                     }}
                                 />

@@ -45,12 +45,14 @@ const InvoiceFilter = props => {
                             size="small"
                             clearable
                             views={['month', 'year']}
+                            format="MM/YYYY"
                             disableFuture
                             fullWidth
                             slotProps={{
                                 textField: {
                                     size: 'small',
                                     fullWidth: true,
+                                    placeholder: 'MM/YYYY',
                                 },
                             }}
                         />

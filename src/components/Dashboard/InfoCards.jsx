@@ -5,7 +5,7 @@ import { PendingActions, TaskAlt, Sync, Checklist } from '@mui/icons-material';
 const InfoCards = ({ dashboardData }) => {
     const { loans } = dashboardData;
     return (
-        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4 py-3 sm:py-5 px-2 sm:px-0">
+        <div className="grid gap-2 sm:gap-4 grid-cols-4 lg:grid-cols-4 py-2 sm:py-5 px-2 sm:px-0">
             <IconCard
                 boxTitle="Draft Loans"
                 boxValue={loans?.draft_loans || 0}

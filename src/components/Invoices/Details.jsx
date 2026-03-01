@@ -74,16 +74,14 @@ const InvoiceDetailsTable = ({ invoiceData }) => {
                 <LabelValue
                     labelName="Invoice From"
                     labelValue={dayjs(invoiceData.from_date).format(
-                        'DD/MMM/YYYY',
+                        'DD/MM/YYYY',
                     )}
                 />
                 <Divider className="my-2" />
 
                 <LabelValue
                     labelName="Invoice to"
-                    labelValue={dayjs(invoiceData.to_date).format(
-                        'DD/MMM/YYYY',
-                    )}
+                    labelValue={dayjs(invoiceData.to_date).format('DD/MM/YYYY')}
                 />
                 <Divider className="my-2" />
 
@@ -154,7 +152,7 @@ const InvoiceDetailsTable = ({ invoiceData }) => {
                     labelName="Payment Date"
                     labelValue={
                         invoiceData.payout_date &&
-                        dayjs(invoiceData.payout_date).format('DD/MMM/YYYY')
+                        dayjs(invoiceData.payout_date).format('DD/MM/YYYY')
                     }
                 />
                 <Divider className="my-2" />
