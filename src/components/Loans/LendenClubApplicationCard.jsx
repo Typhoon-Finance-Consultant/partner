@@ -175,6 +175,12 @@ const detailSections = [
                     value: fs.ui_redirect_url,
                     isUrl: true,
                 },
+                {
+                    label: 'Can Refresh Link',
+                    value: fs.can_refresh_link != null
+                        ? fs.can_refresh_link ? 'Yes' : 'No'
+                        : null,
+                },
             ];
         },
     },
@@ -421,8 +427,9 @@ const outcomeCardClass = {
  * @param {Object} props.application - LendenClub application data
  * @param {Function} props.onSmartRetry - Handler for smart-retry (refresh status)
  */
-const LendenClubApplicationCard = ({ application, onSmartRetry }) => {
+const LendenClubApplicationCard = ({ application, onSmartRetry, onRefreshLink }) => {
     const [retrying, setRetrying] = useState(false);
+    const [refreshingLink, setRefreshingLink] = useState(false);
     const [copied, setCopied] = useState(false);
     const [detailOpen, setDetailOpen] = useState(false);
 
@@ -445,6 +452,17 @@ const LendenClubApplicationCard = ({ application, onSmartRetry }) => {
             await onSmartRetry(application.id);
         } finally {
             setRetrying(false);
+        }
+    };
+
+    // --- Refresh link handler ---
+    const handleRefreshLink = async () => {
+        if (!onRefreshLink || refreshingLink || !application.ldc_lead_id) return;
+        setRefreshingLink(true);
+        try {
+            await onRefreshLink(application.ldc_lead_id);
+        } finally {
+            setRefreshingLink(false);
         }
     };
 
@@ -498,9 +516,6 @@ const LendenClubApplicationCard = ({ application, onSmartRetry }) => {
                             )}
                             {retrying ? 'Checking...' : 'Refresh Status'}
                         </button>
-                        <span className="ldc-retry-counter">
-                            Attempt {application.customer_retry_count ?? 0} of 5
-                        </span>
                     </div>
                 );
 
@@ -527,6 +542,7 @@ const LendenClubApplicationCard = ({ application, onSmartRetry }) => {
 
             case 'CONTINUE': {
                 const redirectUrl = fs?.ui_redirect_url;
+                const canRefresh = fs?.can_refresh_link;
                 return redirectUrl ? (
                     <div className="ldc-action-area">
                         <button
@@ -577,12 +593,38 @@ const LendenClubApplicationCard = ({ application, onSmartRetry }) => {
                                 </>
                             )}
                         </button>
+                        {canRefresh && (
+                            <button
+                                className="ldc-btn-refresh-link"
+                                onClick={handleRefreshLink}
+                                disabled={refreshingLink}>
+                                {refreshingLink ? (
+                                    <span className="ldc-btn-spinner" />
+                                ) : (
+                                    <svg
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round">
+                                        <path d="M23 4v6h-6" />
+                                        <path d="M1 20v-6h6" />
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                                    </svg>
+                                )}
+                                {refreshingLink ? 'Refreshing...' : 'Link Expired? Refresh'}
+                            </button>
+                        )}
                     </div>
                 ) : null;
             }
 
             case 'CONTINUE_APPLICATION': {
                 const appUrl = fs?.ui_redirect_url;
+                const canRefreshApp = fs?.can_refresh_link;
                 return appUrl ? (
                     <div className="ldc-action-area">
                         <button
@@ -633,6 +675,31 @@ const LendenClubApplicationCard = ({ application, onSmartRetry }) => {
                                 </>
                             )}
                         </button>
+                        {canRefreshApp && (
+                            <button
+                                className="ldc-btn-refresh-link"
+                                onClick={handleRefreshLink}
+                                disabled={refreshingLink}>
+                                {refreshingLink ? (
+                                    <span className="ldc-btn-spinner" />
+                                ) : (
+                                    <svg
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round">
+                                        <path d="M23 4v6h-6" />
+                                        <path d="M1 20v-6h6" />
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                                    </svg>
+                                )}
+                                {refreshingLink ? 'Refreshing...' : 'Link Expired? Refresh'}
+                            </button>
+                        )}
                     </div>
                 ) : null;
             }

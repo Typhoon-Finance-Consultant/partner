@@ -217,6 +217,34 @@
     background-color: #f0fdf4;
 }
 
+/* -- Refresh Link button (for expired links) -- */
+.ldc-btn-refresh-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--ldc-radius-sm);
+    border: 1.5px solid #f59e0b;
+    background-color: #fffbeb;
+    color: #b45309;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ldc-btn-refresh-link:hover:not(:disabled) {
+    background-color: #fef3c7;
+    border-color: #d97706;
+    transform: translateY(-1px);
+}
+
+.ldc-btn-refresh-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* -- Dashboard / View Details button -- */
 .ldc-btn-dashboard {
     display: inline-flex;
@@ -737,6 +765,13 @@
         padding: 8px 14px;
         font-size: 0.82rem;
         flex: 1;
+        justify-content: center;
+    }
+
+    .ldc-btn-refresh-link {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        flex-basis: 100%;
         justify-content: center;
     }
 

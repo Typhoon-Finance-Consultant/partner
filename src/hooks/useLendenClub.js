@@ -6,6 +6,7 @@ import {
     createLead,
     checkLeadStatus,
     getLeadDetail,
+    refreshLeadLink,
 } from '&/services/lendenclub';
 import { generateConsentData } from '&/helpers/consentHelper';
 
@@ -159,6 +160,19 @@ export const useLendenClub = () => {
         }
     }, []);
 
+    const refreshLink = useCallback(
+        async ldcLeadId => {
+            return wrapAsync(async () => {
+                const res = await refreshLeadLink(ldcLeadId);
+                if (res.status !== 'success') {
+                    throw new Error(res.message || 'Link refresh failed');
+                }
+                return res.data;
+            });
+        },
+        [wrapAsync],
+    );
+
     return {
         loading,
         error,
@@ -167,5 +181,6 @@ export const useLendenClub = () => {
         getOffer,
         getStatus,
         getNewLink,
+        refreshLink,
     };
 };

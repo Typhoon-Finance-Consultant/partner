@@ -12,7 +12,7 @@ import {
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import LendenClubApplicationCard from './LendenClubApplicationCard';
-import { smartRetry } from '&/services/lendenclub';
+import { smartRetry, refreshLeadLink } from '&/services/lendenclub';
 
 /**
  * TabPanel component — renders content for the active tab
@@ -114,16 +114,8 @@ const LoanTabsWrapper = ({
                     }
                     case 'pending': {
                         showToast(
-                            `Still processing — Attempt ${respData?.retry_count ?? '?'} of ${respData?.max_retries ?? 5}. You can try again.`,
+                            `Still processing — Attempt ${respData?.retry_count ?? '?'}. You can try again.`,
                             'info',
-                        );
-                        if (onLendenRefresh) await onLendenRefresh();
-                        break;
-                    }
-                    case 'max_retries_reached': {
-                        showToast(
-                            'Maximum retries reached. Please contact support for assistance.',
-                            'error',
                         );
                         if (onLendenRefresh) await onLendenRefresh();
                         break;
@@ -151,6 +143,37 @@ const LoanTabsWrapper = ({
                 console.error('Smart-retry failed:', error);
                 showToast(
                     'Failed to refresh status. Please check your connection and try again.',
+                    'error',
+                );
+            }
+        },
+        [onLendenRefresh],
+    );
+
+    // Refresh-link handler — fetches a fresh redirect URL for expired links
+    const handleRefreshLink = useCallback(
+        async ldcLeadId => {
+            try {
+                const resp = await refreshLeadLink(ldcLeadId);
+                if (resp?.status === 'success' && resp.data) {
+                    const newUrl = resp.data.frontend_status?.ui_redirect_url;
+                    showToast('Link refreshed successfully!', 'success');
+                    // Refresh the full list to get latest state
+                    if (onLendenRefresh) await onLendenRefresh();
+                    // Auto-open the new link if available
+                    if (newUrl) {
+                        window.open(newUrl, '_blank');
+                    }
+                } else {
+                    showToast(
+                        resp?.message || 'Failed to refresh link. Please try again.',
+                        'error',
+                    );
+                }
+            } catch (error) {
+                console.error('Refresh link failed:', error);
+                showToast(
+                    'Failed to refresh link. Please check your connection and try again.',
                     'error',
                 );
             }
@@ -242,6 +265,7 @@ const LoanTabsWrapper = ({
                                 key={app.id}
                                 application={app}
                                 onSmartRetry={handleSmartRetry}
+                                onRefreshLink={handleRefreshLink}
                             />
                         ))}
                     </Box>

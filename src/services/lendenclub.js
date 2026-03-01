@@ -78,3 +78,15 @@ export const smartRetry = internalLeadId => {
     );
     return handleResponse(response);
 };
+
+/**
+ * Refresh an expired continuation link for a LendenClub lead.
+ * @param {string} ldcLeadId - The LDC lead ID (e.g. L2702267943858C290)
+ * @returns {Promise} - { status, data, message } where data contains the updated lead object
+ */
+export const refreshLeadLink = ldcLeadId => {
+    const response = coreApi.makeAuthenticatedGetCall(
+        `lendenclub/prod/lead/refresh-link/${ldcLeadId}`,
+    );
+    return handleResponse(response);
+};
