@@ -427,6 +427,8 @@ const outcomeCardClass = {
  * @param {Object} props.application - LendenClub application data
  * @param {Function} props.onSmartRetry - Handler for smart-retry (refresh status)
  */
+const LENDENCLUB_MAINTENANCE = true; // Temporarily disable LendenClub actions
+
 const LendenClubApplicationCard = ({ application, onSmartRetry, onRefreshLink }) => {
     const [retrying, setRetrying] = useState(false);
     const [refreshingLink, setRefreshingLink] = useState(false);
@@ -489,6 +491,11 @@ const LendenClubApplicationCard = ({ application, onSmartRetry, onRefreshLink })
 
     // --- Action button / widget ---
     const renderAction = () => {
+        if (LENDENCLUB_MAINTENANCE) return (
+            <div className="ldc-action-area ldc-action-area--wait">
+                <span className="ldc-wait-text">Service temporarily unavailable</span>
+            </div>
+        );
         switch (uiAction) {
             case 'REFRESH_STATUS':
                 return (

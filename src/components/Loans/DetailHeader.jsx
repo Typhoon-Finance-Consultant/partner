@@ -18,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import { useLendenClub } from '&/hooks/useLendenClub';
 import { mapLoanDataToLendenPayload } from '&/helpers/lenden';
 
+const LENDENCLUB_MAINTENANCE = true; // Temporarily disable LendenClub submissions
+
 const LoanDetailHeader = ({ loanData }) => {
     const navigate = useNavigate();
     const { submitLoan, loading } = useLendenClub();
@@ -100,7 +102,8 @@ const LoanDetailHeader = ({ loanData }) => {
                                     variant="contained"
                                     fullWidth
                                     onClick={handleVerifyClick}
-                                    disabled={loading}
+                                    disabled={loading || LENDENCLUB_MAINTENANCE}
+                                    title={LENDENCLUB_MAINTENANCE ? 'Service temporarily unavailable' : undefined}
                                     sx={{
                                         fontSize: {
                                             xs: '0.75rem',
