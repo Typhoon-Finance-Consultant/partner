@@ -12,6 +12,7 @@ import InvoiceDetails from './pages/InvoiceDetails';
 import CreateLead from './pages/CreateLead';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import UpdatePassword from './pages/UpdatePassword';
 import UpdateProfile from './pages/UpdateProfile.jsx';
 import Notfound from './pages/Notfound.jsx';
@@ -42,6 +43,10 @@ function App() {
                         />
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/reset-password" element={<Login />} />
+                        <Route
+                            path="/reset-password/:token"
+                            element={<ResetPassword />}
+                        />
 
                         <Route path="" element={<AuthGuard />}>
                             <Route path="/" element={<Dashboard />} index />
@@ -73,14 +78,6 @@ function App() {
                                 element={<UpdateProfile />}
                             />
                         </Route>
-                        <Route
-                            path="/forgot-password"
-                            element={<ForgotPassword />}
-                        />
-                        <Route
-                            path="/reset-password/:token"
-                            element={<ForgotPassword />}
-                        />
 
                         <Route path="*" element={<Notfound />} />
                     </Route>
