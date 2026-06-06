@@ -257,20 +257,14 @@ const UpdateProfileForm = props => {
             formik.setFieldValue('pincode', event.target.value);
             if (event.target.value.length === 6) {
                 getPinCode(event.target.value).then(data => {
-                    if (data.code === 200) {
-                        // Find the matching state value in INDIAN_STATES
-                        const validState = INDIAN_STATES.find(
-                            state => state.label === data.response?.state,
-                        );
+                    if (data.code === 200 && data.response) {
                         formik.setFieldValue(
                             'city',
                             data?.response?.city || '',
                         );
                         formik.setFieldValue(
                             'state',
-                            validState
-                                ? validState.value
-                                : data.response?.state, // Use the value property
+                            data.response?.state || '',
                         );
                     }
                 });

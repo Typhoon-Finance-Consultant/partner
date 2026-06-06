@@ -1,5 +1,33 @@
+import { INDIAN_STATES } from '&/helpers/constants';
 import { coreApi } from './axiosConfig';
 import { handleResponse } from './common';
+
+const resolveIndianState = stateName => {
+    if (!stateName) {
+        return '';
+    }
+    const match = INDIAN_STATES.find(
+        state =>
+            state.label.toLowerCase() === String(stateName).trim().toLowerCase(),
+    );
+    return match ? match.value : stateName;
+};
+
+const normalizePincodeResponse = data => {
+    if (!data?.response) {
+        return data;
+    }
+
+    const { city, state } = data.response;
+    return {
+        ...data,
+        response: {
+            ...data.response,
+            city: city || '',
+            state: resolveIndianState(state),
+        },
+    };
+};
 
 export const loansList = (data, page = 1, pageSize = 20) => {
     const response = coreApi.makeAuthenticatedPostCall(
@@ -183,65 +211,11 @@ export const getBankDetailsUsingIFSCWithFallback = async ifscCode => {
     }
 };
 
-export const getPinCode = data => {
+export const getPinCode = pincode => {
     const response = coreApi.makeAuthenticatedGetCall(
-        `loan/address/pincode?pincode=${data}`,
-        data,
+        `loan/address/pincode?pincode=${pincode}`,
     );
-    return handleResponse(response);
-};
-
-// New function to get pincode details with external API fallback
-export const getPinCodeWithFallback = async pincode => {
-    try {
-        // First try the external API
-        const externalResponse = await fetch(
-            `https://api.postalpincode.in/pincode/${pincode}`,
-        );
-        const externalData = await externalResponse.json();
-
-        // Check if external API returned valid data
-        if (
-            externalData &&
-            externalData.length > 0 &&
-            externalData[0].Status === 'Success' &&
-            externalData[0].PostOffice &&
-            externalData[0].PostOffice.length > 0
-        ) {
-            const postOffice = externalData[0].PostOffice[0];
-            return {
-                code: 200,
-                response: {
-                    city: postOffice.District, // Using District as city
-                    state: postOffice.State,
-                    pincode: postOffice.Pincode,
-                },
-                source: 'external',
-            };
-        }
-
-        // If external API fails, fallback to internal server API
-
-        const serverResponse = await getPinCode(pincode);
-        return {
-            ...serverResponse,
-            source: 'server',
-        };
-    } catch (error) {
-        console.error('External API error, falling back to server API:', error);
-
-        // Fallback to internal server API
-        try {
-            const serverResponse = await getPinCode(pincode);
-            return {
-                ...serverResponse,
-                source: 'server',
-            };
-        } catch (serverError) {
-            console.error('Both external and server APIs failed:', serverError);
-            throw serverError;
-        }
-    }
+    return handleResponse(response).then(normalizePincodeResponse);
 };
 
 export const lendenDedupe = data => {

@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import * as yup from 'yup';
 import { INDIAN_STATES } from '&/helpers/constants';
-import { updateAddress, getPinCodeWithFallback } from '&/services/loans';
+import { updateAddress, getPinCode } from '&/services/loans';
 import { useQueryClient } from '@tanstack/react-query';
 
 const addressSchema = yup.object().shape({
@@ -107,15 +107,9 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
 
         // When we have a complete 6-digit pincode, fetch and update city and state
         if (pincode.length === 6) {
-            getPinCodeWithFallback(pincode)
+            getPinCode(pincode)
                 .then(data => {
                     if (data.code === 200 && data.response) {
-                        // Find the matching state value in INDIAN_STATES
-                        const validState = INDIAN_STATES.find(
-                            state => state.label === data.response?.state,
-                        );
-
-                        // Update city and state for the specific address type
                         formik.setFieldValue(
                             `${addressType}.city`,
                             data?.response?.city || '',
@@ -123,9 +117,7 @@ const Address = ({ address, loanID, status, setActiveTab, activeTab }) => {
 
                         formik.setFieldValue(
                             `${addressType}.state`,
-                            validState
-                                ? validState.value
-                                : data.response?.state,
+                            data.response?.state || '',
                         );
                     }
                 })
